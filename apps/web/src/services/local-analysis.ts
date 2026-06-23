@@ -9,12 +9,14 @@ import { openings } from "@/lib/engine/openings";
 
 export async function analyzeLocally(
   username: string,
-  filename: string
+  filename: string,
+  onProgress?: (progress: number, stage: string) => void
 ): Promise<any> {
   if (!isWasmSupported()) {
     throw new Error("WebAssembly is not supported in this browser");
   }
 
+  onProgress?.(0, "Fetching game data...");
   const pgn = await fetchPgn(username, filename);
   const game = new Chess();
   game.loadPgn(pgn);
@@ -44,17 +46,21 @@ export async function analyzeLocally(
     hashSize: engineConfig.hashSize,
   });
 
+  onProgress?.(5, "Analyzing positions...");
+
   const gameEval = await engine.evaluateGame({
     fens,
     uciMoves,
     depth: engineConfig.depth,
     multiPv: engineConfig.multiPv,
     workersNb: workers,
+    setEvaluationProgress: (p: number) => onProgress?.(5 + p * 0.9, "Analyzing positions..."),
   });
 
   engine.shutdown();
 
-  return mapToAnalysisSchema(
+  onProgress?.(95, "Building analysis report...");
+  const result_ = mapToAnalysisSchema(
     gameEval,
     game,
     pgn,
@@ -69,6 +75,9 @@ export async function analyzeLocally(
     uciMoves,
     fens
   );
+
+  onProgress?.(100, "Done!");
+  return result_;
 }
 
 async function fetchPgn(

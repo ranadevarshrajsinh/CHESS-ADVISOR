@@ -46,7 +46,11 @@ export async function getStats(username) {
   return res.json();
 }
 
-export async function analyzeGame(username: string, filename: string): Promise<any> {
+export async function analyzeGame(
+  username: string,
+  filename: string,
+  onProgress?: (progress: number, stage: string) => void
+): Promise<any> {
   const { engineConfig } = await import("@/lib/engine-config");
   if (!engineConfig.enabled) {
     throw new Error("Client-side analysis is disabled. Set NEXT_PUBLIC_ANALYSIS_ENABLE_WASM=true");
@@ -58,7 +62,7 @@ export async function analyzeGame(username: string, filename: string): Promise<a
   }
 
   const { analyzeLocally } = await import("@/services/local-analysis");
-  return await analyzeLocally(username, filename);
+  return await analyzeLocally(username, filename, onProgress);
 }
 
 export async function batchAnalyze(username, limit = 5) {

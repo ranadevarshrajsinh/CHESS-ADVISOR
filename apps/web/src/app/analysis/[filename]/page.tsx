@@ -140,6 +140,8 @@ export default function GameAnalysisPage({
 
   const [analysis, setAnalysis] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [progressStage, setProgressStage] = useState("");
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [mistakeFilter, setMistakeFilter] = useState<MistakeFilter>("All");
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
@@ -211,7 +213,12 @@ export default function GameAnalysisPage({
     }
     if (!filename) return;
 
-    analyzeGame(chessUsername, filename)
+    setProgress(0);
+    setProgressStage("Starting analysis...");
+    analyzeGame(chessUsername, filename, (p, stage) => {
+      setProgress(p);
+      if (stage) setProgressStage(stage);
+    })
       .then((data) => {
         setAnalysis(data);
         if (data?.full_history) {
@@ -506,7 +513,34 @@ export default function GameAnalysisPage({
         </div>
 
         {loading ? (
-          <Loader message="Analyzing game with Stockfish… This may take a moment." />
+          progress > 0 ? (
+            <div className="flex-center" style={{ flexDirection: "column", gap: "20px", padding: "60px 40px" }}>
+              <div style={{ width: "100%", maxWidth: "400px" }}>
+                <div style={{
+                  height: "8px",
+                  borderRadius: "4px",
+                  background: "rgba(0,0,0,0.08)",
+                  overflow: "hidden",
+                }}>
+                  <div style={{
+                    height: "100%",
+                    width: `${progress}%`,
+                    borderRadius: "4px",
+                    background: "linear-gradient(90deg, #6366f1, #22d3ee)",
+                    transition: "width 0.3s ease",
+                  }} />
+                </div>
+              </div>
+              <p style={{ color: "var(--text-secondary)", fontSize: "14px" }}>
+                {progressStage || "Analyzing game with Stockfish..."}
+              </p>
+              <p style={{ color: "var(--text-muted)", fontSize: "12px" }}>
+                {Math.round(progress)}%
+              </p>
+            </div>
+          ) : (
+            <Loader message="Analyzing game with Stockfish… This may take a moment." />
+          )
         ) : analysis ? (
           <div
             style={{
