@@ -6,6 +6,8 @@ temperature: 0.1
 permission:
   edit: allow
   bash: allow
+    "git *": "allow"
+    "rm -rf *": "deny"
   web: allow
 ---
 # Bug Fixer Agent

@@ -5,6 +5,9 @@ model: opencode/big-pickle
 temperature: 0.1
 permission:
   edit: deny
+  read: allow 
+  glob: allow
+  grep: allow
 ---
 # Bug Hunter Agent
 
