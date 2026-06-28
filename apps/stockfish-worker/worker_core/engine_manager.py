@@ -1,8 +1,11 @@
 import shutil
 import chess.engine
 import os
+import logging
 from pathlib import Path
 from typing import Dict, Any, Optional
+
+logger = logging.getLogger(__name__)
 
 # Import lazily-resolved to avoid circular imports at package init
 def _default_stockfish() -> str:
@@ -22,6 +25,7 @@ class EngineManager:
         self.stockfish_path = candidate if self._path_is_valid(candidate) else self._find_stockfish()
         self.analysis_nodes = analysis_nodes if analysis_nodes is not None else _default_analysis_nodes()
         self.engine = None
+        logger.info("ENGINE_INIT path=%s analysis_nodes=%d", self.stockfish_path, self.analysis_nodes)
 
     @staticmethod
     def _path_is_valid(path: str) -> bool:
@@ -57,20 +61,32 @@ class EngineManager:
 
     def start(self):
         if self.engine is None:
+            logger.info("ENGINE_START path=%s", self.stockfish_path)
             self.engine = chess.engine.SimpleEngine.popen_uci(self.stockfish_path)
+            logger.info("ENGINE_STARTED path=%s", self.stockfish_path)
+        else:
+            logger.debug("ENGINE_ALREADY_RUNNING path=%s", self.stockfish_path)
 
     def stop(self):
         if self.engine:
+            logger.info("ENGINE_STOP path=%s", self.stockfish_path)
             self.engine.quit()
             self.engine = None
+            logger.info("ENGINE_STOPPED path=%s", self.stockfish_path)
 
     def evaluate_position(self, board: chess.Board, multipv: int = 1, cache=None) -> Any:
+        zobrist_hash = None
         if cache is not None:
             import chess.polyglot
-            cached = cache.get(chess.polyglot.zobrist_hash(board), multipv)
+            zobrist_hash = chess.polyglot.zobrist_hash(board)
+            cached = cache.get(zobrist_hash, multipv)
             if cached is not None:
+                logger.debug("EVAL_CACHE_HIT hash=%s multipv=%d nodes=%d",
+                             hex(zobrist_hash), multipv, self.analysis_nodes)
                 return cached
 
+        logger.debug("EVAL_START halfmove=%d fen=%s nodes=%d multipv=%d",
+                     board.halfmove_clock, board.fen(), self.analysis_nodes, multipv)
         limit = chess.engine.Limit(nodes=self.analysis_nodes)
         info = self.engine.analyse(board, limit, multipv=multipv)
         
@@ -90,8 +106,12 @@ class EngineManager:
                     "move": move,
                     "move_san": board.san(move) if move and move in board.legal_moves else "N/A"
                 })
+            logger.debug("EVAL_DONE multipv=%d top_eval=%+d best_move=%s cache=%s",
+                         multipv, results[0]['eval_cp'],
+                         results[0].get('move_san', 'N/A'),
+                         "miss" if zobrist_hash is None else "saved")
             if cache is not None:
-                cache.put(chess.polyglot.zobrist_hash(board), multipv, results)
+                cache.put(zobrist_hash, multipv, results)
             return results
         else:
             # Single PV (explicitly requested)
@@ -106,6 +126,9 @@ class EngineManager:
                 "best_move": best_move,
                 "best_move_san": board.san(best_move) if best_move and best_move in board.legal_moves else "N/A"
             }
+            logger.debug("EVAL_DONE multipv=1 eval=%+d best_move=%s cache=%s",
+                         eval_cp, result.get('best_move_san', 'N/A'),
+                         "miss" if zobrist_hash is None else "saved")
             if cache is not None:
-                cache.put(chess.polyglot.zobrist_hash(board), multipv, result)
+                cache.put(zobrist_hash, multipv, result)
             return result

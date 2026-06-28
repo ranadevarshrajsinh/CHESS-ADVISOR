@@ -52,6 +52,7 @@ export default function Dashboard() {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [batchAnalyzing, setBatchAnalyzing] = useState(false);
+  const [batchResult, setBatchResult] = useState<any>(null);
 
   useEffect(() => {
     if (playerLoading) return;
@@ -89,9 +90,11 @@ export default function Dashboard() {
 
   const handleBatchAnalyze = async () => {
     setBatchAnalyzing(true);
+    setBatchResult(null);
     try {
-      await batchAnalyze(chessUsername, 5);
-      router.push("/report");
+      const result = await batchAnalyze(chessUsername, 5);
+      setBatchResult(result);
+      setBatchAnalyzing(false);
     } catch (e) {
       console.error(e);
       alert(
@@ -139,6 +142,42 @@ export default function Dashboard() {
             {batchAnalyzing ? "Analyzing..." : "Run Batch Analysis"}
           </button>
         </div>
+
+        {/* ── Batch Analysis Success Banner ── */}
+        {batchResult && (
+          <div
+            style={{
+              padding: "20px 24px",
+              borderRadius: "12px",
+              background: "rgba(16,185,129,0.08)",
+              border: "1px solid rgba(16,185,129,0.2)",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: "16px",
+              marginBottom: "8px",
+            }}
+          >
+            <div>
+              <div style={{ fontWeight: "700", fontSize: "16px", color: "var(--success)" }}>
+                Batch Analysis Started
+              </div>
+              <p style={{ margin: "4px 0 0", fontSize: "14px", color: "var(--text-secondary)" }}>
+                {batchResult.jobs_created} job{batchResult.jobs_created !== 1 ? "s" : ""} created
+                from {batchResult.total_games} game{batchResult.total_games !== 1 ? "s" : ""}.
+                The worker is processing them now — check back shortly.
+              </p>
+            </div>
+            <button
+              className="btn btn-primary"
+              onClick={() => router.push("/report")}
+              style={{ padding: "10px 20px", fontSize: "14px", whiteSpace: "nowrap" }}
+            >
+              View Report
+            </button>
+          </div>
+        )}
 
         {loading ? (
           <Loader message="Loading dashboard..." />

@@ -1,4 +1,7 @@
+import logging
 from typing import List, Dict, Any
+
+logger = logging.getLogger(__name__)
 
 
 class OpeningSuggestions:
@@ -14,6 +17,7 @@ class OpeningSuggestions:
         Returns:
             List of dicts with keys: opening, priority, suggestion (or message).
         """
+        logger.debug("OPENING_SUGGESTIONS_START")
         suggestions = []
         openings = batch_analysis.get("openings", {})
 
@@ -61,4 +65,5 @@ class OpeningSuggestions:
                 seen.add(key)
                 deduped.append(s)
 
+        logger.info("OPENING_SUGGESTIONS_DONE total=%d deduped=%d", len(suggestions), len(deduped))
         return deduped

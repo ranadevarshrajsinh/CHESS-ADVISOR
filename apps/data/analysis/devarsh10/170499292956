@@ -1,0 +1,1757 @@
+{
+    "analysis_version": 2,
+    "metadata": {
+        "Event": "Live Chess",
+        "Site": "Chess.com",
+        "Date": "2026.06.21",
+        "Round": "-",
+        "White": "Devarsh10",
+        "Black": "Gy0rk0s",
+        "Result": "0-1",
+        "CurrentPosition": "2K5/2q5/2k5/8/8/8/8/8 w - - 22 68",
+        "Timezone": "UTC",
+        "ECO": "B20",
+        "ECOUrl": "https://www.chess.com/openings/Closed-Sicilian-Defense-Traditional-Line-3.Nf3-g6-4.Bc4-Bg7",
+        "UTCDate": "2026.06.21",
+        "UTCTime": "08:18:08",
+        "WhiteElo": "1201",
+        "BlackElo": "1230",
+        "TimeControl": "600",
+        "Termination": "Gy0rk0s won by checkmate",
+        "StartTime": "08:18:08",
+        "EndDate": "2026.06.21",
+        "EndTime": "08:34:09",
+        "Link": "https://www.chess.com/game/live/170499292956",
+        "Opening": "Sicilian Defense"
+    },
+    "user_color": "white",
+    "user_result": "loss",
+    "white_player": "Devarsh10",
+    "black_player": "Gy0rk0s",
+    "white_rating": "1201",
+    "black_rating": "1230",
+    "performance_rating": 1005,
+    "opening_name": "Sicilian Defense",
+    "eco_code": "B20",
+    "game_accuracy": 43.52,
+    "opp_accuracy": 70.38,
+    "move_history": [
+        {
+            "move_num": 1,
+            "san": "e4",
+            "eval_before": 0.34,
+            "eval_after": 0.3,
+            "eval": 0.3,
+            "best_move": "e4",
+            "cp_loss": 4,
+            "win_prob_drop": 0.57,
+            "accuracy": 55.97,
+            "quality": "Best",
+            "is_book": false,
+            "time_spent": null,
+            "error_nature": "None",
+            "phase": "opening"
+        },
+        {
+            "move_num": 2,
+            "san": "Bc4",
+            "eval_before": 0.43,
+            "eval_after": -0.03,
+            "eval": -0.03,
+            "best_move": "Nf3",
+            "cp_loss": 46,
+            "win_prob_drop": 6.59,
+            "accuracy": 40.37,
+            "quality": "Good",
+            "is_book": false,
+            "time_spent": 1.0,
+            "error_nature": "None",
+            "phase": "opening"
+        },
+        {
+            "move_num": 3,
+            "san": "Nf3",
+            "eval_before": 0.05,
+            "eval_after": -0.02,
+            "eval": -0.02,
+            "best_move": "Nf3",
+            "cp_loss": 7,
+            "win_prob_drop": 1.01,
+            "accuracy": 54.86,
+            "quality": "Best",
+            "is_book": false,
+            "time_spent": 1.7000000000000455,
+            "error_nature": "None",
+            "phase": "opening"
+        },
+        {
+            "move_num": 4,
+            "san": "Nc3",
+            "eval_before": 0.39,
+            "eval_after": 0.03,
+            "eval": 0.03,
+            "best_move": "c3",
+            "cp_loss": 36,
+            "win_prob_drop": 5.16,
+            "accuracy": 44.03,
+            "quality": "Good",
+            "is_book": false,
+            "time_spent": 5.600000000000023,
+            "error_nature": "None",
+            "phase": "opening"
+        },
+        {
+            "move_num": 5,
+            "san": "a3",
+            "eval_before": 0.01,
+            "eval_after": -0.38,
+            "eval": -0.38,
+            "best_move": "d3",
+            "cp_loss": 39,
+            "win_prob_drop": 5.59,
+            "accuracy": 42.92,
+            "quality": "Good",
+            "is_book": false,
+            "time_spent": 5.899999999999977,
+            "error_nature": "None",
+            "phase": "opening"
+        },
+        {
+            "move_num": 6,
+            "san": "d3",
+            "eval_before": -0.39,
+            "eval_after": -0.41,
+            "eval": -0.41,
+            "best_move": "O-O",
+            "cp_loss": 2,
+            "win_prob_drop": 0.28,
+            "accuracy": 56.71,
+            "quality": "Excellent",
+            "is_book": false,
+            "time_spent": 5.400000000000091,
+            "error_nature": "None",
+            "phase": "opening"
+        },
+        {
+            "move_num": 7,
+            "san": "Bf4",
+            "eval_before": -0.47,
+            "eval_after": -0.42,
+            "eval": -0.42,
+            "best_move": "O-O",
+            "cp_loss": 0.0,
+            "win_prob_drop": 0.0,
+            "accuracy": 59.27,
+            "quality": "Excellent",
+            "is_book": false,
+            "time_spent": 10.5,
+            "error_nature": "None",
+            "phase": "opening"
+        },
+        {
+            "move_num": 8,
+            "san": "O-O",
+            "eval_before": 0.67,
+            "eval_after": -0.41,
+            "eval": -0.41,
+            "best_move": "Bd6",
+            "cp_loss": 108,
+            "win_prob_drop": 15.4,
+            "accuracy": 21.08,
+            "quality": "Mistake",
+            "is_book": false,
+            "time_spent": 19.5,
+            "error_nature": "Opening Knowledge",
+            "phase": "opening"
+        },
+        {
+            "move_num": 9,
+            "san": "Re1",
+            "eval_before": 0.36,
+            "eval_after": 0.37,
+            "eval": 0.37,
+            "best_move": "Re1",
+            "cp_loss": 0.0,
+            "win_prob_drop": 0.0,
+            "accuracy": 57.81,
+            "quality": "Best",
+            "is_book": false,
+            "time_spent": 17.600000000000023,
+            "error_nature": "None",
+            "phase": "opening"
+        },
+        {
+            "move_num": 10,
+            "san": "exd5",
+            "eval_before": 0.98,
+            "eval_after": 0.82,
+            "eval": 0.82,
+            "best_move": "exd5",
+            "cp_loss": 16,
+            "win_prob_drop": 2.15,
+            "accuracy": 51.5,
+            "quality": "Best",
+            "is_book": false,
+            "time_spent": 14.100000000000023,
+            "error_nature": "None",
+            "phase": "opening"
+        },
+        {
+            "move_num": 11,
+            "san": "Bb5",
+            "eval_before": 0.73,
+            "eval_after": -0.46,
+            "eval": -0.46,
+            "best_move": "Nxd5",
+            "cp_loss": 119,
+            "win_prob_drop": 16.94,
+            "accuracy": 18.47,
+            "quality": "Mistake",
+            "is_book": false,
+            "time_spent": 14.799999999999955,
+            "error_nature": "Opening Knowledge",
+            "phase": "opening"
+        },
+        {
+            "move_num": 12,
+            "san": "Bg5",
+            "eval_before": 0.27,
+            "eval_after": -0.69,
+            "eval": -0.69,
+            "best_move": "Bxc6",
+            "cp_loss": 96,
+            "win_prob_drop": 13.68,
+            "accuracy": 24.23,
+            "quality": "Inaccuracy",
+            "is_book": false,
+            "time_spent": 13.400000000000091,
+            "error_nature": "Positional Misjudgment",
+            "phase": "opening"
+        },
+        {
+            "move_num": 13,
+            "san": "Bxe7",
+            "eval_before": 0.15,
+            "eval_after": -1.32,
+            "eval": -1.32,
+            "best_move": "Bxc6",
+            "cp_loss": 147,
+            "win_prob_drop": 20.29,
+            "accuracy": 12.95,
+            "quality": "Mistake",
+            "is_book": false,
+            "time_spent": 9.299999999999955,
+            "error_nature": "Opening Knowledge",
+            "phase": "opening"
+        },
+        {
+            "move_num": 14,
+            "san": "Rxe7",
+            "eval_before": 4.01,
+            "eval_after": 0.1,
+            "eval": 0.1,
+            "best_move": "Bxe8",
+            "cp_loss": 391,
+            "win_prob_drop": 39.52,
+            "accuracy": 0.38,
+            "quality": "Forced",
+            "is_book": false,
+            "time_spent": 34.30000000000001,
+            "error_nature": "Hanging Piece",
+            "phase": "opening"
+        },
+        {
+            "move_num": 15,
+            "san": "Nxd5",
+            "eval_before": 0.0,
+            "eval_after": -0.01,
+            "eval": -0.01,
+            "best_move": "Nxd5",
+            "cp_loss": 1,
+            "win_prob_drop": 0.14,
+            "accuracy": 57.08,
+            "quality": "Forced",
+            "is_book": false,
+            "time_spent": 33.099999999999966,
+            "error_nature": "None",
+            "phase": "opening"
+        },
+        {
+            "move_num": 16,
+            "san": "Nxe7+",
+            "eval_before": 1.97,
+            "eval_after": 1.8,
+            "eval": 1.8,
+            "best_move": "Nxe7+",
+            "cp_loss": 17,
+            "win_prob_drop": 1.85,
+            "accuracy": 51.12,
+            "quality": "Forced",
+            "is_book": false,
+            "time_spent": 18.0,
+            "error_nature": "None",
+            "phase": "opening"
+        },
+        {
+            "move_num": 17,
+            "san": "Nxf5",
+            "eval_before": 2.21,
+            "eval_after": 2.15,
+            "eval": 2.15,
+            "best_move": "Nxf5",
+            "cp_loss": 6,
+            "win_prob_drop": 0.6,
+            "accuracy": 55.23,
+            "quality": "Forced",
+            "is_book": false,
+            "time_spent": 22.099999999999966,
+            "error_nature": "None",
+            "phase": "opening"
+        },
+        {
+            "move_num": 18,
+            "san": "Ng5",
+            "eval_before": 2.14,
+            "eval_after": 0.54,
+            "eval": 0.54,
+            "best_move": "Rb1",
+            "cp_loss": 160,
+            "win_prob_drop": 19.71,
+            "accuracy": 10.91,
+            "quality": "Mistake",
+            "is_book": false,
+            "time_spent": 70.19999999999999,
+            "error_nature": "Hanging Piece",
+            "phase": "middlegame"
+        },
+        {
+            "move_num": 19,
+            "san": "Rb1",
+            "eval_before": 0.54,
+            "eval_after": 0.45,
+            "eval": 0.45,
+            "best_move": "Rb1",
+            "cp_loss": 9,
+            "win_prob_drop": 1.27,
+            "accuracy": 54.12,
+            "quality": "Best",
+            "is_book": false,
+            "time_spent": 91.5,
+            "error_nature": "None",
+            "phase": "middlegame"
+        },
+        {
+            "move_num": 20,
+            "san": "Qh5",
+            "eval_before": 0.46,
+            "eval_after": 0.4,
+            "eval": 0.4,
+            "best_move": "Qh5",
+            "cp_loss": 6,
+            "win_prob_drop": 0.85,
+            "accuracy": 55.23,
+            "quality": "Best",
+            "is_book": false,
+            "time_spent": 104.30000000000001,
+            "error_nature": "None",
+            "phase": "middlegame"
+        },
+        {
+            "move_num": 21,
+            "san": "Qxg6",
+            "eval_before": 2.38,
+            "eval_after": 1.81,
+            "eval": 1.81,
+            "best_move": "Nxf7+",
+            "cp_loss": 57,
+            "win_prob_drop": 5.82,
+            "accuracy": 36.47,
+            "quality": "Inaccuracy",
+            "is_book": false,
+            "time_spent": 136.10000000000002,
+            "error_nature": "Positional Misjudgment",
+            "phase": "middlegame"
+        },
+        {
+            "move_num": 22,
+            "san": "Rxb7",
+            "eval_before": 2.0,
+            "eval_after": 2.0,
+            "eval": 2.0,
+            "best_move": "Rxb7",
+            "cp_loss": 0.0,
+            "win_prob_drop": 0.0,
+            "accuracy": 57.44,
+            "quality": "Forced",
+            "is_book": false,
+            "time_spent": 136.0,
+            "error_nature": "None",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 23,
+            "san": "Ne6",
+            "eval_before": 2.77,
+            "eval_after": 2.43,
+            "eval": 2.43,
+            "best_move": "Kf1",
+            "cp_loss": 34,
+            "win_prob_drop": 2.93,
+            "accuracy": 44.77,
+            "quality": "Good",
+            "is_book": false,
+            "time_spent": 143.09999999999997,
+            "error_nature": "None",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 24,
+            "san": "Ng5",
+            "eval_before": 3.47,
+            "eval_after": 1.28,
+            "eval": 1.28,
+            "best_move": "Kf1",
+            "cp_loss": 219,
+            "win_prob_drop": 20.42,
+            "accuracy": 4.81,
+            "quality": "Blunder",
+            "is_book": false,
+            "time_spent": 143.5,
+            "error_nature": "Endgame Technique",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 25,
+            "san": "Rb5",
+            "eval_before": 2.77,
+            "eval_after": 2.0,
+            "eval": 2.0,
+            "best_move": "Kf1",
+            "cp_loss": 77,
+            "win_prob_drop": 7.15,
+            "accuracy": 29.84,
+            "quality": "Inaccuracy",
+            "is_book": false,
+            "time_spent": 147.2,
+            "error_nature": "Positional Misjudgment",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 26,
+            "san": "f3",
+            "eval_before": 2.21,
+            "eval_after": 0.16,
+            "eval": 0.16,
+            "best_move": "Nf3",
+            "cp_loss": 205,
+            "win_prob_drop": 25.81,
+            "accuracy": 5.87,
+            "quality": "Blunder",
+            "is_book": false,
+            "time_spent": 143.60000000000002,
+            "error_nature": "Endgame Technique",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 27,
+            "san": "Kf1",
+            "eval_before": 2.03,
+            "eval_after": 1.82,
+            "eval": 1.82,
+            "best_move": "Kf1",
+            "cp_loss": 21,
+            "win_prob_drop": 2.26,
+            "accuracy": 49.63,
+            "quality": "Forced",
+            "is_book": false,
+            "time_spent": 141.0,
+            "error_nature": "None",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 28,
+            "san": "Rb7+",
+            "eval_before": 2.2,
+            "eval_after": 1.83,
+            "eval": 1.83,
+            "best_move": "f4",
+            "cp_loss": 37,
+            "win_prob_drop": 3.87,
+            "accuracy": 43.66,
+            "quality": "Good",
+            "is_book": false,
+            "time_spent": 122.0,
+            "error_nature": "None",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 29,
+            "san": "Nxh7+",
+            "eval_before": 4.0,
+            "eval_after": 1.47,
+            "eval": 1.47,
+            "best_move": "f4",
+            "cp_loss": 253,
+            "win_prob_drop": 20.93,
+            "accuracy": 2.95,
+            "quality": "Forced",
+            "is_book": false,
+            "time_spent": 121.60000000000002,
+            "error_nature": "Endgame Technique",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 30,
+            "san": "g3",
+            "eval_before": 1.64,
+            "eval_after": 1.57,
+            "eval": 1.57,
+            "best_move": "g3",
+            "cp_loss": 7,
+            "win_prob_drop": 0.82,
+            "accuracy": 54.86,
+            "quality": "Best",
+            "is_book": false,
+            "time_spent": 138.5,
+            "error_nature": "None",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 31,
+            "san": "Rd7+",
+            "eval_before": 2.03,
+            "eval_after": 0.39,
+            "eval": 0.39,
+            "best_move": "Rb6",
+            "cp_loss": 164,
+            "win_prob_drop": 20.7,
+            "accuracy": 10.34,
+            "quality": "Mistake",
+            "is_book": false,
+            "time_spent": 121.10000000000002,
+            "error_nature": "Endgame Technique",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 32,
+            "san": "Ra7",
+            "eval_before": 0.4,
+            "eval_after": 0.0,
+            "eval": 0.0,
+            "best_move": "Rf7",
+            "cp_loss": 40,
+            "win_prob_drop": 5.73,
+            "accuracy": 42.56,
+            "quality": "Good",
+            "is_book": false,
+            "time_spent": 153.8,
+            "error_nature": "None",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 33,
+            "san": "c4+",
+            "eval_before": 0.03,
+            "eval_after": -0.62,
+            "eval": -0.62,
+            "best_move": "Ng5",
+            "cp_loss": 65,
+            "win_prob_drop": 9.26,
+            "accuracy": 33.74,
+            "quality": "Inaccuracy",
+            "is_book": false,
+            "time_spent": 156.8,
+            "error_nature": "Positional Misjudgment",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 34,
+            "san": "Ng5",
+            "eval_before": -0.5,
+            "eval_after": -0.99,
+            "eval": -0.99,
+            "best_move": "h4",
+            "cp_loss": 49,
+            "win_prob_drop": 6.73,
+            "accuracy": 39.29,
+            "quality": "Good",
+            "is_book": false,
+            "time_spent": 161.50000000000003,
+            "error_nature": "None",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 35,
+            "san": "Kg2",
+            "eval_before": -0.07,
+            "eval_after": -1.3,
+            "eval": -1.3,
+            "best_move": "Ne6",
+            "cp_loss": 123,
+            "win_prob_drop": 16.87,
+            "accuracy": 17.58,
+            "quality": "Mistake",
+            "is_book": false,
+            "time_spent": 158.1,
+            "error_nature": "Hanging Piece",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 36,
+            "san": "Kh3",
+            "eval_before": -1.4,
+            "eval_after": -4.06,
+            "eval": -4.06,
+            "best_move": "Kf1",
+            "cp_loss": 266,
+            "win_prob_drop": 22.07,
+            "accuracy": 2.44,
+            "quality": "Blunder",
+            "is_book": false,
+            "time_spent": 155.2,
+            "error_nature": "Hanging Piece",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 37,
+            "san": "Kh4",
+            "eval_before": -4.58,
+            "eval_after": -4.61,
+            "eval": -4.61,
+            "best_move": "Kh4",
+            "cp_loss": 3,
+            "win_prob_drop": 0.11,
+            "accuracy": 56.34,
+            "quality": "Best",
+            "is_book": false,
+            "time_spent": 154.8,
+            "error_nature": "None",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 38,
+            "san": "Nh3",
+            "eval_before": -4.57,
+            "eval_after": -4.69,
+            "eval": -4.69,
+            "best_move": "Nh3",
+            "cp_loss": 12,
+            "win_prob_drop": 0.42,
+            "accuracy": 53.0,
+            "quality": "Best",
+            "is_book": false,
+            "time_spent": 153.8,
+            "error_nature": "None",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 39,
+            "san": "Rh7",
+            "eval_before": -2.46,
+            "eval_after": -7.37,
+            "eval": -7.37,
+            "best_move": "f4",
+            "cp_loss": 491,
+            "win_prob_drop": 18.11,
+            "accuracy": 0.09,
+            "quality": "Forced",
+            "is_book": false,
+            "time_spent": 162.89999999999998,
+            "error_nature": "Hanging Piece",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 40,
+            "san": "Kh5",
+            "eval_before": -8.11,
+            "eval_after": -8.36,
+            "eval": -8.36,
+            "best_move": "Kh5",
+            "cp_loss": 25,
+            "win_prob_drop": 0.12,
+            "accuracy": 48.13,
+            "quality": "Best",
+            "is_book": false,
+            "time_spent": 166.70000000000002,
+            "error_nature": "None",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 41,
+            "san": "Kg6",
+            "eval_before": -8.63,
+            "eval_after": -8.52,
+            "eval": -8.52,
+            "best_move": "Kg6",
+            "cp_loss": 0.0,
+            "win_prob_drop": 0.0,
+            "accuracy": 61.42,
+            "quality": "Best",
+            "is_book": false,
+            "time_spent": 165.4,
+            "error_nature": "None",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 42,
+            "san": "Kxh7",
+            "eval_before": -8.65,
+            "eval_after": -8.81,
+            "eval": -8.81,
+            "best_move": "Kf6",
+            "cp_loss": 16,
+            "win_prob_drop": 0.06,
+            "accuracy": 51.5,
+            "quality": "Good",
+            "is_book": false,
+            "time_spent": 161.70000000000002,
+            "error_nature": "None",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 43,
+            "san": "fxg4",
+            "eval_before": -7.46,
+            "eval_after": -9.21,
+            "eval": -9.21,
+            "best_move": "f4",
+            "cp_loss": 175,
+            "win_prob_drop": 0.85,
+            "accuracy": 8.91,
+            "quality": "Good",
+            "is_book": false,
+            "time_spent": 149.09999999999997,
+            "error_nature": "Hanging Piece",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 44,
+            "san": "Kg6",
+            "eval_before": -10.38,
+            "eval_after": -28.07,
+            "eval": -28.07,
+            "best_move": "d4",
+            "cp_loss": 1769,
+            "win_prob_drop": 0.25,
+            "accuracy": 0.0,
+            "quality": "Forced",
+            "is_book": false,
+            "time_spent": 150.89999999999998,
+            "error_nature": "Hanging Piece",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 45,
+            "san": "Kf5",
+            "eval_before": -11.54,
+            "eval_after": -63.27,
+            "eval": -63.27,
+            "best_move": "Kf5",
+            "cp_loss": 5173,
+            "win_prob_drop": 0.13,
+            "accuracy": 0.0,
+            "quality": "Forced",
+            "is_book": false,
+            "time_spent": 148.7,
+            "error_nature": "Hanging Piece",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 46,
+            "san": "Kxg4",
+            "eval_before": -7.68,
+            "eval_after": -38.61,
+            "eval": -38.61,
+            "best_move": "d4",
+            "cp_loss": 3093,
+            "win_prob_drop": 1.19,
+            "accuracy": 0.0,
+            "quality": "Forced",
+            "is_book": false,
+            "time_spent": 148.10000000000002,
+            "error_nature": "Hanging Piece",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 47,
+            "san": "Kf3",
+            "eval_before": -6.72,
+            "eval_after": -52.27,
+            "eval": -52.27,
+            "best_move": "d4",
+            "cp_loss": 4555,
+            "win_prob_drop": 2.05,
+            "accuracy": 0.0,
+            "quality": "Forced",
+            "is_book": false,
+            "time_spent": 145.50000000000003,
+            "error_nature": "Hanging Piece",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 48,
+            "san": "Ke4",
+            "eval_before": -6.38,
+            "eval_after": -13.4,
+            "eval": -13.4,
+            "best_move": "d4",
+            "cp_loss": 702,
+            "win_prob_drop": 2.43,
+            "accuracy": 0.0,
+            "quality": "Forced",
+            "is_book": false,
+            "time_spent": 145.10000000000002,
+            "error_nature": "Hanging Piece",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 49,
+            "san": "Kd5",
+            "eval_before": -7.43,
+            "eval_after": -12.12,
+            "eval": -12.12,
+            "best_move": "d4",
+            "cp_loss": 469,
+            "win_prob_drop": 1.28,
+            "accuracy": 0.12,
+            "quality": "Forced",
+            "is_book": false,
+            "time_spent": 143.2,
+            "error_nature": "Endgame Technique",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 50,
+            "san": "d4",
+            "eval_before": -7.53,
+            "eval_after": -11.1,
+            "eval": -11.1,
+            "best_move": "d4",
+            "cp_loss": 357,
+            "win_prob_drop": 1.13,
+            "accuracy": 0.63,
+            "quality": "Forced",
+            "is_book": false,
+            "time_spent": 142.10000000000002,
+            "error_nature": "Endgame Technique",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 51,
+            "san": "Kxd4",
+            "eval_before": -81.15,
+            "eval_after": -59.3,
+            "eval": -59.3,
+            "best_move": "Kxd4",
+            "cp_loss": 0.0,
+            "win_prob_drop": 0.0,
+            "accuracy": 100.0,
+            "quality": "Best",
+            "is_book": false,
+            "time_spent": 141.5,
+            "error_nature": "None",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 52,
+            "san": "c5",
+            "eval_before": -5.81,
+            "eval_after": -20.79,
+            "eval": -20.79,
+            "best_move": "c5",
+            "cp_loss": 1498,
+            "win_prob_drop": 3.41,
+            "accuracy": 0.0,
+            "quality": "Forced",
+            "is_book": false,
+            "time_spent": 141.2,
+            "error_nature": "Endgame Technique",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 53,
+            "san": "Kxc5",
+            "eval_before": -6.87,
+            "eval_after": -77.22,
+            "eval": -77.22,
+            "best_move": "Kxc5",
+            "cp_loss": 7035,
+            "win_prob_drop": 1.88,
+            "accuracy": 0.0,
+            "quality": "Forced",
+            "is_book": false,
+            "time_spent": 140.10000000000002,
+            "error_nature": "Endgame Technique",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 54,
+            "san": "Kd4",
+            "eval_before": -69.54,
+            "eval_after": -67.85,
+            "eval": -67.85,
+            "best_move": "Kb6",
+            "cp_loss": 0.0,
+            "win_prob_drop": 0.0,
+            "accuracy": 94.45,
+            "quality": "Excellent",
+            "is_book": false,
+            "time_spent": 142.7,
+            "error_nature": "None",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 55,
+            "san": "Kd3",
+            "eval_before": -40.58,
+            "eval_after": -44.82,
+            "eval": -44.82,
+            "best_move": "Kd5",
+            "cp_loss": 424,
+            "win_prob_drop": 0.0,
+            "accuracy": 0.23,
+            "quality": "Forced",
+            "is_book": false,
+            "time_spent": 142.89999999999998,
+            "error_nature": "Endgame Technique",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 56,
+            "san": "Kd2",
+            "eval_before": -81.15,
+            "eval_after": -69.1,
+            "eval": -69.1,
+            "best_move": "Ke4",
+            "cp_loss": 0.0,
+            "win_prob_drop": 0.0,
+            "accuracy": 100.0,
+            "quality": "Excellent",
+            "is_book": false,
+            "time_spent": 142.7,
+            "error_nature": "None",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 57,
+            "san": "Kd3",
+            "eval_before": -67.14,
+            "eval_after": -99.95,
+            "eval": -99.95,
+            "best_move": "Ke2",
+            "cp_loss": 3281,
+            "win_prob_drop": 0.0,
+            "accuracy": 0.0,
+            "quality": "Good",
+            "is_book": false,
+            "time_spent": 142.39999999999998,
+            "error_nature": "Endgame Technique",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 58,
+            "san": "Ke4",
+            "eval_before": -16.36,
+            "eval_after": -55.31,
+            "eval": -55.31,
+            "best_move": "Ke2",
+            "cp_loss": 3895,
+            "win_prob_drop": 0.01,
+            "accuracy": 0.0,
+            "quality": "Forced",
+            "is_book": false,
+            "time_spent": 140.3,
+            "error_nature": "Endgame Technique",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 59,
+            "san": "Kd5",
+            "eval_before": -57.55,
+            "eval_after": -63.57,
+            "eval": -63.57,
+            "best_move": "Kf5",
+            "cp_loss": 602,
+            "win_prob_drop": 0.0,
+            "accuracy": 0.02,
+            "quality": "Forced",
+            "is_book": false,
+            "time_spent": 139.3,
+            "error_nature": "Endgame Technique",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 60,
+            "san": "Kc5",
+            "eval_before": -44.73,
+            "eval_after": -99.96,
+            "eval": -99.96,
+            "best_move": "Kc5",
+            "cp_loss": 5523,
+            "win_prob_drop": 0.0,
+            "accuracy": 0.0,
+            "quality": "Forced",
+            "is_book": false,
+            "time_spent": 141.2,
+            "error_nature": "Endgame Technique",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 61,
+            "san": "Kc6",
+            "eval_before": -99.94,
+            "eval_after": -99.94,
+            "eval": -99.94,
+            "best_move": "Kc6",
+            "cp_loss": 0.0,
+            "win_prob_drop": 0.0,
+            "accuracy": 57.44,
+            "quality": "Best",
+            "is_book": false,
+            "time_spent": 139.0,
+            "error_nature": "None",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 62,
+            "san": "Kb7",
+            "eval_before": -99.95,
+            "eval_after": -99.96,
+            "eval": -99.96,
+            "best_move": "Kb6",
+            "cp_loss": 1,
+            "win_prob_drop": 0.0,
+            "accuracy": 57.08,
+            "quality": "Excellent",
+            "is_book": false,
+            "time_spent": 138.9,
+            "error_nature": "None",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 63,
+            "san": "Ka6",
+            "eval_before": -99.97,
+            "eval_after": -99.98,
+            "eval": -99.98,
+            "best_move": "Kc8",
+            "cp_loss": 1,
+            "win_prob_drop": 0.0,
+            "accuracy": 57.08,
+            "quality": "Excellent",
+            "is_book": false,
+            "time_spent": 136.9,
+            "error_nature": "None",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 64,
+            "san": "Kb7",
+            "eval_before": -99.97,
+            "eval_after": -99.97,
+            "eval": -99.97,
+            "best_move": "Kb7",
+            "cp_loss": 0.0,
+            "win_prob_drop": 0.0,
+            "accuracy": 57.44,
+            "quality": "Best",
+            "is_book": false,
+            "time_spent": 136.0,
+            "error_nature": "None",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 65,
+            "san": "Kc8",
+            "eval_before": -99.97,
+            "eval_after": -99.97,
+            "eval": -99.97,
+            "best_move": "Kc8",
+            "cp_loss": 0.0,
+            "win_prob_drop": 0.0,
+            "accuracy": 57.44,
+            "quality": "Best",
+            "is_book": false,
+            "time_spent": 132.5,
+            "error_nature": "None",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 66,
+            "san": "Kd8",
+            "eval_before": -99.98,
+            "eval_after": -99.98,
+            "eval": -99.98,
+            "best_move": "Kd8",
+            "cp_loss": 0.0,
+            "win_prob_drop": 0.0,
+            "accuracy": 57.44,
+            "quality": "Best",
+            "is_book": false,
+            "time_spent": 129.60000000000002,
+            "error_nature": "None",
+            "phase": "endgame"
+        },
+        {
+            "move_num": 67,
+            "san": "Kc8",
+            "eval_before": -99.99,
+            "eval_after": -99.99,
+            "eval": -99.99,
+            "best_move": "Kc8",
+            "cp_loss": 0.0,
+            "win_prob_drop": 0.0,
+            "accuracy": 57.44,
+            "quality": "Best",
+            "is_book": false,
+            "time_spent": 130.2,
+            "error_nature": "None",
+            "phase": "endgame"
+        }
+    ],
+    "full_history": [
+        {
+            "san": "e4",
+            "is_user": true
+        },
+        {
+            "san": "c5",
+            "is_user": false
+        },
+        {
+            "san": "Bc4",
+            "is_user": true
+        },
+        {
+            "san": "Nc6",
+            "is_user": false
+        },
+        {
+            "san": "Nf3",
+            "is_user": true
+        },
+        {
+            "san": "g6",
+            "is_user": false
+        },
+        {
+            "san": "Nc3",
+            "is_user": true
+        },
+        {
+            "san": "Bg7",
+            "is_user": false
+        },
+        {
+            "san": "a3",
+            "is_user": true
+        },
+        {
+            "san": "e6",
+            "is_user": false
+        },
+        {
+            "san": "d3",
+            "is_user": true
+        },
+        {
+            "san": "Nge7",
+            "is_user": false
+        },
+        {
+            "san": "Bf4",
+            "is_user": true
+        },
+        {
+            "san": "O-O",
+            "is_user": false
+        },
+        {
+            "san": "O-O",
+            "is_user": true
+        },
+        {
+            "san": "Re8",
+            "is_user": false
+        },
+        {
+            "san": "Re1",
+            "is_user": true
+        },
+        {
+            "san": "d5",
+            "is_user": false
+        },
+        {
+            "san": "exd5",
+            "is_user": true
+        },
+        {
+            "san": "exd5",
+            "is_user": false
+        },
+        {
+            "san": "Bb5",
+            "is_user": true
+        },
+        {
+            "san": "Bf5",
+            "is_user": false
+        },
+        {
+            "san": "Bg5",
+            "is_user": true
+        },
+        {
+            "san": "Qb6",
+            "is_user": false
+        },
+        {
+            "san": "Bxe7",
+            "is_user": true
+        },
+        {
+            "san": "Nxe7",
+            "is_user": false
+        },
+        {
+            "san": "Rxe7",
+            "is_user": true
+        },
+        {
+            "san": "Rxe7",
+            "is_user": false
+        },
+        {
+            "san": "Nxd5",
+            "is_user": true
+        },
+        {
+            "san": "Qxb5",
+            "is_user": false
+        },
+        {
+            "san": "Nxe7+",
+            "is_user": true
+        },
+        {
+            "san": "Kh8",
+            "is_user": false
+        },
+        {
+            "san": "Nxf5",
+            "is_user": true
+        },
+        {
+            "san": "gxf5",
+            "is_user": false
+        },
+        {
+            "san": "Ng5",
+            "is_user": true
+        },
+        {
+            "san": "Qxb2",
+            "is_user": false
+        },
+        {
+            "san": "Rb1",
+            "is_user": true
+        },
+        {
+            "san": "Qf6",
+            "is_user": false
+        },
+        {
+            "san": "Qh5",
+            "is_user": true
+        },
+        {
+            "san": "Qg6",
+            "is_user": false
+        },
+        {
+            "san": "Qxg6",
+            "is_user": true
+        },
+        {
+            "san": "fxg6",
+            "is_user": false
+        },
+        {
+            "san": "Rxb7",
+            "is_user": true
+        },
+        {
+            "san": "a5",
+            "is_user": false
+        },
+        {
+            "san": "Ne6",
+            "is_user": true
+        },
+        {
+            "san": "Bf8",
+            "is_user": false
+        },
+        {
+            "san": "Ng5",
+            "is_user": true
+        },
+        {
+            "san": "Bg7",
+            "is_user": false
+        },
+        {
+            "san": "Rb5",
+            "is_user": true
+        },
+        {
+            "san": "Re8",
+            "is_user": false
+        },
+        {
+            "san": "f3",
+            "is_user": true
+        },
+        {
+            "san": "Bd4+",
+            "is_user": false
+        },
+        {
+            "san": "Kf1",
+            "is_user": true
+        },
+        {
+            "san": "Kg7",
+            "is_user": false
+        },
+        {
+            "san": "Rb7+",
+            "is_user": true
+        },
+        {
+            "san": "Kf6",
+            "is_user": false
+        },
+        {
+            "san": "Nxh7+",
+            "is_user": true
+        },
+        {
+            "san": "Ke5",
+            "is_user": false
+        },
+        {
+            "san": "g3",
+            "is_user": true
+        },
+        {
+            "san": "Kd5",
+            "is_user": false
+        },
+        {
+            "san": "Rd7+",
+            "is_user": true
+        },
+        {
+            "san": "Kc6",
+            "is_user": false
+        },
+        {
+            "san": "Ra7",
+            "is_user": true
+        },
+        {
+            "san": "Kb5",
+            "is_user": false
+        },
+        {
+            "san": "c4+",
+            "is_user": true
+        },
+        {
+            "san": "Ka4",
+            "is_user": false
+        },
+        {
+            "san": "Ng5",
+            "is_user": true
+        },
+        {
+            "san": "Rb8",
+            "is_user": false
+        },
+        {
+            "san": "Kg2",
+            "is_user": true
+        },
+        {
+            "san": "Rb2+",
+            "is_user": false
+        },
+        {
+            "san": "Kh3",
+            "is_user": true
+        },
+        {
+            "san": "Bg1",
+            "is_user": false
+        },
+        {
+            "san": "Kh4",
+            "is_user": true
+        },
+        {
+            "san": "Rxh2+",
+            "is_user": false
+        },
+        {
+            "san": "Nh3",
+            "is_user": true
+        },
+        {
+            "san": "Be3",
+            "is_user": false
+        },
+        {
+            "san": "Rh7",
+            "is_user": true
+        },
+        {
+            "san": "g5+",
+            "is_user": false
+        },
+        {
+            "san": "Kh5",
+            "is_user": true
+        },
+        {
+            "san": "Rxh3+",
+            "is_user": false
+        },
+        {
+            "san": "Kg6",
+            "is_user": true
+        },
+        {
+            "san": "Rxh7",
+            "is_user": false
+        },
+        {
+            "san": "Kxh7",
+            "is_user": true
+        },
+        {
+            "san": "g4",
+            "is_user": false
+        },
+        {
+            "san": "fxg4",
+            "is_user": true
+        },
+        {
+            "san": "fxg4",
+            "is_user": false
+        },
+        {
+            "san": "Kg6",
+            "is_user": true
+        },
+        {
+            "san": "Bf2",
+            "is_user": false
+        },
+        {
+            "san": "Kf5",
+            "is_user": true
+        },
+        {
+            "san": "Bxg3",
+            "is_user": false
+        },
+        {
+            "san": "Kxg4",
+            "is_user": true
+        },
+        {
+            "san": "Be1",
+            "is_user": false
+        },
+        {
+            "san": "Kf3",
+            "is_user": true
+        },
+        {
+            "san": "Bd2",
+            "is_user": false
+        },
+        {
+            "san": "Ke4",
+            "is_user": true
+        },
+        {
+            "san": "Kxa3",
+            "is_user": false
+        },
+        {
+            "san": "Kd5",
+            "is_user": true
+        },
+        {
+            "san": "Bb4",
+            "is_user": false
+        },
+        {
+            "san": "d4",
+            "is_user": true
+        },
+        {
+            "san": "cxd4",
+            "is_user": false
+        },
+        {
+            "san": "Kxd4",
+            "is_user": true
+        },
+        {
+            "san": "Kb3",
+            "is_user": false
+        },
+        {
+            "san": "c5",
+            "is_user": true
+        },
+        {
+            "san": "Bxc5+",
+            "is_user": false
+        },
+        {
+            "san": "Kxc5",
+            "is_user": true
+        },
+        {
+            "san": "a4",
+            "is_user": false
+        },
+        {
+            "san": "Kd4",
+            "is_user": true
+        },
+        {
+            "san": "a3",
+            "is_user": false
+        },
+        {
+            "san": "Kd3",
+            "is_user": true
+        },
+        {
+            "san": "a2",
+            "is_user": false
+        },
+        {
+            "san": "Kd2",
+            "is_user": true
+        },
+        {
+            "san": "a1=Q",
+            "is_user": false
+        },
+        {
+            "san": "Kd3",
+            "is_user": true
+        },
+        {
+            "san": "Qc3+",
+            "is_user": false
+        },
+        {
+            "san": "Ke4",
+            "is_user": true
+        },
+        {
+            "san": "Qe1+",
+            "is_user": false
+        },
+        {
+            "san": "Kd5",
+            "is_user": true
+        },
+        {
+            "san": "Kc3",
+            "is_user": false
+        },
+        {
+            "san": "Kc5",
+            "is_user": true
+        },
+        {
+            "san": "Qe5+",
+            "is_user": false
+        },
+        {
+            "san": "Kc6",
+            "is_user": true
+        },
+        {
+            "san": "Kc4",
+            "is_user": false
+        },
+        {
+            "san": "Kb7",
+            "is_user": true
+        },
+        {
+            "san": "Kc5",
+            "is_user": false
+        },
+        {
+            "san": "Ka6",
+            "is_user": true
+        },
+        {
+            "san": "Qa1+",
+            "is_user": false
+        },
+        {
+            "san": "Kb7",
+            "is_user": true
+        },
+        {
+            "san": "Qf6",
+            "is_user": false
+        },
+        {
+            "san": "Kc8",
+            "is_user": true
+        },
+        {
+            "san": "Qf7",
+            "is_user": false
+        },
+        {
+            "san": "Kd8",
+            "is_user": true
+        },
+        {
+            "san": "Kc6",
+            "is_user": false
+        },
+        {
+            "san": "Kc8",
+            "is_user": true
+        },
+        {
+            "san": "Qc7#",
+            "is_user": false
+        }
+    ],
+    "time_analysis": {
+        "average_time_per_move": 110.1,
+        "phase_time_breakdown": {
+            "opening": 14.1,
+            "middlegame": 100.5,
+            "endgame": 144.3
+        },
+        "time_pressure_risk": "low",
+        "think_move_count": 2
+    },
+    "patterns": {
+        "tactical": {
+            "tactical_summary": "11 tactical error(s) in 67 moves",
+            "tactical_error_count": 11,
+            "total_moves": 67
+        },
+        "positional": {
+            "positional_summary": "4 positional error(s)",
+            "positional_error_count": 4
+        },
+        "endgame": {
+            "endgame_summary": "Endgame accuracy: 30.8% (46 moves)",
+            "endgame_accuracy": 30.8,
+            "endgame_move_count": 46
+        },
+        "time_pressure": {
+            "time_pressure_summary": "2 move(s) under time pressure (<5s)",
+            "time_pressure_move_count": 2
+        },
+        "critical_weaknesses": [
+            "Endgame Technique (13x)",
+            "Hanging Piece (11x)",
+            "Positional Misjudgment (4x)",
+            "Opening Knowledge (3x)"
+        ]
+    },
+    "mistakes": {
+        "categories": {
+            "by_quality": {
+                "Mistake": 6,
+                "Inaccuracy": 4,
+                "Blunder": 3
+            },
+            "by_phase": {
+                "opening": 4,
+                "middlegame": 2,
+                "endgame": 7
+            },
+            "by_nature": {
+                "Opening Knowledge": 3,
+                "Positional Misjudgment": 4,
+                "Hanging Piece": 11,
+                "Endgame Technique": 13
+            },
+            "total_errors": 13,
+            "error_summary": "3 blunder(s), 6 mistake(s), 4 inaccurac(ies)"
+        },
+        "critical_moments": [
+            {
+                "move_num": 14,
+                "san": "Rxe7",
+                "win_prob_drop": 39.5,
+                "accuracy": 0.38,
+                "quality": "Forced",
+                "reason": "Forced (Rxe7) \u2014 40% win-prob change"
+            },
+            {
+                "move_num": 26,
+                "san": "f3",
+                "win_prob_drop": 25.8,
+                "accuracy": 5.87,
+                "quality": "Blunder",
+                "reason": "Severe blunder (f3) \u2014 game swung 26%"
+            },
+            {
+                "move_num": 36,
+                "san": "Kh3",
+                "win_prob_drop": 22.1,
+                "accuracy": 2.44,
+                "quality": "Blunder",
+                "reason": "Severe blunder (Kh3) \u2014 game swung 22%"
+            },
+            {
+                "move_num": 29,
+                "san": "Nxh7+",
+                "win_prob_drop": 20.9,
+                "accuracy": 2.95,
+                "quality": "Forced",
+                "reason": "Forced (Nxh7+) \u2014 21% win-prob change"
+            },
+            {
+                "move_num": 31,
+                "san": "Rd7+",
+                "win_prob_drop": 20.7,
+                "accuracy": 10.34,
+                "quality": "Mistake",
+                "reason": "Costly mistake (Rd7+) \u2014 21% win-prob drop"
+            }
+        ],
+        "frequency": {
+            "blunders": 3,
+            "mistakes": 6,
+            "inaccuracies": 4,
+            "total_moves": 67,
+            "errors_per_10_moves": 1.94
+        }
+    }
+}

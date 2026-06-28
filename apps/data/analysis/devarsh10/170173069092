@@ -1,0 +1,114 @@
+{
+    "analysis_version": 2,
+    "metadata": {
+        "Event": "Live Chess",
+        "Site": "Chess.com",
+        "Date": "2026.06.14",
+        "Round": "-",
+        "White": "almgrahe55",
+        "Black": "Devarsh10",
+        "Result": "0-1",
+        "CurrentPosition": "rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+        "Timezone": "UTC",
+        "ECO": "B20",
+        "ECOUrl": "https://www.chess.com/openings/Caro-Kann-Defense",
+        "UTCDate": "2026.06.14",
+        "UTCTime": "08:58:33",
+        "WhiteElo": "1214",
+        "BlackElo": "1225",
+        "TimeControl": "600",
+        "Termination": "Devarsh10 won by resignation",
+        "StartTime": "08:58:33",
+        "EndDate": "2026.06.14",
+        "EndTime": "08:58:41",
+        "Link": "https://www.chess.com/game/live/170173069092",
+        "Opening": "Sicilian Defense"
+    },
+    "user_color": "black",
+    "user_result": "win",
+    "white_player": "almgrahe55",
+    "black_player": "Devarsh10",
+    "white_rating": "1214",
+    "black_rating": "1225",
+    "performance_rating": 1225,
+    "opening_name": "Sicilian Defense",
+    "eco_code": "B20",
+    "game_accuracy": 53.74,
+    "opp_accuracy": 58.9,
+    "move_history": [
+        {
+            "move_num": 1,
+            "san": "c6",
+            "eval_before": -0.3,
+            "eval_after": -0.4,
+            "eval": -0.4,
+            "best_move": "e5",
+            "cp_loss": 10,
+            "win_prob_drop": 1.42,
+            "accuracy": 53.74,
+            "quality": "Good",
+            "is_book": false,
+            "time_spent": 0.0,
+            "error_nature": "None",
+            "phase": "opening"
+        }
+    ],
+    "full_history": [
+        {
+            "san": "e4",
+            "is_user": false
+        },
+        {
+            "san": "c6",
+            "is_user": true
+        }
+    ],
+    "time_analysis": {
+        "average_time_per_move": 0.0,
+        "phase_time_breakdown": {
+            "opening": 0.0,
+            "middlegame": 0,
+            "endgame": 0
+        },
+        "time_pressure_risk": "high",
+        "think_move_count": 0
+    },
+    "patterns": {
+        "tactical": {
+            "tactical_summary": "0 tactical error(s) in 1 moves",
+            "tactical_error_count": 0,
+            "total_moves": 1
+        },
+        "positional": {
+            "positional_summary": "0 positional error(s)",
+            "positional_error_count": 0
+        },
+        "endgame": {
+            "endgame_summary": "Endgame accuracy: 0.0% (0 moves)",
+            "endgame_accuracy": 0,
+            "endgame_move_count": 0
+        },
+        "time_pressure": {
+            "time_pressure_summary": "1 move(s) under time pressure (<5s)",
+            "time_pressure_move_count": 1
+        },
+        "critical_weaknesses": []
+    },
+    "mistakes": {
+        "categories": {
+            "by_quality": {},
+            "by_phase": {},
+            "by_nature": {},
+            "total_errors": 0,
+            "error_summary": "No errors detected"
+        },
+        "critical_moments": [],
+        "frequency": {
+            "blunders": 0,
+            "mistakes": 0,
+            "inaccuracies": 0,
+            "total_moves": 1,
+            "errors_per_10_moves": 0.0
+        }
+    }
+}

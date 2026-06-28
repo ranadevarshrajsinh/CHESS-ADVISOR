@@ -1,4 +1,7 @@
+import logging
 from typing import List, Dict, Any
+
+logger = logging.getLogger(__name__)
 
 
 class StudySuggestions:
@@ -14,6 +17,9 @@ class StudySuggestions:
         Returns:
             List of dicts with keys: topic, priority, message.
         """
+        logger.debug("STUDY_SUGGESTIONS avg_accuracy=%.1f%% games=%d",
+                      batch_analysis.get('average_accuracy', 0) or 0,
+                      batch_analysis.get('total_analyzed', 0))
         suggestions = []
         avg_acc = batch_analysis.get("average_accuracy", 0) or 0
 
@@ -75,4 +81,5 @@ class StudySuggestions:
                         "message": f"Identified weakness: {weakness}",
                     })
 
+        logger.info("STUDY_SUGGESTIONS_DONE suggestions=%d", len(suggestions))
         return suggestions

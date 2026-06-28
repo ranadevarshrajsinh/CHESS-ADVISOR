@@ -55,10 +55,16 @@ class BatchAnalyzer:
             reverse=True,
         )[:limit]
 
+        logger.info("BATCH_START user=%s dir=%s limit=%d total_pgns_found=%d",
+                     username, directory_path, limit, len(pgn_files))
+
+        if not pgn_files:
+            logger.warning("BATCH_NO_FILES user=%s dir=%s", username, directory_path)
+            return {"username": username, "total_analyzed": 0, "summary": "No PGN files found."}
+
         # Fast path: persisted aggregate is still fresh (no PGN newer than the report)
         cached_report = self.storage.get_batch_report(username, limit, directory_path)
         if cached_report:
-            logger.info("Batch report cache hit for %s (limit=%d)", username, limit)
             return cached_report
 
         # Incremental path: reuse raw results for games already processed, only
@@ -67,13 +73,15 @@ class BatchAnalyzer:
         old_by_file = {r['filename']: r for r in old_raw if r.get('filename')}
 
         new_files = [f for f in pgn_files if f not in old_by_file]
-        if new_files:
-            logger.info("Incremental update: %d new game(s) to analyse for %s", len(new_files), username)
+        reused_count = len(pgn_files) - len(new_files)
+
+        logger.info("BATCH_INCREMENTAL user=%s new=%d reused=%d total=%d",
+                     username, len(new_files), reused_count, len(pgn_files))
 
         new_results = []
         engine_started = False
         try:
-            for filename in new_files:
+            for idx, filename in enumerate(new_files, 1):
                 filepath = os.path.join(directory_path, filename)
                 pgn_mtime = os.path.getmtime(filepath)
 
@@ -83,10 +91,12 @@ class BatchAnalyzer:
                     if cached:
                         cached['filename'] = filename
                         new_results.append(cached)
-                        logger.info(f"Cache hit: {filename}")
+                        logger.info("BATCH_CACHE_HIT user=%s game=%s (%d/%d)",
+                                     username, filename, idx, len(new_files))
                         continue
 
                 if not engine_started:
+                    logger.info("ENGINE_START reason=batch_analyzer user=%s", username)
                     self.engine_manager.start()
                     engine_started = True
 
@@ -98,40 +108,54 @@ class BatchAnalyzer:
                             analysis['filename'] = filename
                             self.storage.save_analysis(username, filename, analysis)
                             new_results.append(analysis)
-                            logger.info(f"Analyzed {filename}")
+                            logger.info("BATCH_ANALYZED user=%s game=%s (%d/%d) accuracy=%.1f%%",
+                                         username, filename, idx, len(new_files),
+                                         analysis.get('game_accuracy', 0))
+                        else:
+                            logger.warning("BATCH_SKIP user=%s game=%s reason=empty_pgn", username, filename)
                 except OSError as e:
-                    logger.error("Could not read %s: %s", filename, e)
+                    logger.error("BATCH_READ_ERROR user=%s game=%s error=%s", username, filename, e)
                 except ValueError as e:
-                    logger.error("Invalid PGN in %s: %s", filename, e)
+                    logger.error("BATCH_PGN_ERROR user=%s game=%s error=%s", username, filename, e)
                 except Exception:
-                    logger.exception("Unexpected error analysing %s", filename)
+                    logger.exception("BATCH_UNEXPECTED_ERROR user=%s game=%s", username, filename)
         finally:
             if engine_started:
                 self.engine_manager.stop()
+                logger.info("ENGINE_STOP reason=batch_complete user=%s", username)
 
         # Merge new results with reused old results, preserving recency order
         all_by_file = {**old_by_file, **{r['filename']: r for r in new_results}}
         all_results = [all_by_file[f] for f in pgn_files if f in all_by_file]
 
+        logger.info("BATCH_AGGREGATING user=%s games=%d new=%d reused=%d",
+                     username, len(all_results), len(new_results), reused_count)
         report = self._aggregate_results(all_results, username)
         self.storage.save_batch_report(username, limit, report)
         self.storage.save_batch_raw(username, limit, all_results)
+        logger.info("BATCH_DONE user=%s analyzed=%d avg_accuracy=%.1f%%",
+                     username, report.get('total_analyzed', 0),
+                     report.get('average_accuracy', 0))
         return report
 
     def analyze_pgn_list(self, pgn_strings: List[str], username: str) -> Dict[str, Any]:
         """Analyzes a list of PGN strings."""
+        logger.info("BATCH_PGN_LIST user=%s count=%d", username, len(pgn_strings))
         results = []
         self.engine_manager.start()
         
         try:
-            for pgn_text in pgn_strings:
+            for idx, pgn_text in enumerate(pgn_strings, 1):
                 try:
                     analysis = self.analyzer.analyze_pgn(pgn_text, username)
                     results.append(analysis)
+                    logger.info("BATCH_PGN_DONE user=%s (%d/%d) accuracy=%.1f%%",
+                                 username, idx, len(pgn_strings),
+                                 analysis.get('game_accuracy', 0))
                 except ValueError as e:
-                    logger.error("Invalid PGN string: %s", e)
+                    logger.error("BATCH_PGN_SKIP user=%s index=%d error=%s", username, idx, e)
                 except Exception:
-                    logger.exception("Unexpected error analysing PGN string")
+                    logger.exception("BATCH_PGN_ERROR user=%s index=%d", username, idx)
         finally:
             self.engine_manager.stop()
             
@@ -140,7 +164,10 @@ class BatchAnalyzer:
     def _aggregate_results(self, results: List[Dict[str, Any]], username: str) -> Dict[str, Any]:
         """Compiles individual game results into a summary report."""
         if not results:
+            logger.warning("BATCH_AGGREGATE_EMPTY user=%s", username)
             return {"username": username, "total_analyzed": 0, "summary": "No games were analyzed."}
+
+        logger.info("BATCH_AGGREGATE user=%s games=%d", username, len(results))
 
         total_accuracy = 0
         quality_counts = {

@@ -1,6 +1,7 @@
 import chess
 import chess.pgn
 import io
+import logging
 from typing import Dict, Any, List, Optional
 from worker_core.engine_manager import EngineManager
 from worker_core.move_classifier import MoveClassifier, identify_error_nature
@@ -17,6 +18,8 @@ from mistakes.mistake_frequency import MistakeFrequency
 from utils.opening_db import OpeningDB
 from storage.analysis_storage import CURRENT_ANALYSIS_VERSION
 from storage.position_cache import PositionCache
+
+logger = logging.getLogger(__name__)
 
 _PIECE_VALUES = {
     chess.PAWN: 1, chess.KNIGHT: 3, chess.BISHOP: 3,
@@ -58,18 +61,27 @@ class GameAnalyzer:
         """Convenience method to analyze a single PGN string"""
         was_running = self.engine.engine is not None
         if not was_running:
+            logger.info("ENGINE_START reason=analyze_pgn user=%s", user_username)
             self.engine.start()
         
         pgn_io = io.StringIO(pgn_text)
         game = chess.pgn.read_game(pgn_io)
         if not game: 
-            if not was_running: self.engine.stop()
+            if not was_running:
+                self.engine.stop()
+                logger.info("ENGINE_STOP reason=parse_failed user=%s", user_username)
             raise ValueError("Invalid PGN")
         
+        logger.info("ANALYZE_PGN user=%s white=%s black=%s result=%s",
+                     user_username,
+                     game.headers.get("White", "?"),
+                     game.headers.get("Black", "?"),
+                     game.headers.get("Result", "*"))
         result = self.analyze_game(game, user_username)
         
         if not was_running:
             self.engine.stop()
+            logger.info("ENGINE_STOP reason=analyze_complete user=%s", user_username)
             
         return result
 
@@ -118,6 +130,7 @@ class GameAnalyzer:
         """Core analysis logic that can be called repeatedly with an open engine"""
         # Ensure engine is started
         if self.engine.engine is None:
+            logger.info("ENGINE_START reason=analyze_game user=%s", user_username)
             self.engine.start()
 
         # Determine color
@@ -138,6 +151,9 @@ class GameAnalyzer:
         else:
             user_result = "win" if result_str == "0-1" else ("draw" if result_str == "1/2-1/2" else "loss")
         
+        logger.info("GAME_START user=%s color=%s result=%s opp_elo=%d",
+                     user_username, user_color, user_result, opp_elo)
+
         # Opening identification fallback
         opening_name = game.headers.get("Opening")
         eco_code = game.headers.get("ECO")
@@ -161,6 +177,11 @@ class GameAnalyzer:
                 eco_code = last_match['eco']
                 game.headers["Opening"] = opening_name
                 game.headers["ECO"] = eco_code
+                logger.info("OPENING_DETECTED name=%s eco=%s method=position_hash", opening_name, eco_code)
+            else:
+                logger.info("OPENING_DETECTED name=Unknown method=not_found")
+
+        logger.info("OPENING user=%s opening=%s eco=%s", user_username, opening_name, eco_code)
         
         # Reset board and node for analysis loop
         board = game.board()
@@ -306,6 +327,10 @@ class GameAnalyzer:
             game_accuracy, len(analysis_data), opp_accuracy,
             opp_elo=opp_elo, user_result=user_result,
         )
+
+        logger.info("GAME_DONE user=%s result=%s opening=%s accuracy=%.1f%% perf_rating=%d moves_analyzed=%d user_moves=%d",
+                     user_username, user_result, opening_name,
+                     game_accuracy, perf_rating, len(analysis_data), len(move_accuracies))
 
         return {
             "analysis_version": CURRENT_ANALYSIS_VERSION,

@@ -1,4 +1,7 @@
+import logging
 from typing import List, Dict, Any
+
+logger = logging.getLogger(__name__)
 
 
 class PuzzleGenerator:
@@ -28,6 +31,8 @@ class PuzzleGenerator:
         Returns:
             Sorted list of puzzle theme names (up to 6).
         """
+        avg_acc = batch_analysis.get('average_accuracy', 0) or 0
+        logger.debug("PUZZLE_THEMES_START avg_accuracy=%.1f%%", avg_acc)
         theme_counts: Dict[str, int] = {}
 
         # Extract error natures from patterns
@@ -58,4 +63,6 @@ class PuzzleGenerator:
 
         # Sort by frequency (descending), return top 6
         sorted_themes = sorted(theme_counts.items(), key=lambda x: -x[1])
-        return [theme for theme, _ in sorted_themes[:6]]
+        themes = [theme for theme, _ in sorted_themes[:6]]
+        logger.info("PUZZLE_THEMES_DONE themes=%s count=%d", themes, len(themes))
+        return themes

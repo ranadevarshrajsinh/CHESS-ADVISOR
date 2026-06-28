@@ -41,6 +41,10 @@ export async function GET(
           username,
           filename,
           status: "pending",
+          result: {
+            pgn: game.pgn,
+            platform: game.platform,
+          },
         })
         .select()
         .single();

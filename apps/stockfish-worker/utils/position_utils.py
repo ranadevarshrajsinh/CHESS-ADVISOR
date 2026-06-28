@@ -1,6 +1,44 @@
 import chess
 
+# Piece values for material counting
+_PHASE_VALUES = {
+    chess.PAWN: 0,
+    chess.KNIGHT: 1,
+    chess.BISHOP: 1,
+    chess.ROOK: 2,
+    chess.QUEEN: 4,
+    chess.KING: 0,
+}
+
 class PositionUtils:
+    @staticmethod
+    def detect_game_phase(board: chess.Board) -> str:
+        """
+        Determine the game phase (opening / middlegame / endgame) based on
+        remaining non-pawn material for both sides.
+
+        Heuristic (standard chess):
+        - Opening:  total piece-score >= 16
+        - Middlegame: total piece-score between 8 and 15
+        - Endgame:   total piece-score <= 7
+
+        Piece-score assigns value 4 to each queen, 2 to each rook,
+        1 to each minor (knight / bishop).  Pawns and kings are not counted.
+        A full set of 16 pieces (both sides) scores 24.
+        """
+        score = 0
+        for square in chess.SQUARES:
+            piece = board.piece_at(square)
+            if piece and piece.piece_type not in (chess.PAWN, chess.KING):
+                score += _PHASE_VALUES.get(piece.piece_type, 0)
+
+        if score >= 16:
+            return "opening"
+        elif score >= 8:
+            return "middlegame"
+        else:
+            return "endgame"
+
     @staticmethod
     def is_hanging(board: chess.Board, square: chess.Square) -> bool:
         """
