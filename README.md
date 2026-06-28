@@ -1,153 +1,137 @@
-# CHESS-ADVISOR
+# Chess Advisor
 
-Chess training platform for academies. Turns player blunders into personalized SM-2 spaced-repetition puzzles.
+A full-stack chess analysis and coaching platform. Players can analyze games with Stockfish 18, track performance stats, train with personalized puzzles, and connect with coaches through an academy system.
 
-## Turborepo starter
+---
 
-## What's inside?
+## Features
 
-This Turborepo includes the following packages/apps:
+- **Game Analysis** — Analyze individual Chess.com or Lichess games using Stockfish 18 (WASM, runs in browser). Shows win-probability graph, move quality, phase accuracy (opening/middlegame/endgame), blunders, and best moves.
+- **Analysis Caching** — Results are saved to Supabase after first analysis. Revisiting the same game loads instantly from cache.
+- **Batch Analysis** — Queue up to 10 recent games for analysis at once.
+- **Report** — Aggregates all completed analyses into accuracy trends, opening stats, and phase breakdown.
+- **Dashboard** — Performance overview with per-time-control stats (Rapid/Blitz/Bullet/Daily), win rate by color, and recent games.
+- **Puzzle Training** — Spaced-repetition (SM-2) puzzles generated from your own game mistakes. Includes timed rush mode and calibration.
+- **Coach / Academy Portal** — Coaches can manage players, view their analyses, and leave move-level annotations.
 
-### Apps and Packages
+---
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+## Tech Stack
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+| Layer | Technology |
+|---|---|
+| Monorepo | Turborepo |
+| Frontend | Next.js 14 (App Router), TypeScript |
+| Styling | CSS variables + glass-card design system |
+| Engine | Stockfish 18 (WASM, single-threaded web worker) |
+| Database | Supabase (Postgres + Auth) |
+| ORM | Prisma |
+| Chess logic | chess.js, react-chessboard |
+| Charts | Recharts |
 
-### Utilities
+---
 
-This Turborepo has some additional tools already setup for you:
+## Project Structure
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo build
+```
+apps/
+  web/          # Main Next.js app
+    src/
+      app/      # Pages and API routes
+        api/
+          analyze/        # Single game + batch analysis + caching
+          report/         # Aggregate report from completed jobs
+          chess-com/      # Chess.com stats proxy
+          games/          # Game fetching (Chess.com + Lichess)
+          stats/          # Win rate calculation
+          puzzles/        # Puzzle queue, rating, rush, library
+          annotations/    # Coach move annotations
+      components/         # UI components (GameCard, MistakeCard, etc.)
+      contexts/           # Auth, Player, Settings, Theme contexts
+      lib/
+        engine/           # Stockfish pool, accuracy helpers, win%
+        chess/            # Game fetching integrations, stats calc
+      services/
+        api.ts            # Client-side API calls
+        local-analysis.ts # In-browser Stockfish analysis logic
+  docs/         # Next.js docs app
+packages/
+  ui/           # Shared React component library
+  types/        # Shared TypeScript types
+  eslint-config/
+  typescript-config/
 ```
 
-Without global `turbo`, use your package manager:
+---
 
+## Data Storage
+
+| Data | Location |
+|---|---|
+| Recent games list | `localStorage` → key `recentGames` |
+| Analysis results | Supabase → `analysis_jobs` table |
+| Dashboard stats cache | `localStorage` → `stats_{username}_v2`, `realStats_{username}_v2` |
+| Puzzle progress | Supabase |
+| Coach annotations | Supabase |
+
+---
+
+## Getting Started
+
+**Install dependencies:**
 ```sh
-cd my-turborepo
-npx turbo build
-npm dlx turbo build
-npm exec turbo build
+npm install
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo build --filter=docs
+**Set up environment variables** in `apps/web/.env.local`:
+```
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...
+NEXT_PUBLIC_ANALYSIS_ENABLE_WASM=true
 ```
 
-Without global `turbo`:
-
-```sh
-npx turbo build --filter=docs
-npm exec turbo build --filter=docs
-npm exec turbo build --filter=docs
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo dev
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo dev
-npm exec turbo dev
-npm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
+**Run the dev server:**
 ```sh
 turbo dev --filter=web
-```
-
-Without global `turbo`:
-
-```sh
+# or
 npx turbo dev --filter=web
-npm exec turbo dev --filter=web
-npm exec turbo dev --filter=web
 ```
 
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
+**Build:**
 ```sh
-cd my-turborepo
-turbo login
+turbo build --filter=web
 ```
 
-Without global `turbo`, use your package manager:
+---
 
-```sh
-cd my-turborepo
-npx turbo login
-npm exec turbo login
-npm exec turbo login
-```
+## Key Implementation Notes
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+- **Result format** — Chess.com games are normalized to `"1-0"` / `"0-1"` / `"1/2-1/2"` at the integration layer (`lib/chess/integrations.ts`). Legacy localStorage data may still have raw Chess.com values (`"win"`, `"resigned"`, `"checkmated"` etc.) — all display/computation code handles both formats.
+- **Analysis caching** — `POST /api/analyze` checks for an existing completed job before inserting. `GET /api/analyze?username=X&filename=Y` returns cached results. `PATCH /api/analyze` saves results after Stockfish finishes.
+- **Stats by time control** — Dashboard pulls career stats from `pub/player/{username}/stats` (Chess.com API). Win rate by color is computed from the user's locally loaded games — these are different datasets and are labelled accordingly.
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+---
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+## Known Issues / Next Up
 
-```sh
-turbo link
-```
+- `patterns`, `time_analysis`, `opening_recommendation` fields are `null` in analysis — tabs exist but show "not available"
+- No progress indicator during Stockfish analysis (can take 30–60s on long games)
+- No re-analyze button on analysis page
+- Batch analysis queues jobs as `"pending"` in Supabase — verify worker picks them up
+- Old localStorage cache keys (`_v1`) not cleaned up automatically
+- Report page UI needs verification with real completed job data
 
-Without global `turbo`:
+---
 
-```sh
-npx turbo link
-npm exec turbo link
-npm exec turbo link
-```
+## Changelog
 
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+### 2026-06-28
+- Analysis results cached in Supabase — subsequent visits load instantly
+- Dashboard stats cached in localStorage — instant load on return visits
+- Fixed win rate by color: now computed from loaded games, handles all result formats
+- Fixed Chess.com result normalization — was storing `white.result` for all games
+- GameCard now shows Win / Loss / Draw instead of raw result strings
+- Phase accuracy bars now always render in correct order (opening → middlegame → endgame)
+- Added per-time-control stats cards (Rapid / Blitz / Bullet / Daily) with rating + W/L/D
+- Added "Load Games" panel on dashboard — fetch more games without going through onboarding (append or replace mode)
