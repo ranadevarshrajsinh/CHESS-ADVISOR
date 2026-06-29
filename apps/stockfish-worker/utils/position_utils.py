@@ -2,6 +2,19 @@ import chess
 
 class PositionUtils:
     @staticmethod
+    def detect_game_phase(board: chess.Board) -> str:
+        """Return 'opening', 'middlegame', or 'endgame' based on move number and material."""
+        if board.fullmove_number <= 10:
+            return "opening"
+        num_queens = (
+            len(board.pieces(chess.QUEEN, chess.WHITE))
+            + len(board.pieces(chess.QUEEN, chess.BLACK))
+        )
+        if num_queens == 0 or len(board.piece_map()) <= 12:
+            return "endgame"
+        return "middlegame"
+
+    @staticmethod
     def is_hanging(board: chess.Board, square: chess.Square) -> bool:
         """
         A piece is hanging if:
