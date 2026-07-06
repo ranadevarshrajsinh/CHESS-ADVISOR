@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Header from "@/components/Header";
 import Loader from "@/components/Loader";
@@ -14,7 +14,7 @@ const TC_META: Record<string, { label: string; icon: string }> = {
   daily:  { label: "Daily",  icon: "📅" },
 };
 
-export default function GamesPage() {
+function GamesPageInner() {
   const router       = useRouter();
   const searchParams = useSearchParams();
   const tc           = searchParams.get("tc") || "";
@@ -137,5 +137,13 @@ export default function GamesPage() {
         )}
       </main>
     </>
+  );
+}
+
+export default function GamesPage() {
+  return (
+    <Suspense>
+      <GamesPageInner />
+    </Suspense>
   );
 }

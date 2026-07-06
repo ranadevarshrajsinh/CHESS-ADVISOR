@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
@@ -93,7 +93,7 @@ const TC_FILTERS = [
   { value: "daily",  label: "Daily" },
 ] as const;
 
-export default function ReportPage() {
+function ReportPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { chessUsername, isApproved, loading: playerLoading } = usePlayer();
@@ -1356,5 +1356,13 @@ export default function ReportPage() {
         )}
       </main>
     </>
+  );
+}
+
+export default function ReportPage() {
+  return (
+    <Suspense>
+      <ReportPageInner />
+    </Suspense>
   );
 }
