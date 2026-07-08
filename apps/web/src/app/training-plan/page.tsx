@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import dynamic from "next/dynamic";
+import Link from "next/link";
 import { Chess } from "chess.js";
 import Header from "@/components/Header";
 import Loader from "@/components/Loader";
@@ -9,11 +9,7 @@ import { usePlayer } from "@/contexts/PlayerContext";
 import { getTrainingPlan } from "@/services/api";
 import { Clock } from "lucide-react";
 
-// react-chessboard requires DOM — disable SSR
-const Chessboard = dynamic(
-  () => import("react-chessboard").then((m) => m.Chessboard),
-  { ssr: false },
-);
+import { Chessboard } from "react-chessboard";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -660,12 +656,43 @@ export default function TrainingPlanPage() {
         style={{ paddingTop: "40px", paddingBottom: "60px" }}
       >
         {/* Page header */}
-        <div style={{ marginBottom: "28px" }}>
+        <div style={{ marginBottom: "20px" }}>
           <h1 style={{ fontSize: "32px", marginBottom: "4px" }}>Training</h1>
           <p style={{ color: "var(--text-secondary)", margin: 0 }}>
             Learn from your actual games — targeted practice based on your mistakes.
           </p>
         </div>
+
+        {/* Opening Drill CTA */}
+        <Link
+          href="/openings/drill"
+          style={{ textDecoration: "none", display: "block", marginBottom: "24px" }}
+        >
+          <div
+            style={{
+              padding: "18px 24px",
+              borderRadius: "12px",
+              border: "1px solid rgba(99,102,241,0.35)",
+              background: "rgba(99,102,241,0.07)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "12px",
+              cursor: "pointer",
+              transition: "border-color 0.15s",
+            }}
+          >
+            <div>
+              <div style={{ fontWeight: "700", fontSize: "15px", color: "#818cf8", marginBottom: "3px" }}>
+                ♟ Opening Drill — Practice against Stockfish
+              </div>
+              <div style={{ fontSize: "13px", color: "var(--text-secondary)" }}>
+                Choose any opening · set the engine ELO · play unlimited games in your browser
+              </div>
+            </div>
+            <span style={{ fontSize: "20px", flexShrink: 0, color: "#818cf8" }}>→</span>
+          </div>
+        </Link>
 
         {/* Tabs */}
         <div
