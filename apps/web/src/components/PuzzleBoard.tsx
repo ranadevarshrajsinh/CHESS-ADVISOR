@@ -4,8 +4,16 @@ import { Chessboard } from "react-chessboard";
 import { Chess } from "chess.js";
 import { CheckCircle, XCircle, Lightbulb, RotateCcw, TrendingUp, TrendingDown } from "lucide-react";
 import { formatThemeTags } from "@/lib/puzzles/theme-utils";
+import { useSettings } from "@/contexts/SettingsContext";
+import { useChessSound } from "@/hooks/useChessSound";
 
-const BOARD_THEME = { dark: "#769656", light: "#eeeed2" };
+const BOARD_THEMES: Record<string, { dark: string; light: string }> = {
+  classic: { dark: "#b58863", light: "#f0d9b5" },
+  green:   { dark: "#769656", light: "#eeeed2" },
+  mono:    { dark: "#4a4a4a", light: "#e8e8e8" },
+  ocean:   { dark: "#4870ac", light: "#dae3f5" },
+  walnut:  { dark: "#7c3f00", light: "#f5d6a4" },
+};
 
 type Puzzle = {
   puzzle_id:  string;
@@ -58,6 +66,9 @@ export default function PuzzleBoard({
   const [selectedSquare,   setSelectedSquare]   = useState<string | null>(null);
   const [pendingPromotion, setPendingPromotion] = useState<{ from: string; to: string } | null>(null);
   const startTime = useRef(Date.now());
+  const { boardTheme } = useSettings();
+  const boardColors = BOARD_THEMES[boardTheme] ?? BOARD_THEMES.classic;
+  const { play } = useChessSound();
   const firedRef  = useRef(false);
 
   const solutionMoves = useMemo(() => {
@@ -127,7 +138,9 @@ export default function PuzzleBoard({
       const to    = opponentUci.slice(2, 4);
       const promo = opponentUci[4] as PromoType | undefined;
       const copy  = new Chess(boardAfterPlayer.fen());
-      try { copy.move({ from, to, promotion: promo }); } catch { /* ignore */ }
+      let oppMove;
+      try { oppMove = copy.move({ from, to, promotion: promo }); } catch { /* ignore */ }
+      play(oppMove?.captured ? "capture" : "move");
       setGame(copy);
       setMoveIndex(nextPlayerIndex);
       onOpponentPlaying?.(false);
@@ -139,11 +152,12 @@ export default function PuzzleBoard({
           onAttempt(true, (Date.now() - startTime.current) / 1000);
         }
         flash("green");
+        setTimeout(() => play("solved"), 120);
       } else {
         setSolveState("waiting");
       }
     }, 600);
-  }, [solutionMoves, onAttempt, onOpponentPlaying]);
+  }, [solutionMoves, onAttempt, onOpponentPlaying, play]);
 
   function flash(colour: "green" | "red") {
     setBoardFlash(colour);
@@ -162,8 +176,10 @@ export default function PuzzleBoard({
 
     const promoChar = promotion ?? "q";
     const copy = new Chess(game.fen());
+    let moveResult;
     try {
-      if (!copy.move({ from, to, promotion: promoChar })) return false;
+      moveResult = copy.move({ from, to, promotion: promoChar });
+      if (!moveResult) return false;
     } catch { return false; }
 
     const base   = from + to;
@@ -176,6 +192,7 @@ export default function PuzzleBoard({
     setSelectedSquare(null);
 
     if (correct) {
+      play(moveResult.captured ? "capture" : "move");
       setGame(copy);
       setHintLevel(0);
       const nextIndex = moveIndex + 1;
@@ -186,10 +203,12 @@ export default function PuzzleBoard({
           firedRef.current = true;
           onAttempt(true, (Date.now() - startTime.current) / 1000);
         }
+        setTimeout(() => play("solved"), 120);
       } else {
         playOpponentReply(copy, solutionMoves[nextIndex], nextIndex + 1);
       }
     } else {
+      play("wrong");
       flash("red");
       setSolveState("failed");
       setFailMove(currentExpected);
@@ -282,9 +301,20 @@ export default function PuzzleBoard({
     }
     if (selectedSquare && !attempted) {
       styles[selectedSquare] = { backgroundColor: "rgba(20,85,255,0.35)", borderRadius: "4px" };
+
+      // Legal move indicators
+      const legalTargets = game.moves({ square: selectedSquare as any, verbose: true });
+      for (const mv of legalTargets) {
+        const occupied = !!game.get(mv.to as Parameters<typeof game.get>[0]);
+        styles[mv.to] = occupied
+          // Capture ring: hollow circle around the enemy piece
+          ? { backgroundImage: "radial-gradient(circle at center, transparent 57%, rgba(0,0,0,0.22) 57%)" }
+          // Move dot: small filled circle on empty square
+          : { backgroundImage: "radial-gradient(circle, rgba(0,0,0,0.18) 23%, transparent 23%)" };
+      }
     }
     return styles;
-  }, [hintLevel, attempted, hintSquare, selectedSquare]);
+  }, [hintLevel, attempted, hintSquare, selectedSquare, game]);
 
   const promoChoices = game.turn() === "w" ? WHITE_PROMO : BLACK_PROMO;
 
@@ -371,7 +401,7 @@ export default function PuzzleBoard({
       )}
 
       {/* Board + promotion picker */}
-      <div style={{ position: "relative", maxWidth: "480px", width: "100%" }}>
+      <div style={{ position: "relative", maxWidth: "480px", width: "100%", marginInline: "auto" }}>
         <div style={{
           borderRadius: "12px", overflow: "hidden",
           outline: boardFlash === "green" ? "4px solid var(--success)" :
@@ -385,8 +415,8 @@ export default function PuzzleBoard({
               allowDragging:         solveState === "waiting" && !pendingPromotion,
               animationDurationInMs: 200,
               boardStyle:            { borderRadius: "8px" },
-              darkSquareStyle:       { backgroundColor: BOARD_THEME.dark },
-              lightSquareStyle:      { backgroundColor: BOARD_THEME.light },
+              darkSquareStyle:       { backgroundColor: boardColors.dark },
+              lightSquareStyle:      { backgroundColor: boardColors.light },
               squareStyles,
               onPieceDrop:           handlePieceDrop,
               onSquareClick:         handleSquareClick,

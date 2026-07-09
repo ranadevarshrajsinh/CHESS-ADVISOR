@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useCallback } from "react";
-import { X, Palette, Settings2, Sparkles, User, Mail, Shield } from "lucide-react";
+import { X, Palette, Settings2, Sparkles, User, Mail, Shield, Volume2 } from "lucide-react";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import "./SettingsPanel.css";
@@ -32,6 +32,7 @@ type Props = {
 export default function SettingsPanel({ isOpen, onClose, userType, username, email, role }: Props) {
   const {
     boardTheme, setBoardTheme,
+    soundEnabled, setSoundEnabled,
     engineDepth, setEngineDepth,
     multiPv, setMultiPv,
     maxWorkers, setMaxWorkers,
@@ -129,6 +130,24 @@ export default function SettingsPanel({ isOpen, onClose, userType, username, ema
                   <span className="theme-swatch-label">{t.label}</span>
                 </button>
               ))}
+            </div>
+          </div>
+
+          <div className="settings-divider" />
+
+          {/* Sound */}
+          <div className="settings-section">
+            <div className="settings-section-title">
+              <Volume2 size={16} />
+              Sound
+            </div>
+            <div className="toggle-row">
+              <span className="engine-setting-label">Move sounds</span>
+              <div className="toggle-switch" onClick={() => setSoundEnabled(!soundEnabled)}>
+                <div className={`toggle-track${soundEnabled ? " active" : ""}`}>
+                  <div className="toggle-thumb" />
+                </div>
+              </div>
             </div>
           </div>
 

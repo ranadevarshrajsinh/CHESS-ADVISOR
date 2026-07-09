@@ -1,0 +1,254 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-07T00:00:00Z",
+  "title": "Design System: Chess Advisor",
+  "extensions": {
+    "colorMeta": {
+      "accent": {
+        "role": "primary",
+        "displayName": "Signal Green",
+        "canonical": "#1dc189",
+        "tonalRamp": ["#062e20", "#0a4a34", "#0f6648", "#13825c", "#1dc189", "#3dcca0", "#70ddb9", "#b3eedd"]
+      },
+      "accent-deep": {
+        "role": "primary",
+        "displayName": "Signal Green Deep",
+        "canonical": "#15a373",
+        "tonalRamp": ["#052619", "#09402c", "#0d583e", "#117050", "#15a373", "#2db889", "#62caa6", "#a8e3cf"]
+      },
+      "ground": {
+        "role": "neutral",
+        "displayName": "Ground",
+        "canonical": "#0f0f0f",
+        "tonalRamp": ["#0f0f0f", "#161616", "#1f1f1f", "#2a2a2a", "#3a3a3a", "#555555", "#888888", "#c0c0c0"]
+      },
+      "surface-1": {
+        "role": "neutral",
+        "displayName": "Surface One",
+        "canonical": "#161616",
+        "tonalRamp": ["#0a0a0a", "#161616", "#202020", "#2c2c2c", "#3c3c3c", "#585858", "#8a8a8a", "#c4c4c4"]
+      },
+      "surface-2": {
+        "role": "neutral",
+        "displayName": "Surface Two",
+        "canonical": "#1f1f1f",
+        "tonalRamp": ["#0d0d0d", "#1a1a1a", "#1f1f1f", "#2d2d2d", "#3d3d3d", "#5a5a5a", "#8c8c8c", "#c6c6c6"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#f7f7f7",
+        "tonalRamp": ["#2a2a2a", "#444444", "#666666", "#888888", "#aaaaaa", "#cccccc", "#e8e8e8", "#f7f7f7"]
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Ink Muted",
+        "canonical": "#a1a1aa",
+        "tonalRamp": ["#2a2a30", "#3e3e46", "#545460", "#6e6e78", "#a1a1aa", "#b8b8bf", "#d0d0d5", "#e8e8eb"]
+      },
+      "quality-best": {
+        "role": "secondary",
+        "displayName": "Quality Best",
+        "canonical": "#10b981",
+        "tonalRamp": ["#052e1f", "#094d36", "#0e6d4e", "#108d65", "#10b981", "#30ca99", "#68ddb6", "#aaeedd"]
+      },
+      "quality-brilliant": {
+        "role": "secondary",
+        "displayName": "Quality Brilliant",
+        "canonical": "#6366f1",
+        "tonalRamp": ["#1e1f6a", "#2a2b8f", "#3637b4", "#4a4bcc", "#6366f1", "#8385f4", "#a8a9f7", "#d0d0fb"]
+      },
+      "quality-inaccuracy": {
+        "role": "secondary",
+        "displayName": "Quality Inaccuracy",
+        "canonical": "#f59e0b",
+        "tonalRamp": ["#3a2500", "#6b4500", "#9c6500", "#c88200", "#f59e0b", "#f7b340", "#facc7a", "#fde5b4"]
+      },
+      "quality-mistake": {
+        "role": "secondary",
+        "displayName": "Quality Mistake",
+        "canonical": "#f97316",
+        "tonalRamp": ["#3d1a00", "#6e3000", "#9f4700", "#d06000", "#f97316", "#fa9450", "#fbb688", "#fdd7c0"]
+      },
+      "quality-blunder": {
+        "role": "secondary",
+        "displayName": "Quality Blunder",
+        "canonical": "#ef4444",
+        "tonalRamp": ["#3d0a0a", "#6e1212", "#9f1a1a", "#cc2a2a", "#ef4444", "#f37070", "#f7a0a0", "#fbcfcf"]
+      },
+      "quality-muted": {
+        "role": "neutral",
+        "displayName": "Quality Muted",
+        "canonical": "#71717a",
+        "tonalRamp": ["#1c1c20", "#2e2e34", "#404048", "#545460", "#71717a", "#909098", "#b0b0b6", "#d0d0d4"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Landing page hero and major section titles only." },
+      "headline": { "displayName": "Headline", "purpose": "Section headings within the app; report page titles." },
+      "title": { "displayName": "Title", "purpose": "Card headings, panel titles, dialog headers." },
+      "body": { "displayName": "Body", "purpose": "Analysis text, explanations, game metadata. Cap at 70ch." },
+      "label": { "displayName": "Label", "purpose": "Form labels, stat labels, table headers, badge text." }
+    },
+    "roundedMeta": {
+      "pill": { "displayName": "Pill", "purpose": "Badges, filter chips, momentum indicators, progress bars. Full pill shape — no specific radius intent beyond 'fully rounded'." }
+    },
+    "shadows": [
+      {
+        "name": "focus-ring",
+        "value": "0 0 0 3px rgba(255, 255, 255, 0.08)",
+        "purpose": "Keyboard focus indicator on inputs and interactive elements. Not a depth shadow."
+      },
+      {
+        "name": "button-primary-hover",
+        "value": "0 8px 24px rgba(255, 255, 255, 0.12)",
+        "purpose": "Applies to the primary (white) button on hover only. The sole place a shadow appears in the system."
+      }
+    ],
+    "motion": [
+      {
+        "name": "standard",
+        "value": "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Default transition for card hover states and color changes."
+      },
+      {
+        "name": "fast",
+        "value": "all 0.15s cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Button press, border color shifts, small UI state changes."
+      },
+      {
+        "name": "sym-pop",
+        "value": "0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+        "purpose": "Move quality badge appear animation (symPop keyframe). Chess-specific."
+      }
+    ],
+    "breakpoints": [
+      { "name": "mobile", "value": "768px", "purpose": "Cards stack, padding reduces to 16px, inputs go 16px font-size." },
+      { "name": "tablet", "value": "992px", "purpose": "Hamburger nav, 1-col grids." }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The dominant CTA. White fill on dark ground — maximum contrast without using the accent color.",
+      "html": "<button class=\"ds-btn-primary\">Analyze Game</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; background: #f5f5f5; color: #050505; border: 1px solid rgba(255,255,255,0.72); border-radius: 8px; font-family: Inter, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.15s cubic-bezier(0.4,0,0.2,1); } .ds-btn-primary:hover { background: #ffffff; color: #000000; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(255,255,255,0.12); } .ds-btn-primary:active { transform: scale(0.97); box-shadow: none; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Ghost-ish secondary action. Surface One background, muted text, solid border.",
+      "html": "<button class=\"ds-btn-secondary\">View Report</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; background: #161616; color: #a1a1aa; border: 1px solid #2a2a2a; border-radius: 8px; font-family: Inter, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.15s cubic-bezier(0.4,0,0.2,1); } .ds-btn-secondary:hover { background: #1f1f1f; color: #f7f7f7; border-color: #3a3a3a; } .ds-btn-secondary:active { transform: scale(0.97); }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Primary information container. Solid Surface One with 1px border — no blur, no glass.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-title\">Game Analysis</div><div class=\"ds-card-body\">Accuracy: 87.4% · 2 blunders · 1 mistake</div></div>",
+      "css": ".ds-card { background: #161616; border: 1px solid #2a2a2a; border-radius: 8px; padding: 24px; transition: all 0.3s cubic-bezier(0.4,0,0.2,1); } .ds-card:hover { background: #1f1f1f; border-color: #3a3a3a; transform: translateY(-2px); } .ds-card-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 600; color: #f7f7f7; letter-spacing: -0.01em; margin-bottom: 8px; } .ds-card-body { font-family: Inter, sans-serif; font-size: 0.95rem; color: #a1a1aa; line-height: 1.6; }"
+    },
+    {
+      "name": "Input Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Text input. Surface One background, subtle border, sharp focus ring on interaction.",
+      "html": "<div class=\"ds-input-group\"><label class=\"ds-input-label\">Chess.com username</label><input class=\"ds-input\" type=\"text\" placeholder=\"Enter username\"></div>",
+      "css": ".ds-input-group { display: flex; flex-direction: column; gap: 6px; } .ds-input-label { font-family: Inter, sans-serif; font-size: 13px; font-weight: 500; color: #a1a1aa; } .ds-input { width: 100%; padding: 12px 16px; background: #161616; border: 1px solid #2a2a2a; border-radius: 6px; color: #f7f7f7; font-family: Inter, sans-serif; font-size: 15px; outline: none; transition: all 0.15s cubic-bezier(0.4,0,0.2,1); } .ds-input::placeholder { color: #71717a; } .ds-input:focus { border-color: rgba(255,255,255,0.52); background: #1f1f1f; box-shadow: 0 0 0 3px rgba(255,255,255,0.08); }"
+    },
+    {
+      "name": "Navigation Header",
+      "kind": "nav",
+      "refersTo": "card",
+      "description": "Sticky top nav. Surface One background, 1px bottom border. No blur.",
+      "html": "<nav class=\"ds-nav\"><div class=\"ds-nav-logo\"><span class=\"ds-nav-icon\">♛</span><span class=\"ds-nav-brand\">Chess<strong>Advisor</strong></span></div><div class=\"ds-nav-links\"><a class=\"ds-nav-link\" href=\"#\">Dashboard</a><a class=\"ds-nav-link\" href=\"#\">Analysis</a><a class=\"ds-nav-link ds-nav-link--active\" href=\"#\">Puzzles</a></div></nav>",
+      "css": ".ds-nav { display: flex; align-items: center; justify-content: space-between; height: 70px; padding: 0 48px; background: #161616; border-bottom: 1px solid #2a2a2a; position: sticky; top: 0; z-index: 100; } .ds-nav-logo { display: flex; align-items: center; gap: 10px; } .ds-nav-icon { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 9px; background: linear-gradient(135deg, #ffffff, #9ca3af); font-size: 18px; } .ds-nav-brand { font-family: Inter, sans-serif; font-size: 15px; font-weight: 500; color: #f7f7f7; } .ds-nav-brand strong { font-weight: 600; } .ds-nav-links { display: flex; gap: 4px; } .ds-nav-link { font-family: Inter, sans-serif; font-size: 14px; font-weight: 500; color: #a1a1aa; padding: 6px 12px; border-radius: 6px; text-decoration: none; transition: all 0.15s cubic-bezier(0.4,0,0.2,1); } .ds-nav-link:hover { color: #f7f7f7; background: #1f1f1f; } .ds-nav-link--active { color: #f7f7f7; background: #1f1f1f; }"
+    },
+    {
+      "name": "Move Quality Badge",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "Chess-specific. Small colored dot or pill classifying move quality. Semantic color only — never decorative.",
+      "html": "<div class=\"ds-quality-row\"><span class=\"ds-quality-badge ds-quality-best\">Best</span><span class=\"ds-quality-badge ds-quality-inaccuracy\">Inaccuracy</span><span class=\"ds-quality-badge ds-quality-blunder\">Blunder</span><span class=\"ds-quality-badge ds-quality-brilliant\">Brilliant</span></div>",
+      "css": "@keyframes ds-sym-pop { 0% { transform: scale(0) rotate(-20deg); opacity: 0; } 70% { transform: scale(1.15) rotate(3deg); } 100% { transform: scale(1) rotate(0); opacity: 1; } } .ds-quality-row { display: flex; gap: 8px; flex-wrap: wrap; } .ds-quality-badge { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 99px; font-family: Inter, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; animation: ds-sym-pop 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards; } .ds-quality-best { background: rgba(16,185,129,0.15); color: #10b981; } .ds-quality-inaccuracy { background: rgba(245,158,11,0.15); color: #f59e0b; } .ds-quality-blunder { background: rgba(239,68,68,0.15); color: #ef4444; } .ds-quality-brilliant { background: rgba(99,102,241,0.15); color: #6366f1; }"
+    },
+    {
+      "name": "Accuracy Bar",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "Phase accuracy bar (opening/middlegame/endgame). Tonal track, Signal Green fill.",
+      "html": "<div class=\"ds-accuracy-bars\"><div class=\"ds-accuracy-item\"><span class=\"ds-accuracy-label\">Opening</span><div class=\"ds-bar-track\"><div class=\"ds-bar-fill\" style=\"width:92%\"></div></div><span class=\"ds-accuracy-value\">92%</span></div><div class=\"ds-accuracy-item\"><span class=\"ds-accuracy-label\">Middlegame</span><div class=\"ds-bar-track\"><div class=\"ds-bar-fill\" style=\"width:74%\"></div></div><span class=\"ds-accuracy-value\">74%</span></div><div class=\"ds-accuracy-item\"><span class=\"ds-accuracy-label\">Endgame</span><div class=\"ds-bar-track\"><div class=\"ds-bar-fill\" style=\"width:61%\"></div></div><span class=\"ds-accuracy-value\">61%</span></div></div>",
+      "css": ".ds-accuracy-bars { display: flex; flex-direction: column; gap: 10px; } .ds-accuracy-item { display: flex; align-items: center; gap: 12px; } .ds-accuracy-label { font-family: Inter, sans-serif; font-size: 12px; font-weight: 500; color: #a1a1aa; width: 80px; flex-shrink: 0; } .ds-bar-track { flex: 1; height: 8px; background: #2a2a2a; border-radius: 99px; overflow: hidden; } .ds-bar-fill { height: 100%; background: #1dc189; border-radius: 99px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); } .ds-accuracy-value { font-family: Inter, sans-serif; font-size: 12px; font-weight: 600; color: #f7f7f7; width: 36px; text-align: right; flex-shrink: 0; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Analyst's Cockpit",
+    "overview": "Chess Advisor is precision instrumentation for serious minds. Every surface earns its place by informing a decision — not by looking impressive. The design aesthetic is that of a high-end tool used in a focused environment: no ambient decoration, no blur atmospherics, no surface for the sake of surface. The information is the design.\n\nThe palette is near-black with tonal charcoal steps and a single saturated accent. Cards are solid, bordered, and clear — the tonal step from ground to surface to elevated element provides all the depth the interface needs. Backdrop blur is prohibited. Gradients are prohibited.\n\nThis design explicitly rejects corporate enterprise aesthetics and the saturated AI startup aesthetic. It also rejects the gamified chess-platform look. The model is a professional-grade analytical tool that happens to be for chess.",
+    "keyCharacteristics": [
+      "Near-black tonal surfaces with no blur, no transparency layers",
+      "Signal Green (#1dc189) as the sole saturated color — used exclusively for correct play and primary CTAs",
+      "Move quality palette (6 semantic data colors) used only for classification — never for decoration",
+      "Space Grotesk + Inter type pairing: display confidence meets reading clarity",
+      "Tight radii (6–12px); surfaces feel precise, not soft",
+      "Transitions present but restrained — state changes only, 0.2s max"
+    ],
+    "rules": [
+      {
+        "name": "The One Signal Rule",
+        "body": "Signal Green is the only saturated color on any given screen. Move quality colors exist at small scale (badges, dots, bars). If Signal Green and a quality color appear in the same view, Signal Green must always read as primary.",
+        "section": "colors"
+      },
+      {
+        "name": "The Data Palette Quarantine Rule",
+        "body": "Quality colors (quality-best through quality-muted) are forbidden from appearing on buttons, backgrounds, borders, or decorative elements. They classify moves; using them decoratively destroys the semantic signal.",
+        "section": "colors"
+      },
+      {
+        "name": "The Heading Weight Rule",
+        "body": "Headings (h1–h3) use letter-spacing -0.02em. At display sizes, default tracking makes Space Grotesk feel loose. Never override to a positive value on large type.",
+        "section": "typography"
+      },
+      {
+        "name": "The Monospace Quarantine Rule",
+        "body": "Monospace (Courier New or system mono) appears only for chess notation, engine output, and coordinates. It never appears in nav, labels, headings, or body copy.",
+        "section": "typography"
+      },
+      {
+        "name": "The No-Blur Rule",
+        "body": "backdrop-filter: blur() and -webkit-backdrop-filter are prohibited. Depth is tonal — Surface One sits 7 lightness steps above Ground; Surface Two sits 7 more.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Flat-at-Rest Rule",
+        "body": "Resting surfaces carry no box-shadow. Hover states may shift border color from #2a2a2a to #3a3a3a and background from Surface One to Surface Two. That is the full hover vocabulary for non-interactive cards.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Use Surface One (#161616) as the card background and Surface Two (#1f1f1f) as the hover/elevated state.",
+      "Reserve Signal Green (#1dc189) for correct play, high accuracy, and primary actions only.",
+      "Use 1px solid borders in #2a2a2a on all cards and inputs.",
+      "Shift border color from #2a2a2a to #3a3a3a and background from Surface One to Surface Two for interactive card hovers.",
+      "Use monospace (Courier New) exclusively for PGN notation and engine output.",
+      "Apply letter-spacing: -0.02em to all display and headline type.",
+      "Use text-wrap: balance on h1–h3.",
+      "Respect @media (prefers-reduced-motion) — all transitions need a reduced-motion alternative.",
+      "Maintain minimum 44px touch targets on all interactive elements on mobile."
+    ],
+    "donts": [
+      "Don't use backdrop-filter: blur() or -webkit-backdrop-filter anywhere. Glassmorphism is prohibited.",
+      "Don't use transparency layers or rgba() glass-card backgrounds. Surfaces are solid tonal colors.",
+      "Don't use gradient text (background-clip: text). Decorative, never meaningful, explicitly banned.",
+      "Don't use quality colors on backgrounds, borders, or decorative elements — data classification only.",
+      "Don't use box-shadow on resting card surfaces.",
+      "Don't introduce a second accent hue. Signal Green is the only saturated color.",
+      "Don't use eyebrow labels (small all-caps text above every section heading).",
+      "Don't nest cards. Use spacing and border to delineate nested content instead.",
+      "Don't use border-left or border-right greater than 1px as a colored accent stripe."
+    ]
+  }
+}

@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 type Settings = {
   boardTheme: string;
+  soundEnabled: boolean;
   engineDepth: number;
   multiPv: number;
   maxWorkers: number;
@@ -12,6 +13,7 @@ type Settings = {
 
 type SettingsContextType = Settings & {
   setBoardTheme: (theme: string) => void;
+  setSoundEnabled: (val: boolean) => void;
   setEngineDepth: (val: number) => void;
   setMultiPv: (val: number) => void;
   setMaxWorkers: (val: number) => void;
@@ -36,6 +38,7 @@ function save(settings: Settings) {
 
 const defaults: Settings = {
   boardTheme: "classic",
+  soundEnabled: true,
   engineDepth: 14,
   multiPv: 3,
   maxWorkers: 2,
@@ -46,6 +49,7 @@ const defaults: Settings = {
 const SettingsContext = createContext<SettingsContextType>({
   ...defaults,
   setBoardTheme: () => {},
+  setSoundEnabled: () => {},
   setEngineDepth: () => {},
   setMultiPv: () => {},
   setMaxWorkers: () => {},
@@ -74,6 +78,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       value={{
         ...settings,
         setBoardTheme: (boardTheme) => patch({ boardTheme }),
+        setSoundEnabled: (soundEnabled) => patch({ soundEnabled }),
         setEngineDepth: (engineDepth) => patch({ engineDepth }),
         setMultiPv: (multiPv) => patch({ multiPv }),
         setMaxWorkers: (maxWorkers) => patch({ maxWorkers }),

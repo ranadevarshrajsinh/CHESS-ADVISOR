@@ -1,12 +1,13 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Header from "@/components/Header";
 import GameCard from "@/components/GameCard";
 import Loader from "@/components/Loader";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { getStats, fetchGames, getBatchJobs } from "@/services/api";
-import { Play, TrendingUp, TrendingDown, Minus, RefreshCw, ChevronDown, ChevronUp } from "lucide-react";
+import { Play, TrendingUp, TrendingDown, Minus, RefreshCw, ChevronDown, ChevronUp, Clock, Zap, Gauge, CalendarDays } from "lucide-react";
 
 function MomentumBadge({ momentum }: { momentum: string }) {
   const lower = (momentum || "").toLowerCase();
@@ -30,7 +31,7 @@ function MomentumBadge({ momentum }: { momentum: string }) {
         alignItems: "center",
         gap: "5px",
         padding: "3px 10px",
-        borderRadius: "20px",
+        borderRadius: "99px",
         background: bg,
         color,
         fontSize: "12px",
@@ -42,6 +43,35 @@ function MomentumBadge({ momentum }: { momentum: string }) {
       {momentum}
     </span>
   );
+}
+
+function winRateColor(pct: number): string {
+  if (pct >= 55) return "var(--success)";
+  if (pct >= 40) return "var(--warning)";
+  return "var(--danger)";
+}
+
+function useCountUp(target: number, triggered: boolean, duration = 1400, delay = 0) {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    if (!triggered) { setValue(0); return; }
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || target === 0) {
+      setValue(target);
+      return;
+    }
+    let rafId: number;
+    let startTime: number | null = null;
+    const runTick = (now: number) => {
+      if (!startTime) startTime = now;
+      const t = Math.min((now - startTime) / duration, 1);
+      setValue(Math.round((1 - Math.pow(2, -10 * t)) * target));
+      if (t < 1) rafId = requestAnimationFrame(runTick);
+      else setValue(target);
+    };
+    const timerId = setTimeout(() => { rafId = requestAnimationFrame(runTick); }, delay);
+    return () => { clearTimeout(timerId); cancelAnimationFrame(rafId); };
+  }, [triggered, target, duration, delay]);
+  return value;
 }
 
 export default function Dashboard() {
@@ -60,6 +90,7 @@ export default function Dashboard() {
   const [fetchMode, setFetchMode] = useState<"append" | "replace">("append");
   const [fetching, setFetching] = useState(false);
   const [fetchError, setFetchError] = useState("");
+  const [replaceConfirmStep, setReplaceConfirmStep] = useState(false);
   const [gameFilter, setGameFilter] = useState<string>("all");
 
   useEffect(() => {
@@ -123,6 +154,11 @@ export default function Dashboard() {
 
   const handleLoadGames = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (fetchMode === "replace" && (games as any[]).length > 0 && !replaceConfirmStep) {
+      setReplaceConfirmStep(true);
+      return;
+    }
+    setReplaceConfirmStep(false);
     setFetching(true);
     setFetchError("");
     try {
@@ -146,6 +182,34 @@ export default function Dashboard() {
     }
   };
 
+  // ── Summary card count-up animation ──────────────────────────────────
+  const summaryRef = useRef<HTMLDivElement>(null);
+  const [summaryInView, setSummaryInView] = useState(false);
+  const summaryTotals = useMemo(() => {
+    if (!realStats) return null;
+    const keys = ["chess_rapid", "chess_blitz", "chess_bullet", "chess_daily"].filter(k => realStats[k]?.record);
+    if (!keys.length) return null;
+    let wins = 0, losses = 0, draws = 0;
+    keys.forEach(k => { wins += realStats[k].record.win; losses += realStats[k].record.loss; draws += realStats[k].record.draw; });
+    const total = wins + losses + draws;
+    return { wins, losses, draws, total, winRate: total > 0 ? Math.round((wins / total) * 100) : 0 };
+  }, [realStats]);
+  useEffect(() => {
+    const el = summaryRef.current;
+    if (!el || !summaryTotals) return;
+    const io = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setSummaryInView(true); io.disconnect(); } },
+      { threshold: 0.3 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [summaryTotals]);
+  const animGames   = useCountUp(summaryTotals?.total   ?? 0, summaryInView, 1400,  0);
+  const animWinRate = useCountUp(summaryTotals?.winRate  ?? 0, summaryInView, 1200, 120);
+  const animWins    = useCountUp(summaryTotals?.wins     ?? 0, summaryInView, 1000, 280);
+  const animLosses  = useCountUp(summaryTotals?.losses   ?? 0, summaryInView, 1000, 350);
+  const animDraws   = useCountUp(summaryTotals?.draws    ?? 0, summaryInView, 1000, 420);
+
   if (!chessUsername) return null;
 
   return (
@@ -154,6 +218,7 @@ export default function Dashboard() {
       <main
         className="container animate-fade-in page-content-mobile"
         style={{ paddingTop: "40px", paddingBottom: "60px" }}
+        aria-label="Dashboard"
       >
         <div
           style={{
@@ -200,13 +265,115 @@ export default function Dashboard() {
           <div
             style={{ display: "flex", flexDirection: "column", gap: "32px" }}
           >
-            {/* ── Overall Stats ── */}
+            {/* ── Bento hero row ── */}
+            {(summaryTotals != null || games.length > 0) && (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))", gap: "20px", alignItems: "stretch" }}>
+
+                {/* LEFT: Overall — tall vertical card */}
+                {summaryTotals != null && (
+                  <div ref={summaryRef} className="glass-card" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                    <div>
+                      <div style={{ fontSize: "11px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "10px" }}>Overall</div>
+                      <div style={{ fontSize: "40px", fontWeight: "800", lineHeight: 1 }}>{animGames.toLocaleString()}</div>
+                      <div style={{ fontSize: "13px", color: "var(--text-secondary)", marginTop: "4px" }}>games played</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: "48px", fontWeight: "800", lineHeight: 1, color: "var(--success)" }}>{animWinRate}%</div>
+                      <div style={{ fontSize: "13px", color: "var(--text-secondary)", marginTop: "4px" }}>overall win rate</div>
+                    </div>
+                    <div style={{ display: "flex", gap: "24px", paddingTop: "16px", borderTop: "1px solid var(--glass-border)" }}>
+                      <div>
+                        <div style={{ fontSize: "20px", fontWeight: "700", color: "var(--success)" }}>{animWins.toLocaleString()}</div>
+                        <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "2px" }}>Wins</div>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: "20px", fontWeight: "700", color: "var(--danger)" }}>{animLosses.toLocaleString()}</div>
+                        <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "2px" }}>Losses</div>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: "20px", fontWeight: "700", color: "var(--warning)" }}>{animDraws.toLocaleString()}</div>
+                        <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "2px" }}>Draws</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* RIGHT: Bento — White / Black / games count / Accuracy in 4 quadrants */}
+                {games.length > 0 && (() => {
+                  const colorStats = { white: { wins: 0, losses: 0, draws: 0 }, black: { wins: 0, losses: 0, draws: 0 } };
+                  const userLower = chessUsername.toLowerCase();
+                  const WHITE_LOSS = new Set(["checkmated", "resigned", "timeout", "abandoned", "loss"]);
+                  (games as any[]).forEach((g) => {
+                    const isWhite = (g.white || "").toLowerCase() === userLower;
+                    const side = colorStats[isWhite ? "white" : "black"];
+                    const r = (g.result || "").toLowerCase().trim();
+                    if (r === "1-0" || r === "white") { isWhite ? side.wins++ : side.losses++; }
+                    else if (r === "0-1" || r === "black") { isWhite ? side.losses++ : side.wins++; }
+                    else if (r === "win") { isWhite ? side.wins++ : side.losses++; }
+                    else if (WHITE_LOSS.has(r)) { isWhite ? side.losses++ : side.wins++; }
+                    else { side.draws++; }
+                  });
+                  const total = games.length;
+                  return (
+                    <div className="glass-card" style={{ padding: 0, display: "grid", gridTemplateColumns: "1fr 1fr", overflow: "hidden" }}>
+                      {(["white", "black"] as const).map((color, i) => {
+                        const { wins, losses, draws } = colorStats[color];
+                        const sideTotal = wins + losses + draws;
+                        const pct = sideTotal > 0 ? Math.round((wins / sideTotal) * 100) : 0;
+                        return (
+                          <div key={color} style={{
+                            padding: "24px",
+                            borderRight: i === 0 ? "1px solid var(--glass-border)" : "none",
+                            borderBottom: "1px solid var(--glass-border)",
+                          }}>
+                            <div style={{ fontSize: "11px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "12px" }}>As {color}</div>
+                            <div style={{ fontSize: "34px", fontWeight: "800", color: winRateColor(pct), lineHeight: 1, marginBottom: "10px" }} aria-label={`${pct}% win rate as ${color}`}>{pct}%</div>
+                            <div style={{ display: "flex", gap: "10px", fontSize: "12px", marginBottom: "10px" }}>
+                              <span style={{ color: "var(--success)" }} aria-label={`${wins} wins`}>{wins}W</span>
+                              <span style={{ color: "var(--danger)" }} aria-label={`${losses} losses`}>{losses}L</span>
+                              <span style={{ color: "var(--warning)" }} aria-label={`${draws} draws`}>{draws}D</span>
+                            </div>
+                            {sideTotal > 0 && (
+                              <div
+                                role="img"
+                                aria-label={`Win/Draw/Loss: ${Math.round((wins/sideTotal)*100)}% / ${Math.round((draws/sideTotal)*100)}% / ${Math.round((losses/sideTotal)*100)}%`}
+                                style={{ height: "3px", borderRadius: "99px", background: "var(--border-subtle)", overflow: "hidden", display: "flex" }}
+                              >
+                                <div style={{ width: `${(wins / sideTotal) * 100}%`, background: "var(--success)" }} />
+                                <div style={{ width: `${(draws / sideTotal) * 100}%`, background: "var(--warning)" }} />
+                                <div style={{ width: `${(losses / sideTotal) * 100}%`, background: "var(--danger)" }} />
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                      <div style={{ padding: "16px 24px", borderRight: "1px solid var(--glass-border)", display: "flex", alignItems: "center" }}>
+                        <span style={{ fontSize: "12px", color: "var(--text-secondary)" }}>{total} game{total !== 1 ? "s" : ""} loaded</span>
+                      </div>
+                      <div style={{ padding: "16px 24px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                        {stats?.accuracy != null ? (
+                          <>
+                            <div style={{ fontSize: "11px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "4px" }}>Avg Accuracy</div>
+                            <div style={{ fontSize: "22px", fontWeight: "700", color: "var(--accent-color)" }}>{parseFloat(stats.accuracy).toFixed(1)}%</div>
+                          </>
+                        ) : (
+                          <span style={{ fontSize: "12px", color: "var(--text-secondary)" }}>No analysis yet</span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })()}
+
+              </div>
+            )}
+
+            {/* ── Stats by Time Control ── */}
             {realStats && (() => {
               const formats = [
-                { key: "chess_rapid",  label: "Rapid",  icon: "⏱" },
-                { key: "chess_blitz",  label: "Blitz",  icon: "⚡" },
-                { key: "chess_bullet", label: "Bullet", icon: "🔫" },
-                { key: "chess_daily",  label: "Daily",  icon: "📅" },
+                { key: "chess_rapid",  label: "Rapid",  Icon: Clock },
+                { key: "chess_blitz",  label: "Blitz",  Icon: Zap },
+                { key: "chess_bullet", label: "Bullet", Icon: Gauge },
+                { key: "chess_daily",  label: "Daily",  Icon: CalendarDays },
               ].filter(({ key }) => realStats[key]?.record);
 
               if (formats.length === 0) return null;
@@ -221,14 +388,14 @@ export default function Dashboard() {
               const overallWinRate = totalGames > 0 ? Math.round((totalWins / totalGames) * 100) : 0;
 
               return (
-                <section>
-                  <h2 style={{ fontSize: "16px", fontWeight: "600", marginBottom: "16px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.8px" }}>
+                <section aria-labelledby="tc-stats-heading">
+                  <h2 id="tc-stats-heading" style={{ fontSize: "16px", fontWeight: "600", marginBottom: "16px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.8px" }}>
                     Stats by Time Control (Chess.com)
                   </h2>
 
                   {/* Per-time-control cards */}
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "16px", marginBottom: "16px" }}>
-                    {formats.map(({ key, label, icon }) => {
+                    {formats.map(({ key, label, Icon }) => {
                       const { record, last } = realStats[key];
                       const games = record.win + record.loss + record.draw;
                       const wr = games > 0 ? Math.round((record.win / games) * 100) : 0;
@@ -247,11 +414,16 @@ export default function Dashboard() {
                         : null;
 
                       return (
-                        <div key={key} className="glass-card" style={{ display: "flex", flexDirection: "column" }}>
+                        <Link
+                          key={key}
+                          href={`/games?tc=${tc}`}
+                          className="glass-card tc-nav-card"
+                          aria-label={`Browse ${label} games — ${wr}% win rate, ${games.toLocaleString()} games`}
+                        >
                           {/* Header */}
                           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                              <span style={{ fontSize: "18px" }}>{icon}</span>
+                              <Icon size={16} aria-hidden="true" style={{ color: "var(--text-secondary)", flexShrink: 0 }} />
                               <span style={{ fontSize: "14px", fontWeight: "700" }}>{label}</span>
                             </div>
                             {last?.rating && (
@@ -266,201 +438,52 @@ export default function Dashboard() {
                             {games.toLocaleString()}
                             <span style={{ fontSize: "13px", fontWeight: "400", color: "var(--text-secondary)", marginLeft: "6px" }}>games</span>
                           </div>
-                          <div style={{ fontSize: "13px", color: "var(--success)", fontWeight: "600", marginBottom: "8px" }}>
+                          <div style={{ fontSize: "13px", color: winRateColor(wr), fontWeight: "600", marginBottom: "8px" }}>
                             {wr}% win rate
                           </div>
                           <div style={{ display: "flex", gap: "12px", fontSize: "12px" }}>
-                            <span style={{ color: "var(--success)" }}>{record.win}W</span>
-                            <span style={{ color: "var(--danger)" }}>{record.loss}L</span>
-                            <span style={{ color: "var(--warning)" }}>{record.draw}D</span>
+                            <span style={{ color: "var(--success)" }} aria-label={`${record.win} wins`}>{record.win}W</span>
+                            <span style={{ color: "var(--danger)" }} aria-label={`${record.loss} losses`}>{record.loss}L</span>
+                            <span style={{ color: "var(--warning)" }} aria-label={`${record.draw} draws`}>{record.draw}D</span>
                           </div>
-                          <div style={{ marginTop: "10px", marginBottom: "14px", height: "4px", borderRadius: "2px", background: "var(--surface-2)", overflow: "hidden", display: "flex" }}>
+                          <div
+                            role="img"
+                            aria-label={`Win/Draw/Loss: ${games > 0 ? Math.round((record.win/games)*100) : 0}% / ${games > 0 ? Math.round((record.draw/games)*100) : 0}% / ${games > 0 ? Math.round((record.loss/games)*100) : 0}%`}
+                            style={{ marginTop: "10px", marginBottom: "14px", height: "4px", borderRadius: "99px", background: "var(--border-subtle)", overflow: "hidden", display: "flex" }}
+                          >
                             <div style={{ width: `${games > 0 ? (record.win / games) * 100 : 0}%`, background: "var(--success)" }} />
                             <div style={{ width: `${games > 0 ? (record.draw / games) * 100 : 0}%`, background: "var(--warning)" }} />
                             <div style={{ width: `${games > 0 ? (record.loss / games) * 100 : 0}%`, background: "var(--danger)" }} />
                           </div>
 
                           {/* Analysis status */}
-                          <div style={{ borderTop: "1px solid var(--glass-border)", paddingTop: "12px", marginTop: "auto" }}>
-                            <div style={{ fontSize: "11px", color: analyzed ? "var(--success)" : "var(--text-secondary)", marginBottom: "10px", display: "flex", alignItems: "center", gap: "5px" }}>
-                              <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: analyzed ? "var(--success)" : "var(--glass-border)", flexShrink: 0, display: "inline-block" }} />
+                          <div style={{ borderTop: "1px solid var(--glass-border)", paddingTop: "12px", marginTop: "auto", display: "flex", alignItems: "center", gap: "5px" }}>
+                            <span
+                              role="img"
+                              aria-label={analyzed ? `${label} analyzed` : `${label} not analyzed`}
+                              style={{ width: "6px", height: "6px", borderRadius: "50%", background: analyzed ? "var(--success)" : "var(--glass-border)", flexShrink: 0, display: "inline-block" }}
+                            />
+                            <span style={{ fontSize: "11px", color: analyzed ? "var(--success)" : "var(--text-secondary)" }}>
                               {analyzed
                                 ? `Analyzed ${analysisLabel} · ${job.summary?.average_accuracy ?? "?"}% avg accuracy`
                                 : "Not analyzed yet"}
-                            </div>
-                            <div style={{ display: "flex", gap: "8px" }}>
-                              <button
-                                onClick={() => router.push(`/batch?tc=${tc}`)}
-                                style={{
-                                  flex: 1,
-                                  padding: "7px 0",
-                                  borderRadius: "6px",
-                                  border: "1px solid var(--glass-border)",
-                                  background: "var(--surface-1)",
-                                  color: "var(--text-primary)",
-                                  fontSize: "12px",
-                                  fontWeight: "600",
-                                  cursor: "pointer",
-                                }}
-                              >
-                                {analyzed ? "Re-analyze" : "Analyze"}
-                              </button>
-                              <button
-                                onClick={() => router.push(`/games?tc=${tc}`)}
-                                style={{
-                                  flex: 1,
-                                  padding: "7px 0",
-                                  borderRadius: "6px",
-                                  border: "none",
-                                  background: analyzed ? "var(--accent-color)" : "var(--surface-2)",
-                                  color: analyzed ? "#fff" : "var(--text-secondary)",
-                                  fontSize: "12px",
-                                  fontWeight: "600",
-                                  cursor: "pointer",
-                                }}
-                              >
-                                Browse Games
-                              </button>
-                            </div>
-                            {analyzed && (
-                              <button
-                                onClick={() => router.push(`/report?tc=${tc}`)}
-                                style={{
-                                  width: "100%",
-                                  marginTop: "6px",
-                                  padding: "5px 0",
-                                  borderRadius: "6px",
-                                  border: "1px solid var(--glass-border)",
-                                  background: "transparent",
-                                  color: "var(--accent-color)",
-                                  fontSize: "11px",
-                                  fontWeight: "600",
-                                  cursor: "pointer",
-                                }}
-                              >
-                                View Analysis Report →
-                              </button>
-                            )}
+                            </span>
                           </div>
-                        </div>
+                        </Link>
                       );
                     })}
                   </div>
 
-                  {/* All-formats summary row */}
-                  <div className="glass-card" style={{ display: "flex", gap: "32px", alignItems: "center", flexWrap: "wrap" }}>
-                    <div>
-                      <div style={{ fontSize: "12px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>All Formats</div>
-                      <div style={{ fontSize: "28px", fontWeight: "800" }}>{totalGames.toLocaleString()} <span style={{ fontSize: "13px", fontWeight: "400", color: "var(--text-secondary)" }}>games</span></div>
-                    </div>
-                    <div style={{ width: "1px", height: "40px", background: "var(--glass-border)", flexShrink: 0 }} />
-                    <div>
-                      <div style={{ fontSize: "12px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>Overall Win Rate</div>
-                      <div style={{ fontSize: "28px", fontWeight: "800", color: "var(--success)" }}>{overallWinRate}%</div>
-                    </div>
-                    <div style={{ width: "1px", height: "40px", background: "var(--glass-border)", flexShrink: 0 }} />
-                    <div style={{ display: "flex", gap: "20px" }}>
-                      <div>
-                        <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "2px" }}>Wins</div>
-                        <div style={{ fontSize: "20px", fontWeight: "700", color: "var(--success)" }}>{totalWins.toLocaleString()}</div>
-                      </div>
-                      <div>
-                        <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "2px" }}>Losses</div>
-                        <div style={{ fontSize: "20px", fontWeight: "700", color: "var(--danger)" }}>{totalLosses.toLocaleString()}</div>
-                      </div>
-                      <div>
-                        <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "2px" }}>Draws</div>
-                        <div style={{ fontSize: "20px", fontWeight: "700", color: "var(--warning)" }}>{totalDraws.toLocaleString()}</div>
-                      </div>
-                    </div>
-                  </div>
                 </section>
               );
             })()}
 
-            {/* ── Win Rate by Color (computed from loaded games) ── */}
-            {games.length > 0 && (() => {
-              const colorStats = { white: { wins: 0, losses: 0, draws: 0 }, black: { wins: 0, losses: 0, draws: 0 } };
-              const userLower = chessUsername.toLowerCase();
-              const WHITE_LOSS = new Set(["checkmated", "resigned", "timeout", "abandoned", "loss"]);
-              const DRAW_R = new Set(["stalemate", "insufficient", "agreed", "repetition", "timevsinsufficient", "50move", "1/2-1/2"]);
-              (games as any[]).forEach((g) => {
-                const isWhite = (g.white || "").toLowerCase() === userLower;
-                const side = colorStats[isWhite ? "white" : "black"];
-                const r = (g.result || "").toLowerCase().trim();
-                if (r === "1-0" || r === "white") {
-                  isWhite ? side.wins++ : side.losses++;
-                } else if (r === "0-1" || r === "black") {
-                  isWhite ? side.losses++ : side.wins++;
-                } else if (r === "win") {
-                  // Old Chess.com format: stored as white's result — "win" means white won
-                  isWhite ? side.wins++ : side.losses++;
-                } else if (WHITE_LOSS.has(r)) {
-                  // Old Chess.com format: white lost
-                  isWhite ? side.losses++ : side.wins++;
-                } else if (DRAW_R.has(r)) {
-                  side.draws++;
-                } else {
-                  side.draws++;
-                }
-              });
-              const total = games.length;
-
-              return (
-                <section>
-                  <h2 style={{ fontSize: "16px", fontWeight: "600", marginBottom: "4px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.8px" }}>
-                    Win Rate by Color
-                  </h2>
-                  <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "16px", marginTop: 0 }}>
-                    Based on your {total} loaded game{total !== 1 ? "s" : ""}
-                  </p>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "20px" }}>
-                    {(["white", "black"] as const).map((color) => {
-                      const { wins, losses, draws } = colorStats[color];
-                      const sideTotal = wins + losses + draws;
-                      const pct = sideTotal > 0 ? Math.round((wins / sideTotal) * 100) : 0;
-                      return (
-                        <div key={color} className="glass-card">
-                          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
-                            <div style={{ width: "28px", height: "28px", borderRadius: "4px", background: color === "white" ? "#eee" : "#333", color: color === "white" ? "#111" : "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold", fontSize: "12px" }}>
-                              {color === "white" ? "W" : "B"}
-                            </div>
-                            <span style={{ fontWeight: "600", textTransform: "capitalize" }}>As {color}</span>
-                            <span style={{ marginLeft: "auto", fontSize: "12px", color: "var(--text-secondary)" }}>{sideTotal} games</span>
-                          </div>
-                          <div style={{ fontSize: "28px", fontWeight: "700", color: "var(--success)", marginBottom: "8px" }}>{pct}%</div>
-                          <div style={{ display: "flex", gap: "14px", fontSize: "13px" }}>
-                            <span style={{ color: "var(--success)" }}>{wins}W</span>
-                            <span style={{ color: "var(--danger)" }}>{losses}L</span>
-                            <span style={{ color: "var(--warning)" }}>{draws}D</span>
-                          </div>
-                          {sideTotal > 0 && (
-                            <div style={{ marginTop: "10px", height: "5px", borderRadius: "3px", background: "var(--surface-2)", overflow: "hidden", display: "flex" }}>
-                              <div style={{ width: `${(wins / sideTotal) * 100}%`, background: "var(--success)" }} />
-                              <div style={{ width: `${(draws / sideTotal) * 100}%`, background: "var(--warning)" }} />
-                              <div style={{ width: `${(losses / sideTotal) * 100}%`, background: "var(--danger)" }} />
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-
-                    {stats?.accuracy != null && (
-                      <div className="glass-card">
-                        <div style={{ fontSize: "13px", color: "var(--text-secondary)", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Avg Accuracy</div>
-                        <div style={{ fontSize: "28px", fontWeight: "700", color: "var(--accent-color)" }}>{parseFloat(stats.accuracy).toFixed(1)}%</div>
-                        <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "4px" }}>From analyzed games</div>
-                      </div>
-                    )}
-                  </div>
-                </section>
-              );
-            })()}
 
             {/* ── Recent Games ── */}
-            <section>
+            <section aria-labelledby="recent-games-heading">
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
                 <h2
+                  id="recent-games-heading"
                   style={{
                     fontSize: "16px",
                     fontWeight: "600",
@@ -473,13 +496,15 @@ export default function Dashboard() {
                   Recent Games {games.length > 0 && <span style={{ fontWeight: 400, fontSize: "13px" }}>({games.length})</span>}
                 </h2>
                 <button
-                  onClick={() => { setShowFetchPanel((v) => !v); setFetchError(""); }}
+                  onClick={() => { setShowFetchPanel((v) => !v); setFetchError(""); setReplaceConfirmStep(false); }}
                   className="btn btn-secondary"
+                  aria-expanded={showFetchPanel}
+                  aria-controls="load-games-panel"
                   style={{ display: "flex", alignItems: "center", gap: "6px", padding: "6px 14px", fontSize: "13px" }}
                 >
-                  <RefreshCw size={14} />
+                  <RefreshCw size={14} aria-hidden="true" />
                   Load Games
-                  {showFetchPanel ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                  {showFetchPanel ? <ChevronUp size={14} aria-hidden="true" /> : <ChevronDown size={14} aria-hidden="true" />}
                 </button>
               </div>
 
@@ -501,15 +526,16 @@ export default function Dashboard() {
                         <button
                           key={f}
                           onClick={() => setGameFilter(f)}
+                          aria-pressed={active}
                           style={{
                             padding: "5px 14px",
-                            borderRadius: "20px",
+                            borderRadius: "99px",
                             fontSize: "13px",
                             fontWeight: active ? "700" : "500",
                             cursor: "pointer",
                             border: `1px solid ${active ? "var(--accent-color)" : "var(--glass-border)"}`,
                             background: active ? "var(--accent-color)" : "transparent",
-                            color: active ? "#fff" : "var(--text-secondary)",
+                            color: active ? "#050505" : "var(--text-secondary)",
                             transition: "all 0.15s ease",
                           }}
                         >
@@ -523,7 +549,7 @@ export default function Dashboard() {
                         onClick={() => router.push(`/games?tc=${gameFilter}`)}
                         style={{
                           padding: "5px 14px",
-                          borderRadius: "20px",
+                          borderRadius: "99px",
                           fontSize: "13px",
                           fontWeight: "500",
                           cursor: "pointer",
@@ -542,13 +568,17 @@ export default function Dashboard() {
 
               {showFetchPanel && (
                 <div
+                  id="load-games-panel"
+                  role="region"
+                  aria-label="Load games"
                   className="glass-card"
                   style={{ marginBottom: "20px", padding: "20px" }}
                 >
                   <form onSubmit={handleLoadGames} style={{ display: "flex", flexWrap: "wrap", gap: "16px", alignItems: "flex-end" }}>
                     <div style={{ display: "flex", flexDirection: "column", gap: "6px", minWidth: "140px" }}>
-                      <label style={{ fontSize: "12px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Platform</label>
+                      <label htmlFor="fetch-platform" style={{ fontSize: "12px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Platform</label>
                       <select
+                        id="fetch-platform"
                         className="input-field"
                         value={fetchPlatform}
                         onChange={(e) => setFetchPlatform(e.target.value)}
@@ -559,8 +589,9 @@ export default function Dashboard() {
                       </select>
                     </div>
                     <div style={{ display: "flex", flexDirection: "column", gap: "6px", minWidth: "100px" }}>
-                      <label style={{ fontSize: "12px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Count (max 50)</label>
+                      <label htmlFor="fetch-count" style={{ fontSize: "12px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Count (max 50)</label>
                       <input
+                        id="fetch-count"
                         type="number"
                         className="input-field"
                         value={fetchLimit}
@@ -571,21 +602,22 @@ export default function Dashboard() {
                       />
                     </div>
                     <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                      <label style={{ fontSize: "12px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Mode</label>
-                      <div style={{ display: "flex", gap: "8px" }}>
+                      <span id="fetch-mode-label" style={{ fontSize: "12px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Mode</span>
+                      <div role="group" aria-labelledby="fetch-mode-label" style={{ display: "flex", gap: "8px" }}>
                         {(["append", "replace"] as const).map((m) => (
                           <button
                             key={m}
                             type="button"
-                            onClick={() => setFetchMode(m)}
+                            onClick={() => { setFetchMode(m); setReplaceConfirmStep(false); }}
+                            aria-pressed={fetchMode === m}
                             style={{
                               padding: "8px 14px",
                               fontSize: "12px",
                               fontWeight: "600",
                               borderRadius: "8px",
-                              border: `1px solid ${fetchMode === m ? "var(--accent-color)" : "var(--glass-border)"}`,
-                              background: fetchMode === m ? "rgba(29,193,137,0.12)" : "transparent",
-                              color: fetchMode === m ? "var(--accent-color)" : "var(--text-secondary)",
+                              border: `1px solid ${fetchMode === m ? (m === "replace" ? "var(--danger)" : "var(--accent-color)") : "var(--glass-border)"}`,
+                              background: fetchMode === m ? (m === "replace" ? "color-mix(in srgb, var(--danger) 12%, transparent)" : "color-mix(in srgb, var(--accent-color) 12%, transparent)") : "transparent",
+                              color: fetchMode === m ? (m === "replace" ? "var(--danger)" : "var(--accent-color)") : "var(--text-secondary)",
                               cursor: "pointer",
                               textTransform: "capitalize",
                             }}
@@ -599,18 +631,28 @@ export default function Dashboard() {
                       type="submit"
                       className="btn btn-primary"
                       disabled={fetching}
-                      style={{ padding: "8px 20px", fontSize: "13px", whiteSpace: "nowrap" }}
+                      style={{
+                        padding: "8px 20px",
+                        fontSize: "13px",
+                        whiteSpace: "nowrap",
+                        ...(replaceConfirmStep ? { background: "var(--danger)", borderColor: "var(--danger)" } : {}),
+                      }}
                     >
-                      {fetching ? "Fetching…" : "Fetch Games"}
+                      {fetching ? "Fetching…" : replaceConfirmStep ? `Confirm — replace ${(games as any[]).length} game${(games as any[]).length !== 1 ? "s" : ""}` : "Fetch Games"}
                     </button>
                   </form>
+                  {replaceConfirmStep && (
+                    <div role="alert" style={{ marginTop: "12px", color: "var(--danger)", fontSize: "13px", background: "color-mix(in srgb, var(--danger) 8%, transparent)", padding: "10px 14px", borderRadius: "8px", border: "1px solid color-mix(in srgb, var(--danger) 30%, transparent)" }}>
+                      This will clear your {(games as any[]).length} loaded game{(games as any[]).length !== 1 ? "s" : ""}. Click the button again to confirm.
+                    </div>
+                  )}
                   {fetchError && (
-                    <div style={{ marginTop: "12px", color: "var(--danger)", fontSize: "13px", background: "rgba(239,68,68,0.08)", padding: "10px 14px", borderRadius: "8px" }}>
+                    <div role="alert" aria-live="assertive" style={{ marginTop: "12px", color: "var(--danger)", fontSize: "13px", background: "color-mix(in srgb, var(--danger) 8%, transparent)", padding: "10px 14px", borderRadius: "8px" }}>
                       {fetchError}
                     </div>
                   )}
                   <p style={{ margin: "12px 0 0", fontSize: "12px", color: "var(--text-secondary)" }}>
-                    <strong>Append</strong> adds new games to your existing list (duplicates skipped). <strong>Replace</strong> replaces the list entirely.
+                    <strong>Append</strong> adds new games to your existing list (duplicates skipped). <strong>Replace</strong> clears your list and loads fresh games.
                   </p>
                 </div>
               )}

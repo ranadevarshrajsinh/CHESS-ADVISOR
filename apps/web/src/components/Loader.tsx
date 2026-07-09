@@ -1,29 +1,15 @@
-export default function Loader({ message = "Loading..." }) {
+import ChessLoader from "@/components/loader/Loader1";
+
+export default function Loader({ message = "Loading..." }: { message?: string }) {
   return (
     <div
       className="flex-center"
-      style={{ flexDirection: "column", gap: "16px", padding: "40px" }}
+      style={{ flexDirection: "column", gap: "20px", padding: "48px 16px" }}
     >
-      <div className="spinner"></div>
-      <p style={{ color: "var(--text-secondary)", fontSize: "14px" }}>
+      <ChessLoader size={48} steps={6} />
+      <p style={{ color: "var(--text-secondary)", fontSize: "14px", margin: 0 }}>
         {message}
       </p>
-
-      <style jsx>{`
-        .spinner {
-          width: 40px;
-          height: 40px;
-          border: 3px solid rgba(0, 0, 0, 0.08);
-          border-radius: 50%;
-          border-top-color: var(--accent-color);
-          animation: spin 1s ease-in-out infinite;
-        }
-        @keyframes spin {
-          to {
-            transform: rotate(360deg);
-          }
-        }
-      `}</style>
     </div>
   );
 }

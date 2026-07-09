@@ -1,0 +1,134 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-color",
+        "value": "#fff",
+        "reason": "White text on accent-color active backgrounds — intentional per DESIGN.md button and chip specs",
+        "createdAt": "2026-07-07T13:13:47.375Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(0, 0, 0, 0.7)",
+        "reason": "Drawer overlay dimmer — functional modal backdrop, not glass decoration",
+        "createdAt": "2026-07-07T13:13:47.436Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(255, 255, 255, 0.72)",
+        "reason": "Subtle border on white primary button — intentional per DESIGN.md",
+        "createdAt": "2026-07-07T13:13:47.491Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(255, 255, 255, 0.2)",
+        "reason": "Hover glow on primary button — the one allowed shadow per DESIGN.md Flat-at-Rest Rule",
+        "createdAt": "2026-07-07T13:13:47.546Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#ffffff",
+        "reason": "Primary button hover state — intentional per DESIGN.md",
+        "createdAt": "2026-07-07T13:13:47.601Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#000000",
+        "reason": "Primary button hover text — intentional contrast on white",
+        "createdAt": "2026-07-07T13:13:47.656Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(255, 255, 255, 0.52)",
+        "reason": "Input focus border — intentional per DESIGN.md input spec",
+        "createdAt": "2026-07-07T13:13:58.259Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(255, 255, 255, 0.1)",
+        "reason": "Input focus ring — accessibility focus indicator per DESIGN.md",
+        "createdAt": "2026-07-07T13:13:58.315Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(255, 255, 255, 0.12)",
+        "reason": "Scrollbar and selection highlight — ambient UI texture",
+        "createdAt": "2026-07-07T13:13:58.373Z"
+      },
+      {
+        "rule": "design-system-radius",
+        "value": "99px",
+        "reason": "Pill radius for badges and filter chips — documented as rounded.pill in DESIGN.md",
+        "createdAt": "2026-07-07T13:13:58.431Z"
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "reason": "Confirmed intentional — part of established Studio Dark design system (Inter body + Space Grotesk headings)",
+        "createdAt": "2026-07-07T13:13:58.486Z"
+      },
+      {
+        "rule": "overused-font",
+        "value": "space grotesk",
+        "reason": "Confirmed intentional — Space Grotesk for headings is part of Studio Dark design system",
+        "createdAt": "2026-07-07T13:13:58.540Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#a855f7",
+        "reason": "Semantic chess tactic classification color (skewer) — data legend use per design spec",
+        "createdAt": "2026-07-07T14:36:50.486Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#3b82f6",
+        "reason": "Semantic chess tactic classification color (back rank) — data legend use",
+        "createdAt": "2026-07-07T14:36:50.552Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#06b6d4",
+        "reason": "Semantic chess tactic classification color (discovery) — data legend use",
+        "createdAt": "2026-07-07T14:36:50.610Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#22c55e",
+        "reason": "Semantic classification color (promotion / beginner difficulty) — data legend use",
+        "createdAt": "2026-07-07T14:36:50.663Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#dc2626",
+        "reason": "Semantic chess tactic classification color (checkmate) — data legend use",
+        "createdAt": "2026-07-07T14:36:50.718Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#9333ea",
+        "reason": "Semantic classification color (smothered mate) — data legend use",
+        "createdAt": "2026-07-07T14:36:50.772Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#ec4899",
+        "reason": "Semantic classification color (sacrifice) — data legend use",
+        "createdAt": "2026-07-07T14:36:50.828Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#6366f1",
+        "reason": "quality-brilliant color (middlegame tactic) — data legend use",
+        "createdAt": "2026-07-07T14:36:50.883Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(0,0,0,0.35)",
+        "reason": "Drop shadow under chess piece — transparent black shadow, not a UI surface color",
+        "createdAt": "2026-07-08T09:47:07.442Z"
+      }
+    ]
+  }
+}

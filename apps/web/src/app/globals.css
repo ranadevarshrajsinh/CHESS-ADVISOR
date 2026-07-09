@@ -1,8 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700;800&display=swap");
 
-/* ─── Dark-first theme (pro-theme) ─────────────────────────────────────── */
+/* ─── Dark-first theme (Studio Dark) ───────────────────────────────────── */
 :root {
-  --bg-color: #050505;
+  --bg-color: #0f0f0f;
   --text-primary: #f7f7f7;
   --text-secondary: #a1a1aa;
 
@@ -12,33 +12,29 @@
   --danger: #ef4444;
   --warning: #f59e0b;
 
-  --glass-bg: rgba(255, 255, 255, 0.045);
-  --glass-border: rgba(255, 255, 255, 0.12);
-  --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
-  --glass-blur: blur(12px);
+  /* Tonal surface scale — no transparency */
+  --surface-1: #161616;
+  --surface-2: #1f1f1f;
+  --border-subtle: #2a2a2a;
+  --border-medium: #3a3a3a;
+  --divider-color: #2a2a2a;
 
-  --card-bg: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.055),
-    rgba(255, 255, 255, 0.025)
-  );
-  --card-hover: rgba(255, 255, 255, 0.075);
+  /* Legacy glass vars remapped to solid tonal equivalents */
+  --glass-bg: #161616;
+  --glass-border: #2a2a2a;
+  --glass-shadow: none;
+  --card-bg: #161616;
+  --card-hover: #1f1f1f;
 
-  --surface-1: rgba(255, 255, 255, 0.045);
-  --surface-2: rgba(255, 255, 255, 0.08);
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-medium: rgba(255, 255, 255, 0.15);
-  --divider-color: rgba(255, 255, 255, 0.08);
+  --input-bg: #161616;
+  --input-bg-focus: #1f1f1f;
+  --input-border: #2a2a2a;
 
-  --input-bg: rgba(255, 255, 255, 0.055);
-  --input-bg-focus: rgba(255, 255, 255, 0.085);
-  --input-border: rgba(255, 255, 255, 0.12);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
 
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
   color-scheme: dark;
 }
@@ -49,22 +45,21 @@
   --text-primary: #0f172a;
   --text-secondary: #475569;
 
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(0, 0, 0, 0.08);
-  --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+  --surface-1: #ffffff;
+  --surface-2: #f8fafc;
+  --border-subtle: #e2e8f0;
+  --border-medium: #cbd5e1;
+  --divider-color: #e2e8f0;
 
-  --card-bg: rgba(255, 255, 255, 0.9);
-  --card-hover: rgba(255, 255, 255, 1);
+  --glass-bg: #ffffff;
+  --glass-border: #e2e8f0;
+  --glass-shadow: none;
+  --card-bg: #ffffff;
+  --card-hover: #f8fafc;
 
-  --surface-1: rgba(0, 0, 0, 0.025);
-  --surface-2: rgba(0, 0, 0, 0.05);
-  --border-subtle: rgba(0, 0, 0, 0.07);
-  --border-medium: rgba(0, 0, 0, 0.12);
-  --divider-color: rgba(0, 0, 0, 0.07);
-
-  --input-bg: rgba(255, 255, 255, 0.9);
-  --input-bg-focus: #ffffff;
-  --input-border: rgba(0, 0, 0, 0.1);
+  --input-bg: #ffffff;
+  --input-bg-focus: #f8fafc;
+  --input-border: #e2e8f0;
 
   color-scheme: light;
 }
@@ -123,7 +118,12 @@ body {
 
 h1,
 h2,
-h3,
+h3 {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
 h4,
 h5,
 h6 {
@@ -150,36 +150,64 @@ button {
   color: #050505;
 }
 
-/* ─── Glassmorphism Utilities ───────────────────────────────────────────── */
+/* ─── Surface Utilities (Studio Dark) ──────────────────────────────────── */
 .glass {
   background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow);
   border-radius: var(--radius-lg);
 }
 
 .glass-card {
   background: var(--card-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
   padding: 24px;
   transition: var(--transition);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.045),
-    0 2px 12px rgba(0, 0, 0, 0.3);
 }
 
 .glass-card:hover {
   background: var(--card-hover);
   transform: translateY(-2px);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 16px 44px rgba(0, 0, 0, 0.34);
-  border-color: rgba(255, 255, 255, 0.22);
+  border-color: var(--border-medium);
+}
+
+/* ─── Clickable card (nav) ──────────────────────────────────────────────── */
+.tc-nav-card {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+.tc-nav-card:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+.tc-nav-card:active {
+  transform: translateY(-1px);
+  transition: transform 0.08s ease-out;
+}
+
+@media (pointer: coarse) {
+  .tc-nav-card:hover {
+    transform: none;
+    background: var(--card-bg);
+    border-color: var(--glass-border);
+  }
+  .tc-nav-card:active {
+    transform: scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tc-nav-card,
+  .tc-nav-card:hover,
+  .tc-nav-card:active {
+    transition: none;
+    transform: none;
+  }
 }
 
 /* ─── Button Styles ─────────────────────────────────────────────────────── */
@@ -198,7 +226,6 @@ button {
   background: #f5f5f5;
   color: #050505;
   border: 1px solid rgba(255, 255, 255, 0.72);
-  box-shadow: 0 8px 28px rgba(255, 255, 255, 0.12);
 }
 
 .btn-primary:hover {
@@ -209,15 +236,15 @@ button {
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.045);
+  background: var(--surface-1);
   color: var(--text-secondary);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--border-subtle);
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.09);
-  border-color: rgba(255, 255, 255, 0.26);
-  color: #ffffff;
+  background: var(--surface-2);
+  border-color: var(--border-medium);
+  color: var(--text-primary);
 }
 
 /* ─── Inputs ────────────────────────────────────────────────────────────── */
@@ -295,15 +322,15 @@ button {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.045);
-  border: 1px solid var(--glass-border);
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
   transition: var(--transition);
   flex-shrink: 0;
 }
 
 .theme-toggle:hover {
-  background: rgba(255, 255, 255, 0.09);
+  background: var(--surface-2);
   color: var(--text-primary);
   transform: rotate(15deg);
 }
@@ -360,12 +387,67 @@ button {
 
 /* ─── Responsive Layout Classes ─────────────────────────────────────────── */
 
-/* Puzzle page: 2-col layout becomes 1-col on mobile */
+/* Puzzle page legacy 2-col (kept for any references) */
 .puzzle-main-grid {
   display: grid;
   grid-template-columns: 1fr 300px;
   gap: 24px;
   align-items: start;
+}
+
+/* ── Puzzle Cockpit: 3-panel layout ─────────────────────────────────────── */
+.puzzle-cockpit {
+  display: grid;
+  grid-template-areas: "filters board stats";
+  grid-template-columns: 240px 1fr 320px;
+  gap: 24px;
+  align-items: start;
+}
+
+.puzzle-filter-panel {
+  grid-area: filters;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: sticky;
+  top: 88px;
+  max-height: calc(100vh - 108px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-subtle) transparent;
+}
+
+.puzzle-filter-panel::-webkit-scrollbar { width: 3px; }
+.puzzle-filter-panel::-webkit-scrollbar-track { background: transparent; }
+.puzzle-filter-panel::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 99px; }
+
+/* Hide mobile tab bar on desktop */
+.puzzle-mobile-tabs { display: none; }
+@media (max-width: 768px) {
+  .puzzle-mobile-tabs { display: flex; }
+}
+
+/* Medium screens: left panel spans full top row, 2-col below */
+@media (max-width: 1280px) and (min-width: 769px) {
+  .puzzle-cockpit {
+    grid-template-areas:
+      "filters filters"
+      "board   stats";
+    grid-template-columns: 1fr 300px;
+  }
+  .puzzle-filter-panel {
+    position: static;
+    max-height: none;
+    overflow-y: visible;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 4px;
+  }
+  .puzzle-filter-section { flex: 0 0 auto; min-width: 160px; }
+  .puzzle-filter-section--type { flex: 1 1 100%; }
 }
 
 /* Analysis page: 2-col layout becomes 1-col on mobile */
@@ -405,6 +487,63 @@ button {
   /* Puzzle layout: stack board above sidebar */
   .puzzle-main-grid {
     grid-template-columns: 1fr;
+  }
+
+  /* Puzzle cockpit: tab-driven on mobile — only active panel visible */
+  .puzzle-cockpit {
+    display: block; /* no grid on mobile; panels stack but only one shows */
+  }
+  .puzzle-filter-panel {
+    position: static;
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  /* Mobile tab visibility — controlled by data-mobile-tab attribute.
+     Uses visibility+height instead of display:none so react-chessboard's
+     getBoundingClientRect() still returns real square widths during animation. */
+  .puzzle-panel-hidden {
+    visibility: hidden;
+    height: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .puzzle-cockpit[data-mobile-tab="board"] .puzzle-filter-panel { visibility: hidden; height: 0; overflow: hidden; pointer-events: none; }
+  .puzzle-cockpit[data-mobile-tab="board"] [data-panel="stats"]  { visibility: hidden; height: 0; overflow: hidden; pointer-events: none; }
+
+  .puzzle-cockpit[data-mobile-tab="filters"] [data-panel="board"] { visibility: hidden; height: 0; overflow: hidden; pointer-events: none; }
+  .puzzle-cockpit[data-mobile-tab="filters"] [data-panel="stats"]  { visibility: hidden; height: 0; overflow: hidden; pointer-events: none; }
+
+  .puzzle-cockpit[data-mobile-tab="stats"] .puzzle-filter-panel  { visibility: hidden; height: 0; overflow: hidden; pointer-events: none; }
+  .puzzle-cockpit[data-mobile-tab="stats"] [data-panel="board"]   { visibility: hidden; height: 0; overflow: hidden; pointer-events: none; }
+
+  /* Mobile tab bar */
+  .puzzle-mobile-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 20px;
+    gap: 0;
+  }
+  .puzzle-mobile-tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 4px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+    margin-bottom: -1px;
+  }
+  .puzzle-mobile-tab.active {
+    color: var(--accent-color);
+    border-bottom-color: var(--accent-color);
   }
 
   /* Analysis layout: stack board above annotation panel */
@@ -563,9 +702,8 @@ button {
 @media (pointer: coarse) {
   .glass-card:hover {
     transform: none;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.045),
-      0 2px 12px rgba(0, 0, 0, 0.3);
+    background: var(--card-bg);
+    border-color: var(--glass-border);
   }
 
   .glass-card:active {
@@ -580,5 +718,26 @@ button {
   .btn:active {
     transform: scale(0.97) !important;
     transition: transform 0.1s ease !important;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .glass-card,
+  .glass-card:hover {
+    transition: none;
+    transform: none;
+  }
+
+  .btn,
+  .btn:hover {
+    transition: none;
+    transform: none !important;
   }
 }
