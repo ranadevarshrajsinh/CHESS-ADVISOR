@@ -19,11 +19,11 @@ const NAV_ITEMS = [
 ];
 
 const BOTTOM_NAV_ITEMS = [
-  { name: "Dashboard", path: "/dashboard", icon: <LayoutDashboard size={20} /> },
-  { name: "Puzzles",   path: "/puzzles",   icon: <Puzzle size={20} /> },
-  { name: "Report",    path: "/report",    icon: <Activity size={20} /> },
-  { name: "Training",  path: "/training-plan", icon: <Target size={20} /> },
-  { name: "Batch",     path: "/batch",     icon: <Layers size={20} /> },
+  { name: "Dashboard", path: "/dashboard", icon: <LayoutDashboard size={20} />, matchPrefixes: ["/dashboard", "/games", "/analysis"] },
+  { name: "Puzzles",   path: "/puzzles",   icon: <Puzzle size={20} />, matchPrefixes: ["/puzzles"] },
+  { name: "Report",    path: "/report",    icon: <Activity size={20} />, matchPrefixes: ["/report"] },
+  { name: "Training",  path: "/training-plan", icon: <Target size={20} />, matchPrefixes: ["/training-plan"] },
+  { name: "Batch",     path: "/batch",     icon: <Layers size={20} />, matchPrefixes: ["/batch"] },
 ];
 
 export default function Header() {
@@ -161,7 +161,7 @@ export default function Header() {
             <Link
               key={item.path}
               href={item.path}
-              className={`bottom-nav-tab ${pathname === item.path ? "active" : ""}`}
+              className={`bottom-nav-tab ${item.matchPrefixes.some(p => pathname.startsWith(p)) ? "active" : ""}`}
             >
               {item.icon}
               <span>{item.name}</span>

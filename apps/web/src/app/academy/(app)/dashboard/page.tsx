@@ -47,6 +47,7 @@ export default function AcademyDashboard() {
   const [academy, setAcademy] = useState<Academy | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [removePlayerLoading, setRemovePlayerLoading] = useState<string | null>(null);
 
   const academyId = coachProfile?.academy_id;
 
@@ -101,6 +102,24 @@ export default function AcademyDashboard() {
     }
     setActionLoading(null);
     loadData();
+  }
+
+  async function handleRemovePlayer(playerId: string, coachId: string) {
+    if (!confirm("Are you sure you want to remove this student?")) return;
+    setRemovePlayerLoading(playerId);
+    const { error } = await supabase.from("players").delete().eq("id", playerId);
+    if (error) {
+      alert("Failed to remove student.");
+    } else {
+      setApprovedCoaches((prev) =>
+        prev.map((c) =>
+          c.id === coachId
+            ? { ...c, players: (c.players ?? []).filter((p) => p.id !== playerId) }
+            : c
+        )
+      );
+    }
+    setRemovePlayerLoading(null);
   }
 
   async function toggleCoachExpand(coachId: string) {
@@ -346,15 +365,34 @@ export default function AcademyDashboard() {
                                       <span style={{ fontWeight: "600", fontSize: "14px" }}>{p.full_name}</span>
                                       <span style={{ color: "var(--text-secondary)", fontSize: "12px", marginLeft: "8px" }}>@{p.chess_username}</span>
                                     </div>
-                                    <span
-                                      style={{
-                                        fontSize: "11px", fontWeight: "700", padding: "3px 10px", borderRadius: "20px",
-                                        background: p.status === "approved" ? "rgba(16,185,129,0.12)" : "rgba(245,158,11,0.12)",
-                                        color: p.status === "approved" ? "var(--success)" : "var(--warning)",
-                                      }}
-                                    >
-                                      {p.status}
-                                    </span>
+                                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                                      <span
+                                        style={{
+                                          fontSize: "11px", fontWeight: "700", padding: "3px 10px", borderRadius: "20px",
+                                          background: p.status === "approved" ? "rgba(16,185,129,0.12)" : "rgba(245,158,11,0.12)",
+                                          color: p.status === "approved" ? "var(--success)" : "var(--warning)",
+                                        }}
+                                      >
+                                        {p.status}
+                                      </span>
+                                      <button
+                                        onClick={() => handleRemovePlayer(p.id, coach.id)}
+                                        disabled={removePlayerLoading === p.id}
+                                        style={{
+                                          background: "rgba(239,68,68,0.1)",
+                                          color: "var(--danger)",
+                                          border: "none",
+                                          padding: "5px 10px",
+                                          borderRadius: "6px",
+                                          cursor: removePlayerLoading === p.id ? "not-allowed" : "pointer",
+                                          fontSize: "12px",
+                                          fontWeight: "700",
+                                          opacity: removePlayerLoading === p.id ? 0.6 : 1,
+                                        }}
+                                      >
+                                        {removePlayerLoading === p.id ? "Removing…" : "Remove"}
+                                      </button>
+                                    </div>
                                   </div>
                                 ))}
                               </div>

@@ -100,8 +100,7 @@ export default function OnboardingPage() {
           ♟
         </div>
         <h1
-          className="text-gradient"
-          style={{ fontSize: "28px", marginBottom: "12px" }}
+          style={{ fontSize: "28px", marginBottom: "12px", color: "var(--text-primary)" }}
         >
           Let&apos;s Get Started
         </h1>

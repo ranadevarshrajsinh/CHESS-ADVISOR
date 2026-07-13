@@ -3,9 +3,15 @@ import { useState, useEffect, Suspense, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
-import { Crown, User, Lock, Mail, Eye, EyeOff, Loader2, School, UserCheck, Award, Building } from "lucide-react";
+import { Crown, User, Lock, Mail, Eye, EyeOff, Loader2, School, UserCheck, Award, Building, CheckCircle, XCircle } from "lucide-react";
 
 type Tab = "player" | "coach" | "academy";
+
+function generateInviteCode() {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const seg = () => Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+  return `${seg()}-${seg()}`;
+}
 
 const TAB_META = {
   player:  { label: "♟ Player",   color: "var(--accent-color)", shadow: "rgba(29,193,137,0.3)",  bg: "linear-gradient(135deg,#10b981,#34d399)" },
@@ -211,10 +217,13 @@ function RegisterContent() {
   // ── Player state ──
   const [pFullName, setPFullName] = useState("");
   const [pUsername, setPUsername] = useState("");
+  const [pInviteCode, setPInviteCode] = useState("");
   const [pCoachId, setPCoachId] = useState("");
-  const [coaches, setCoaches] = useState<{ id: string; full_name: string }[]>([]);
+  const [codeStatus, setCodeStatus] = useState<"idle" | "checking" | "valid" | "invalid">("idle");
+  const [resolvedCoachName, setResolvedCoachName] = useState("");
   const [pLoading, setPLoading] = useState(false);
   const [pError, setPError] = useState("");
+  const [pErrorLoginLink, setPErrorLoginLink] = useState(false);
 
   // ── Coach state ──
   const [cFullName, setCFullName] = useState("");
@@ -238,24 +247,42 @@ function RegisterContent() {
   const [aError, setAError] = useState("");
 
   useEffect(() => {
-    supabase.from("profiles").select("id, full_name").eq("role", "coach").eq("status", "approved").order("full_name")
-      .then(({ data }) => { if (data) setCoaches(data); });
     supabase.from("academies").select("id, name").eq("status", "approved").order("name")
       .then(({ data }) => { if (data) setAcademies(data); });
   }, []);
+
+  useEffect(() => {
+    if (pInviteCode.replace("-", "").length < 8) {
+      setCodeStatus("idle"); setResolvedCoachName(""); setPCoachId(""); return;
+    }
+    const timer = setTimeout(async () => {
+      setCodeStatus("checking");
+      const { data } = await supabase
+        .from("profiles").select("id, full_name")
+        .eq("invite_code", pInviteCode.toUpperCase().trim())
+        .eq("role", "coach").eq("status", "approved").single();
+      if (data) { setPCoachId(data.id); setResolvedCoachName(data.full_name); setCodeStatus("valid"); }
+      else { setPCoachId(""); setResolvedCoachName(""); setCodeStatus("invalid"); }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [pInviteCode]);
 
   // ── Player submit ──
   const handlePlayerSubmit = async (e) => {
     e.preventDefault();
     setPError("");
-    if (!pFullName.trim() || !pUsername.trim() || !pCoachId) { setPError("Please fill in all fields."); return; }
+    setPErrorLoginLink(false);
+    if (!pFullName.trim() || !pUsername.trim() || !pCoachId) { setPError("Please fill in all fields and enter a valid invite code."); return; }
     setPLoading(true);
 
     const { data: existing } = await supabase.from("players").select("id, status").eq("chess_username", pUsername.trim().toLowerCase()).single();
     if (existing) {
-      setPError(existing.status === "approved"
-        ? "This username is already registered and approved. Go to login."
-        : "This username is already registered and pending approval.");
+      if (existing.status === "approved") {
+        setPError("This username is already registered and approved.");
+        setPErrorLoginLink(true);
+      } else {
+        setPError("This username is already registered and pending approval.");
+      }
       setPLoading(false);
       return;
     }
@@ -306,6 +333,7 @@ function RegisterContent() {
       role: "coach",
       academy_id: cAcademyId || null,
       status: cAcademyId ? "pending" : "approved",
+      invite_code: generateInviteCode(),
     });
 
     if (profileError) {
@@ -566,18 +594,70 @@ function RegisterContent() {
                 />
               </div>
             </div>
-            <CustomDropdown
-              label="Select Your Coach"
-              value={pCoachId}
-              onChange={setPCoachId}
-              options={coaches.map((c) => ({ value: c.id, label: c.full_name }))}
-              placeholder={coaches.length === 0 ? "Loading coaches..." : "— Select a coach —"}
-              disabled={pLoading || coaches.length === 0}
-              icon={<Award size={18} />}
-              activeColor={meta.color}
-              activeShadow={meta.shadow}
-            />
-            {pError && <ErrorBox message={pError} />}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label className="input-label">Coach Invite Code</label>
+              <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+                <Award
+                  size={18}
+                  style={{ position: "absolute", left: "16px", color: meta.color, opacity: 0.7, pointerEvents: "none" }}
+                />
+                <input
+                  className="input-field"
+                  type="text"
+                  placeholder="e.g. ABCD-1234"
+                  value={pInviteCode}
+                  onChange={(e) => setPInviteCode(e.target.value.toUpperCase())}
+                  disabled={pLoading}
+                  maxLength={9}
+                  style={{
+                    paddingLeft: "46px",
+                    paddingRight: "46px",
+                    border:
+                      codeStatus === "valid"
+                        ? "1px solid var(--accent-color)"
+                        : codeStatus === "invalid"
+                        ? "1px solid var(--danger)"
+                        : focusedField === "pInviteCode"
+                        ? `1px solid ${meta.color}`
+                        : "1px solid var(--input-border)",
+                    boxShadow:
+                      codeStatus === "valid"
+                        ? "0 0 0 3px rgba(29,193,137,0.15)"
+                        : codeStatus === "invalid"
+                        ? "0 0 0 3px rgba(239,68,68,0.15)"
+                        : "none",
+                    transition: "all 0.3s ease",
+                  }}
+                  onFocus={() => setFocusedField("pInviteCode")}
+                  onBlur={() => setFocusedField(null)}
+                />
+                <div style={{ position: "absolute", right: "14px", display: "flex", alignItems: "center" }}>
+                  {codeStatus === "checking" && <Loader2 size={16} className="animate-spin" style={{ color: "var(--text-secondary)" }} />}
+                  {codeStatus === "valid" && <CheckCircle size={16} style={{ color: "var(--accent-color)" }} />}
+                  {codeStatus === "invalid" && <XCircle size={16} style={{ color: "var(--danger)" }} />}
+                </div>
+              </div>
+              {codeStatus === "valid" && (
+                <p style={{ fontSize: "12px", color: "var(--accent-color)", marginTop: "2px" }}>
+                  Coach: {resolvedCoachName}
+                </p>
+              )}
+              {codeStatus === "invalid" && (
+                <p style={{ fontSize: "12px", color: "var(--danger)", marginTop: "2px" }}>
+                  Invalid or unrecognised invite code.
+                </p>
+              )}
+            </div>
+            {pError && (
+              <div style={{ color: "var(--danger)", fontSize: "13px", background: "rgba(239,68,68,0.08)", padding: "10px 14px", borderRadius: "8px", border: "1px solid rgba(239,68,68,0.2)" }}>
+                {pError}{" "}
+                {pErrorLoginLink && (
+                  <Link href="/login" style={{ color: "var(--danger)", fontWeight: "700", textDecoration: "underline" }}>
+                    Go to login →
+                  </Link>
+                )}
+              </div>
+            )}
             <button
               type="submit"
               style={{
@@ -1262,10 +1342,12 @@ function RegisterContent() {
                 position: "absolute",
                 bottom: "-2px",
                 left: "0",
-                width: linkHovered ? "100%" : "0%",
+                width: "100%",
                 height: "1px",
                 backgroundColor: meta.color,
-                transition: "width 0.3s ease",
+                transform: linkHovered ? "scaleX(1)" : "scaleX(0)",
+                transformOrigin: "left",
+                transition: "transform 0.3s ease",
               }}
             />
           </Link>

@@ -380,7 +380,7 @@ export default function PuzzlesPage() {
         />
       )}
 
-      <div className="container page-content-mobile" style={{ paddingTop: "32px", paddingBottom: "48px" }}>
+      <div className="container page-content-mobile puzzle-viewport" style={{ paddingTop: "32px", paddingBottom: "48px" }}>
 
         {/* ── Page header ── */}
         <div style={{ marginBottom: "24px" }}>
@@ -629,7 +629,7 @@ export default function PuzzlesPage() {
           </aside>
 
           {/* ─────────── CENTER: Board ─────────── */}
-          <div data-panel="board" style={{ gridArea: "board", minWidth: 0, alignSelf: "center" }}>
+          <div data-panel="board" style={{ gridArea: "board", minWidth: 0, alignSelf: "start" }}>
 
             {/* Survival status bar */}
             {mode === "survival" && !gameOver && (

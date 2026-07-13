@@ -53,7 +53,7 @@ function TH({ label, k, sortKey, sortDesc, toggle }: THProps) {
     <th
       onClick={() => toggle(k)}
       style={{
-        padding: "10px 12px",
+        padding: "14px 12px",
         color: "var(--text-secondary)",
         fontSize: "12px",
         textTransform: "uppercase",
@@ -62,6 +62,7 @@ function TH({ label, k, sortKey, sortDesc, toggle }: THProps) {
         userSelect: "none",
         fontWeight: sortKey === k ? "700" : "400",
         textAlign: k === "name" ? "left" : "right",
+        minHeight: "44px",
       }}
     >
       <span

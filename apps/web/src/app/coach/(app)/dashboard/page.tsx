@@ -175,6 +175,9 @@ export default function CoachDashboardPage() {
   );
   const [statsLoading, setStatsLoading] = useState(false);
 
+  const [inviteCode, setInviteCode] = useState<string | null>(null);
+  const [codeCopied, setCodeCopied] = useState(false);
+
   // Roster sort state
   const [sortKey, setSortKey] = useState<SortKey>("full_name");
   const [sortDesc, setSortDesc] = useState(false);
@@ -242,6 +245,8 @@ export default function CoachDashboardPage() {
       return;
     }
     fetchPlayers();
+    supabase.from("profiles").select("invite_code").eq("id", coachProfile.id).single()
+      .then(({ data }) => { if (data) setInviteCode(data.invite_code); });
     if (coachProfile.academy_id) {
       setAcademyLoading(true);
       const fetchAcademy = async () => {
@@ -255,6 +260,20 @@ export default function CoachDashboardPage() {
       };
       fetchAcademy();
     }
+    const channel = supabase
+      .channel("coach-players-realtime")
+      .on(
+        "postgres_changes",
+        { event: "DELETE", schema: "public", table: "players", filter: `coach_id=eq.${coachProfile.id}` },
+        (payload) => {
+          const deletedId = (payload.old as { id: string }).id;
+          setApprovedPlayers((prev) => prev.filter((p) => p.id !== deletedId));
+          setPendingPlayers((prev) => prev.filter((p) => p.id !== deletedId));
+        }
+      )
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coachProfile]);
 
@@ -439,6 +458,57 @@ export default function CoachDashboardPage() {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Invite code card */}
+        <div
+          className="glass"
+          style={{
+            padding: "16px 20px",
+            borderRadius: "16px",
+            border: "1px solid rgba(99,102,241,0.2)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "12px",
+            marginBottom: "28px",
+          }}
+        >
+          <div>
+            <p style={{ fontSize: "11px", fontWeight: "700", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: "4px" }}>
+              Your Invite Code
+            </p>
+            <p style={{ fontSize: "22px", fontWeight: "800", fontFamily: "'Space Grotesk', monospace", letterSpacing: "0.12em", color: "var(--text-primary)" }}>
+              {inviteCode ?? "—"}
+            </p>
+            <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "2px" }}>
+              Share this with students so they can join your roster
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              if (!inviteCode) return;
+              navigator.clipboard.writeText(inviteCode);
+              setCodeCopied(true);
+              setTimeout(() => setCodeCopied(false), 2000);
+            }}
+            disabled={!inviteCode}
+            style={{
+              padding: "10px 16px",
+              borderRadius: "10px",
+              background: "rgba(99,102,241,0.1)",
+              border: "1px solid rgba(99,102,241,0.25)",
+              color: "#818cf8",
+              fontSize: "13px",
+              fontWeight: "600",
+              cursor: inviteCode ? "pointer" : "not-allowed",
+              whiteSpace: "nowrap",
+              opacity: inviteCode ? 1 : 0.5,
+              transition: "all 0.2s ease",
+            }}
+          >
+            {codeCopied ? "Copied!" : "Copy Code"}
+          </button>
         </div>
 
         {/* Tabs */}

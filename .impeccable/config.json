@@ -2,8 +2,22 @@
   "detector": {
     "ignoreRules": [],
     "ignoreFiles": [
-      "src/components/PuzzleBoard.tsx"
+      "src/components/PuzzleBoard.tsx",
+      "apps/web/src/app/register/page.tsx"
     ],
-    "ignoreValues": []
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "reason": "Committed design system choice: Inter chosen for readability in dense data/labels per DESIGN.md",
+        "createdAt": "2026-07-09T19:59:00.845Z"
+      },
+      {
+        "rule": "overused-font",
+        "value": "space grotesk",
+        "reason": "Committed design system choice: Space Grotesk chosen for geometric technical character in headings per DESIGN.md",
+        "createdAt": "2026-07-09T19:59:04.321Z"
+      }
+    ]
   }
 }

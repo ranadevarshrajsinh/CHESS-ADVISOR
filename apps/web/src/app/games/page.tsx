@@ -6,6 +6,7 @@ import Loader from "@/components/Loader";
 import GameCard from "@/components/GameCard";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { fetchGamesByTimeControl } from "@/services/api";
+import { ArrowLeft } from "lucide-react";
 
 const TC_META: Record<string, { label: string; icon: string }> = {
   rapid:  { label: "Rapid",  icon: "🕐" },
@@ -62,7 +63,8 @@ function GamesPageInner() {
                 padding: 0, display: "flex", alignItems: "center", gap: "4px", marginBottom: "10px",
               }}
             >
-              ← Dashboard
+              <ArrowLeft size={14} />
+              Dashboard
             </button>
             <h1 style={{ fontSize: "28px", fontWeight: "800", margin: "0 0 6px" }}>
               {icon} {label} Games
@@ -127,7 +129,7 @@ function GamesPageInner() {
         ) : (
           <div style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fill, minmax(min(300px, 100%), 1fr))",
             gap: "20px",
           }}>
             {games.map((g, i) => (

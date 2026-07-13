@@ -280,7 +280,7 @@ button {
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
-  padding: 0 48px;
+  padding: 0 20px;
 }
 
 .flex-center {
@@ -300,18 +300,6 @@ button {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-}
-
-/* ─── Typography ────────────────────────────────────────────────────────── */
-.text-gradient {
-  background: linear-gradient(
-    135deg,
-    #ffffff 0%,
-    rgba(255, 255, 255, 0.6) 100%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 /* ─── Theme toggle button ───────────────────────────────────────────────── */
@@ -448,6 +436,62 @@ button {
   }
   .puzzle-filter-section { flex: 0 0 auto; min-width: 160px; }
   .puzzle-filter-section--type { flex: 1 1 100%; }
+  /* Constrain the type options list so 30+ entries don't balloon the filter bar */
+  .puzzle-filter-section--type > div {
+    max-height: 200px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-subtle) transparent;
+  }
+  .puzzle-filter-section--type > div::-webkit-scrollbar { width: 3px; }
+  .puzzle-filter-section--type > div::-webkit-scrollbar-track { background: transparent; }
+  .puzzle-filter-section--type > div::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 99px; }
+}
+
+/* ── Puzzle: viewport-locked layout (no page scroll on desktop) ────────── */
+@media (min-width: 769px) {
+  /* Container fills exactly the viewport area below the fixed header */
+  .puzzle-viewport {
+    height: calc(100dvh - 80px); /* 80px = .page-wrapper padding-top */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 0;           /* remove scroll-tail padding */
+  }
+
+  /* Cockpit grows to fill space below the page title row */
+  .puzzle-viewport .puzzle-cockpit {
+    flex: 1;
+    min-height: 0;
+    align-items: stretch;        /* all columns fill cockpit height */
+    overflow: hidden;
+  }
+
+  /* Each panel fills its column and scrolls internally */
+  .puzzle-viewport .puzzle-filter-panel {
+    position: static;
+    top: auto;
+    max-height: none;
+    height: 100%;
+    overflow-y: auto;
+  }
+
+  .puzzle-viewport [data-panel="board"] {
+    height: 100%;
+    overflow-y: auto;
+  }
+
+  .puzzle-viewport [data-panel="stats"] {
+    height: 100%;
+    overflow-y: auto;
+  }
+}
+
+/* Medium screens: filter row takes natural height, board+stats row fills rest */
+@media (max-width: 1280px) and (min-width: 769px) {
+  .puzzle-viewport .puzzle-cockpit {
+    grid-template-rows: auto 1fr;
+  }
 }
 
 /* Analysis page: 2-col layout becomes 1-col on mobile */
@@ -464,6 +508,11 @@ button {
 
 /* ─── Mobile Foundation (max-width: 768px) ───────────────────────────────── */
 @media (max-width: 768px) {
+  /* Page wrapper: match 60px mobile header */
+  .page-wrapper {
+    padding-top: 60px;
+  }
+
   /* Container: tighter horizontal padding */
   .container {
     padding: 0 16px;
@@ -698,6 +747,52 @@ button {
   }
 }
 
+/* ─── Load Games form ───────────────────────────────────────────────────── */
+.load-games-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.load-games-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 120px;
+}
+
+@media (max-width: 768px) {
+  .load-games-field {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .load-games-submit {
+    width: 100%;
+  }
+}
+
+/* ─── Report page action buttons ────────────────────────────────────────── */
+.report-action-btns {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .report-action-btns {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .report-action-btns a,
+  .report-action-btns button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 /* Touch devices: replace hover lifts with active press feedback */
 @media (pointer: coarse) {
   .glass-card:hover {
@@ -721,8 +816,25 @@ button {
   }
 }
 
+/* ─── Report page tab panel crossfade ───────────────────────────────────── */
+@keyframes tabFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.tab-panel {
+  animation: tabFadeIn 150ms ease-out forwards;
+}
+
+/* Hide scrollbar on tab bar overflow scroll */
+.tab-bar-scroll::-webkit-scrollbar {
+  display: none;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
+  .tab-panel {
+    animation: none;
+  }
   .animate-fade-in {
     animation: none;
     opacity: 1;

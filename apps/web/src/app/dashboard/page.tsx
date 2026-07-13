@@ -274,24 +274,24 @@ export default function Dashboard() {
                   <div ref={summaryRef} className="glass-card" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                     <div>
                       <div style={{ fontSize: "11px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "10px" }}>Overall</div>
-                      <div style={{ fontSize: "40px", fontWeight: "800", lineHeight: 1 }}>{animGames.toLocaleString()}</div>
+                      <div style={{ fontSize: "clamp(28px, 8vw, 40px)", fontWeight: "800", lineHeight: 1 }}>{animGames.toLocaleString()}</div>
                       <div style={{ fontSize: "13px", color: "var(--text-secondary)", marginTop: "4px" }}>games played</div>
                     </div>
                     <div>
-                      <div style={{ fontSize: "48px", fontWeight: "800", lineHeight: 1, color: "var(--success)" }}>{animWinRate}%</div>
+                      <div style={{ fontSize: "clamp(32px, 10vw, 48px)", fontWeight: "800", lineHeight: 1, color: "var(--success)" }}>{animWinRate}%</div>
                       <div style={{ fontSize: "13px", color: "var(--text-secondary)", marginTop: "4px" }}>overall win rate</div>
                     </div>
                     <div style={{ display: "flex", gap: "24px", paddingTop: "16px", borderTop: "1px solid var(--glass-border)" }}>
                       <div>
-                        <div style={{ fontSize: "20px", fontWeight: "700", color: "var(--success)" }}>{animWins.toLocaleString()}</div>
+                        <div style={{ fontSize: "clamp(16px, 5vw, 20px)", fontWeight: "700", color: "var(--success)" }}>{animWins.toLocaleString()}</div>
                         <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "2px" }}>Wins</div>
                       </div>
                       <div>
-                        <div style={{ fontSize: "20px", fontWeight: "700", color: "var(--danger)" }}>{animLosses.toLocaleString()}</div>
+                        <div style={{ fontSize: "clamp(16px, 5vw, 20px)", fontWeight: "700", color: "var(--danger)" }}>{animLosses.toLocaleString()}</div>
                         <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "2px" }}>Losses</div>
                       </div>
                       <div>
-                        <div style={{ fontSize: "20px", fontWeight: "700", color: "var(--warning)" }}>{animDraws.toLocaleString()}</div>
+                        <div style={{ fontSize: "clamp(16px, 5vw, 20px)", fontWeight: "700", color: "var(--warning)" }}>{animDraws.toLocaleString()}</div>
                         <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "2px" }}>Draws</div>
                       </div>
                     </div>
@@ -327,7 +327,7 @@ export default function Dashboard() {
                             borderBottom: "1px solid var(--glass-border)",
                           }}>
                             <div style={{ fontSize: "11px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "12px" }}>As {color}</div>
-                            <div style={{ fontSize: "34px", fontWeight: "800", color: winRateColor(pct), lineHeight: 1, marginBottom: "10px" }} aria-label={`${pct}% win rate as ${color}`}>{pct}%</div>
+                            <div style={{ fontSize: "clamp(24px, 7vw, 34px)", fontWeight: "800", color: winRateColor(pct), lineHeight: 1, marginBottom: "10px" }} aria-label={`${pct}% win rate as ${color}`}>{pct}%</div>
                             <div style={{ display: "flex", gap: "10px", fontSize: "12px", marginBottom: "10px" }}>
                               <span style={{ color: "var(--success)" }} aria-label={`${wins} wins`}>{wins}W</span>
                               <span style={{ color: "var(--danger)" }} aria-label={`${losses} losses`}>{losses}L</span>
@@ -354,7 +354,7 @@ export default function Dashboard() {
                         {stats?.accuracy != null ? (
                           <>
                             <div style={{ fontSize: "11px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "4px" }}>Avg Accuracy</div>
-                            <div style={{ fontSize: "22px", fontWeight: "700", color: "var(--accent-color)" }}>{parseFloat(stats.accuracy).toFixed(1)}%</div>
+                            <div style={{ fontSize: "clamp(16px, 5vw, 22px)", fontWeight: "700", color: "var(--accent-color)" }}>{parseFloat(stats.accuracy).toFixed(1)}%</div>
                           </>
                         ) : (
                           <span style={{ fontSize: "12px", color: "var(--text-secondary)" }}>No analysis yet</span>
@@ -574,21 +574,21 @@ export default function Dashboard() {
                   className="glass-card"
                   style={{ marginBottom: "20px", padding: "20px" }}
                 >
-                  <form onSubmit={handleLoadGames} style={{ display: "flex", flexWrap: "wrap", gap: "16px", alignItems: "flex-end" }}>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "6px", minWidth: "140px" }}>
+                  <form onSubmit={handleLoadGames} className="load-games-form">
+                    <div className="load-games-field">
                       <label htmlFor="fetch-platform" style={{ fontSize: "12px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Platform</label>
                       <select
                         id="fetch-platform"
                         className="input-field"
                         value={fetchPlatform}
                         onChange={(e) => setFetchPlatform(e.target.value)}
-                        style={{ padding: "8px 12px", fontSize: "13px" }}
+                        style={{ padding: "8px 12px", fontSize: "16px" }}
                       >
                         <option value="chess.com">Chess.com</option>
                         <option value="lichess">Lichess</option>
                       </select>
                     </div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "6px", minWidth: "100px" }}>
+                    <div className="load-games-field">
                       <label htmlFor="fetch-count" style={{ fontSize: "12px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Count (max 50)</label>
                       <input
                         id="fetch-count"
@@ -598,10 +598,10 @@ export default function Dashboard() {
                         onChange={(e) => setFetchLimit(Math.min(50, Math.max(1, Number(e.target.value))))}
                         min={1}
                         max={50}
-                        style={{ padding: "8px 12px", fontSize: "13px" }}
+                        style={{ padding: "8px 12px", fontSize: "16px" }}
                       />
                     </div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                    <div className="load-games-field">
                       <span id="fetch-mode-label" style={{ fontSize: "12px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Mode</span>
                       <div role="group" aria-labelledby="fetch-mode-label" style={{ display: "flex", gap: "8px" }}>
                         {(["append", "replace"] as const).map((m) => (
@@ -611,6 +611,7 @@ export default function Dashboard() {
                             onClick={() => { setFetchMode(m); setReplaceConfirmStep(false); }}
                             aria-pressed={fetchMode === m}
                             style={{
+                              flex: 1,
                               padding: "8px 14px",
                               fontSize: "12px",
                               fontWeight: "600",
@@ -620,6 +621,7 @@ export default function Dashboard() {
                               color: fetchMode === m ? (m === "replace" ? "var(--danger)" : "var(--accent-color)") : "var(--text-secondary)",
                               cursor: "pointer",
                               textTransform: "capitalize",
+                              minHeight: "44px",
                             }}
                           >
                             {m}
@@ -629,7 +631,7 @@ export default function Dashboard() {
                     </div>
                     <button
                       type="submit"
-                      className="btn btn-primary"
+                      className="btn btn-primary load-games-submit"
                       disabled={fetching}
                       style={{
                         padding: "8px 20px",
@@ -662,7 +664,7 @@ export default function Dashboard() {
                   ? games as any[]
                   : (games as any[]).filter(g => (g.time_class || "").toLowerCase() === gameFilter);
                 return filtered.length > 0 ? (
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(300px, 100%), 1fr))", gap: "20px" }}>
                     {filtered.map((g, i) => (
                       <GameCard key={i} game={g} username={chessUsername} />
                     ))}

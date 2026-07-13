@@ -244,7 +244,7 @@ function BatchPageInner() {
                     <div style={{ display: "flex", alignItems: "center", gap: "6px", background: "var(--surface-2)", borderRadius: "8px", padding: "4px 8px", border: "1px solid var(--glass-border)" }}>
                       <button
                         onClick={() => setAnalyzeCount(c => Math.max(1, c - 1))}
-                        style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-primary)", fontSize: "16px", lineHeight: 1, padding: "0 4px" }}
+                        style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-primary)", fontSize: "16px", lineHeight: 1, padding: "0 4px", minWidth: "36px", height: "36px", display: "flex", alignItems: "center", justifyContent: "center" }}
                       >−</button>
                       <input
                         type="number"
@@ -261,7 +261,7 @@ function BatchPageInner() {
                           background: "none",
                           border: "none",
                           color: "var(--text-primary)",
-                          fontSize: "14px",
+                          fontSize: "16px",
                           fontWeight: "700",
                           outline: "none",
                           fontVariantNumeric: "tabular-nums",
@@ -270,7 +270,7 @@ function BatchPageInner() {
                       />
                       <button
                         onClick={() => setAnalyzeCount(c => Math.min(filteredGames.length, c + 1))}
-                        style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-primary)", fontSize: "16px", lineHeight: 1, padding: "0 4px" }}
+                        style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-primary)", fontSize: "16px", lineHeight: 1, padding: "0 4px", minWidth: "36px", height: "36px", display: "flex", alignItems: "center", justifyContent: "center" }}
                       >+</button>
                     </div>
                     <span style={{ fontSize: "13px", color: "var(--text-secondary)" }}>of {filteredGames.length} games</span>
@@ -331,10 +331,12 @@ function BatchPageInner() {
               <div style={{ flex: 1, height: "8px", borderRadius: "4px", background: "var(--surface-2, rgba(255,255,255,0.06))", overflow: "hidden" }}>
                 <div style={{
                   height: "100%",
-                  width: gamesTotal > 0 ? `${progressPct}%` : "0%",
+                  width: "100%",
                   background: "var(--accent-color)",
                   borderRadius: "4px",
-                  transition: "width 0.5s ease",
+                  transformOrigin: "left",
+                  transform: `scaleX(${gamesTotal > 0 ? progressPct / 100 : 0})`,
+                  transition: "transform 0.5s ease",
                 }} />
               </div>
               <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--accent-color)", minWidth: "36px", textAlign: "right", fontVariantNumeric: "tabular-nums" }}>

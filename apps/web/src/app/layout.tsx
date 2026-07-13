@@ -10,6 +10,12 @@ export const metadata = {
   description: "A premium platform to analyze and improve your chess games",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
