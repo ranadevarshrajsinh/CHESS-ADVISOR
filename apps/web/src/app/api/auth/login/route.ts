@@ -22,6 +22,8 @@ export async function POST(request: Request) {
     request.headers.get("x-real-ip") ??
     undefined;
 
+  try {
+
   // ── Player login (no @ → chess username) ─────────────────────────────────────
   if (!id.includes("@")) {
     const player = await prisma.players.findUnique({
@@ -122,4 +124,12 @@ export async function POST(request: Request) {
   });
 
   return setSessionCookie(response, rawToken);
+
+  } catch (err) {
+    console.error("[/api/auth/login] Unhandled error:", err);
+    return NextResponse.json(
+      { error: "Internal server error", detail: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
+  }
 }

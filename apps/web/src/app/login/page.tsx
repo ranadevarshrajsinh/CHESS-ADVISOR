@@ -76,7 +76,7 @@ function LoginForm() {
 
 
       if (!res.ok) {
-        setError(data.error ?? "Login failed. Please try again.");
+        setError(data.error ?? data.detail ?? "Login failed. Please try again.");
         setLoading(false);
         return;
       }
