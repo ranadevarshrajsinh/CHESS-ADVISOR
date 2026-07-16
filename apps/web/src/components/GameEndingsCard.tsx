@@ -5,6 +5,7 @@ type EndingStats = {
   timeout: number;
   resignation: number;
   checkmate: number;
+  aborted: number;
   other: number;
 };
 
@@ -17,6 +18,7 @@ const WINS_COLORS = {
   checkmate:   "#10b981",
   resignation: "#34d399",
   timeout:     "#22d3ee",
+  aborted:     "#a3a3a3",
   other:       "#52525b",
 };
 
@@ -24,6 +26,7 @@ const LOSSES_COLORS = {
   checkmate:   "#ef4444",
   resignation: "#f97316",
   timeout:     "#f59e0b",
+  aborted:     "#a3a3a3",
   other:       "#52525b",
 };
 
@@ -31,6 +34,7 @@ const ENDING_LABELS = {
   timeout:    "On time",
   resignation: "Resignation",
   checkmate:  "Checkmate",
+  aborted:    "Aborted",
   other:      "Other",
 };
 
@@ -44,6 +48,7 @@ function EndingBar({ stats, variant }: { stats: EndingStats; variant: "wins" | "
     { key: "checkmate",   count: stats.checkmate },
     { key: "resignation", count: stats.resignation },
     { key: "timeout",     count: stats.timeout },
+    { key: "aborted",     count: stats.aborted },
     { key: "other",       count: stats.other },
   ];
   const segments = allSegments.filter((s) => s.count > 0);

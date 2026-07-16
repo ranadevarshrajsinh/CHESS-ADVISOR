@@ -237,6 +237,97 @@ function classifyGame(g: any): string {
   return "daily";
 }
 
+const PHASES = ["opening", "middlegame", "endgame"] as const;
+
+// Mirrors metrics/time_analysis.py (TimeAnalyzer.analyze_game_time) + the
+// batch-level aggregation in worker_core/batch_analyzer.py's _aggregate_results,
+// but computed directly from individual_games[].move_history so it can be
+// recomputed for any subset (e.g. a single time-class) instead of only the
+// full, unfiltered batch.
+function computeTimeAnalysisForGames(games: any[]) {
+  let gamesWithTimeData = 0;
+  let gamesWithTimePressure = 0;
+  let totalTimePressureMoves = 0;
+  const phaseTimeBuckets: Record<string, number[]> = { opening: [], middlegame: [], endgame: [] };
+
+  for (const g of games) {
+    const movesWithTime = (g.move_history || []).filter((m: any) => m.time_spent != null);
+    if (movesWithTime.length === 0) continue;
+    gamesWithTimeData++;
+
+    const gamePhaseTimes: Record<string, number[]> = { opening: [], middlegame: [], endgame: [] };
+    for (const m of movesWithTime) {
+      const phase = PHASES.includes(m.phase) ? m.phase : "middlegame";
+      gamePhaseTimes[phase].push(m.time_spent);
+    }
+    for (const phase of PHASES) {
+      const times = gamePhaseTimes[phase];
+      if (times.length) phaseTimeBuckets[phase].push(times.reduce((a, b) => a + b, 0) / times.length);
+    }
+
+    const pressureMoves = movesWithTime.filter((m: any) => m.time_spent < 5).length;
+    totalTimePressureMoves += pressureMoves;
+    if (pressureMoves >= 3) gamesWithTimePressure++;
+  }
+
+  const phase_avg_time: Record<string, number | null> = {};
+  for (const phase of PHASES) {
+    const times = phaseTimeBuckets[phase];
+    phase_avg_time[phase] = times.length
+      ? Math.round((times.reduce((a, b) => a + b, 0) / times.length) * 100) / 100
+      : null;
+  }
+
+  return {
+    games_with_time_data: gamesWithTimeData,
+    games_with_time_pressure: gamesWithTimePressure,
+    time_pressure_pct:
+      gamesWithTimeData > 0 ? Math.round((gamesWithTimePressure / gamesWithTimeData) * 1000) / 10 : 0,
+    avg_time_pressure_moves_per_game:
+      gamesWithTimeData > 0 ? Math.round((totalTimePressureMoves / gamesWithTimeData) * 10) / 10 : 0,
+    phase_avg_time,
+  };
+}
+
+// Mirrors mistakes/mistake_frequency.py (MistakeFrequency.analyze_frequency +
+// aggregate_batch_frequency), computed from individual_games[].move_history
+// so it reflects only the filtered subset instead of the whole batch.
+function computeMistakeStatsForGames(games: any[]) {
+  const counts = { blunders: 0, mistakes: 0, inaccuracies: 0 };
+  const by_phase: Record<string, number> = { opening: 0, middlegame: 0, endgame: 0 };
+  const by_nature: Record<string, number> = {};
+  let totalMoves = 0;
+
+  for (const g of games) {
+    for (const m of (g.move_history || [])) {
+      totalMoves++;
+      const quality = m.quality;
+      const phase = PHASES.includes(m.phase) ? m.phase : "middlegame";
+      if (quality === "Blunder") counts.blunders++;
+      else if (quality === "Mistake") counts.mistakes++;
+      else if (quality === "Inaccuracy") counts.inaccuracies++;
+
+      if (quality === "Blunder" || quality === "Mistake" || quality === "Inaccuracy") {
+        by_phase[phase]++;
+        if (m.error_nature && m.error_nature !== "None") {
+          by_nature[m.error_nature] = (by_nature[m.error_nature] || 0) + 1;
+        }
+      }
+    }
+  }
+
+  const total_errors = counts.blunders + counts.mistakes + counts.inaccuracies;
+  return {
+    counts,
+    total_errors,
+    by_phase,
+    by_nature,
+    error_rate: totalMoves > 0 ? Math.round((total_errors / totalMoves) * 1000) / 10 : 0,
+    games_analyzed: games.length,
+    errors_per_game: games.length > 0 ? Math.round((total_errors / games.length) * 100) / 100 : 0,
+  };
+}
+
 function filterBatchByTc(br: any, tc: string): any {
   const all: any[] = br.individual_games || [];
   const hasTimeClassData = all.some((g) => g.time_class);
@@ -295,6 +386,10 @@ function filterBatchByTc(br: any, tc: string): any {
     phase_performance:        phasePerf,
     individual_games:         filtered,
     openings: { ...br.openings, performance: { by_opening: byOpening } },
+    // These previously leaked the full, unfiltered batch's numbers when a tc
+    // filter was applied — recompute from just the filtered games instead.
+    time_analysis:  computeTimeAnalysisForGames(filtered),
+    mistake_stats:  computeMistakeStatsForGames(filtered),
   };
 }
 
@@ -531,16 +626,68 @@ function applyIndividualAccuracies(
   };
 }
 
-function computeNewMetrics(indJobs: any[]) {
-  const completed = indJobs.filter((j) => j.result);
+// Common shape both analysis_jobs rows and batch individual_games[] entries
+// get normalized into, so game-level stats (time-per-move, game endings,
+// openings by color, mistakes by phase) can be derived identically regardless
+// of which table the games actually came from.
+interface NormalizedGame {
+  user_result?: string;
+  result?: string;       // legacy "1-0"/"0-1"/"1/2-1/2" fallback
+  is_white?: boolean;    // for the legacy win/loss fallback
+  opening?: string;
+  user_color?: "white" | "black";
+  move_history: any[];
+  termination?: string;  // lowercased Termination header, when known
+  is_checkmate?: boolean; // inferred fallback when termination is unknown
+}
 
+function normalizeAnalysisJob(job: any, username: string): NormalizedGame {
+  const r = job.result ?? {};
+  return {
+    user_result: r.user_result,
+    result: r.result,
+    is_white: (r.white_player ?? "").toLowerCase() === username.toLowerCase(),
+    opening: r.opening_name,
+    user_color: r.user_color,
+    move_history: r.move_history ?? [],
+    termination: r.metadata?.Termination ? String(r.metadata.Termination).toLowerCase() : undefined,
+  };
+}
+
+// batch_jobs individual_games[] entries don't carry the PGN Termination header
+// (batch_analyzer.py's per-game summary omits it) — infer checkmate from the
+// final move's SAN ("#" suffix) instead of losing termination detail entirely.
+function normalizeBatchGame(g: any, username: string): NormalizedGame {
+  const lastMove = g.full_history?.[g.full_history.length - 1];
+  return {
+    user_result: g.user_result,
+    result: g.result,
+    is_white: (g.white ?? "").toLowerCase() === username.toLowerCase(),
+    opening: g.opening,
+    user_color: g.user_color,
+    move_history: g.move_history ?? [],
+    is_checkmate: typeof lastMove?.san === "string" && lastMove.san.endsWith("#"),
+  };
+}
+
+function deriveGameLevelStats(games: NormalizedGame[]) {
   const moveTimeBuckets: Record<number, number[]> = {};
-  for (const job of completed) {
-    const mh: any[] = (job.result as any)?.move_history ?? [];
-    for (const m of mh) {
+  const mistakes_by_phase: Record<string, { blunders: number; mistakes: number; inaccuracies: number }> = {
+    opening:    { blunders: 0, mistakes: 0, inaccuracies: 0 },
+    middlegame: { blunders: 0, mistakes: 0, inaccuracies: 0 },
+    endgame:    { blunders: 0, mistakes: 0, inaccuracies: 0 },
+  };
+  for (const g of games) {
+    for (const m of g.move_history) {
       if (m.time_spent != null && m.move_number != null && m.move_number <= 50) {
         if (!moveTimeBuckets[m.move_number]) moveTimeBuckets[m.move_number] = [];
         moveTimeBuckets[m.move_number].push(Number(m.time_spent));
+      }
+
+      if (m.phase && m.phase in mistakes_by_phase) {
+        if (m.quality === "Blunder") mistakes_by_phase[m.phase].blunders++;
+        else if (m.quality === "Mistake") mistakes_by_phase[m.phase].mistakes++;
+        else if (m.quality === "Inaccuracy") mistakes_by_phase[m.phase].inaccuracies++;
       }
     }
   }
@@ -552,18 +699,28 @@ function computeNewMetrics(indJobs: any[]) {
     .sort((a, b) => a.move - b.move);
 
   const game_endings = {
-    wins:   { total: 0, timeout: 0, resignation: 0, checkmate: 0, other: 0 },
-    losses: { total: 0, timeout: 0, resignation: 0, checkmate: 0, other: 0 },
+    wins:   { total: 0, timeout: 0, resignation: 0, checkmate: 0, aborted: 0, other: 0 },
+    losses: { total: 0, timeout: 0, resignation: 0, checkmate: 0, aborted: 0, other: 0 },
   };
-  for (const job of completed) {
-    const r = job.result as any;
-    if (!r?.user_result || (r.user_result !== "win" && r.user_result !== "loss")) continue;
-    const termStr = (r.metadata?.Termination ?? "").toLowerCase();
-    let termType: "timeout" | "resignation" | "checkmate" | "other" = "other";
-    if (termStr.includes("time") || termStr.includes("forfeit")) termType = "timeout";
-    else if (termStr.includes("resign") || termStr.includes("abandon")) termType = "resignation";
-    else if (termStr.includes("checkmate") || termStr.includes("checkmated")) termType = "checkmate";
-    const bucket = r.user_result === "win" ? game_endings.wins : game_endings.losses;
+  for (const g of games) {
+    let userResult = g.user_result;
+    if (userResult !== "win" && userResult !== "loss") {
+      // Legacy rows (pre user_result) only have the raw "1-0"/"0-1" result
+      // plus player names — derive the outcome instead of dropping the game.
+      if (g.result !== "1-0" && g.result !== "0-1") continue; // draw, unknown, or no data at all
+      userResult = (g.result === "1-0") === g.is_white ? "win" : "loss";
+    }
+
+    let termType: "timeout" | "resignation" | "checkmate" | "aborted" | "other" = "other";
+    if (g.termination) {
+      if (g.termination.includes("abandon")) termType = "aborted";
+      else if (g.termination.includes("resign")) termType = "resignation";
+      else if (g.termination.includes("time") || g.termination.includes("forfeit")) termType = "timeout";
+      else if (g.termination.includes("checkmate") || g.termination.includes("checkmated")) termType = "checkmate";
+    } else if (g.is_checkmate) {
+      termType = "checkmate";
+    }
+    const bucket = userResult === "win" ? game_endings.wins : game_endings.losses;
     bucket.total++;
     bucket[termType]++;
   }
@@ -571,15 +728,14 @@ function computeNewMetrics(indJobs: any[]) {
   const colorMap: Record<"white" | "black", Record<string, { wins: number; losses: number; draws: number; games: number }>> = {
     white: {}, black: {},
   };
-  for (const job of completed) {
-    const r = job.result as any;
-    const color: "white" | "black" | undefined = r?.user_color;
-    const name: string | undefined = r?.opening_name;
+  for (const g of games) {
+    const color = g.user_color;
+    const name = g.opening;
     if (!color || !name || (color !== "white" && color !== "black")) continue;
     if (!colorMap[color][name]) colorMap[color][name] = { wins: 0, losses: 0, draws: 0, games: 0 };
     colorMap[color][name].games++;
-    if (r.user_result === "win") colorMap[color][name].wins++;
-    else if (r.user_result === "loss") colorMap[color][name].losses++;
+    if (g.user_result === "win") colorMap[color][name].wins++;
+    else if (g.user_result === "loss") colorMap[color][name].losses++;
     else colorMap[color][name].draws++;
   }
   const toArr = (m: Record<string, { wins: number; losses: number; draws: number; games: number }>) =>
@@ -592,7 +748,20 @@ function computeNewMetrics(indJobs: any[]) {
       .slice(0, 8);
   const openings_by_color = { as_white: toArr(colorMap.white), as_black: toArr(colorMap.black) };
 
-  return { time_per_move, game_endings, openings_by_color };
+  return { time_per_move, game_endings, openings_by_color, mistakes_by_phase };
+}
+
+// Fallback used only when there's no batch data at all — derives the same
+// stats from analysis_jobs, tc-filtered via the PGN's TimeControl header
+// since analysis_jobs has no time_class column.
+function computeNewMetrics(indJobs: any[], username: string, tc?: string) {
+  let completed = indJobs.filter((j) => j.result);
+  if (tc) {
+    completed = completed.filter(
+      (j) => classifyGame({ time_control: (j.result as any)?.metadata?.TimeControl }) === tc
+    );
+  }
+  return deriveGameLevelStats(completed.map((j) => normalizeAnalysisJob(j, username)));
 }
 
 export async function GET(
@@ -626,7 +795,15 @@ export async function GET(
       if (key.replace(/\|/g, "")) byGameKey.set(key, parsed);
     }
 
-    const newMetrics = computeNewMetrics(indJobs);
+    // Game-level stats (game endings, openings by color, mistakes by phase,
+    // time per move) must be derived from whichever dataset is actually
+    // backing this report — a batch's own individual_games when one is in
+    // play, never a blanket analysis_jobs computation, or they silently show
+    // stale numbers from an unrelated, differently-scoped set of games.
+    const gameLevelStatsFromBatch = (batchResult: any) =>
+      deriveGameLevelStats(
+        (batchResult.individual_games || []).map((g: any) => normalizeBatchGame(g, username))
+      );
 
     if (tc && tc !== "all") {
       const tcJob = await prisma.batch_jobs.findFirst({
@@ -637,7 +814,7 @@ export async function GET(
 
       if (tcJob?.result) {
         const merged = applyIndividualAccuracies(tcJob.result, byFilename, byGameKey);
-        return NextResponse.json({ ...buildReportFromBatch(username, merged), ...newMetrics });
+        return NextResponse.json({ ...buildReportFromBatch(username, merged), ...gameLevelStatsFromBatch(merged) });
       }
     }
 
@@ -654,14 +831,17 @@ export async function GET(
         if (filterResult._tc_no_data) {
           return NextResponse.json({ tc_no_data: true, tc, tc_reason: filterResult._tc_reason });
         }
-        return NextResponse.json({ ...buildReportFromBatch(username, filterResult), ...newMetrics });
+        return NextResponse.json({ ...buildReportFromBatch(username, filterResult), ...gameLevelStatsFromBatch(filterResult) });
       }
-      return NextResponse.json({ ...buildReportFromBatch(username, merged), ...newMetrics });
+      return NextResponse.json({ ...buildReportFromBatch(username, merged), ...gameLevelStatsFromBatch(merged) });
     }
 
     if (indJobs.length > 0) {
       const report = buildReportFromJobs(username, indJobs);
-      if (report) return NextResponse.json({ ...report, ...newMetrics });
+      if (report) {
+        const newMetrics = computeNewMetrics(indJobs, username, tc && tc !== "all" ? tc : undefined);
+        return NextResponse.json({ ...report, ...newMetrics });
+      }
     }
 
     const games = await fetchRecentChessComGames(username, 20);

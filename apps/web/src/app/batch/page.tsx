@@ -171,7 +171,7 @@ function BatchPageInner() {
       <main className="container animate-fade-in page-content-mobile" style={{ paddingTop: "40px", paddingBottom: "80px" }}>
 
         {/* Page header */}
-        <div style={{ marginBottom: "32px" }}>
+        <div style={{ marginBottom: "24px" }}>
           <h1 style={{ fontSize: "28px", fontWeight: "800", margin: "0 0 8px" }}>
             Batch Analysis{tcLabel ? ` — ${tcLabel}` : ""}
           </h1>
@@ -180,6 +180,24 @@ function BatchPageInner() {
               ? `Analyzing ${tcLabel} games only using the full Stockfish engine — server-side, so you can close this tab.`
               : "Analyze all your loaded games at once using the full Stockfish engine — server-side, so you can close this tab."}
           </p>
+        </div>
+
+        {/* Time control picker */}
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "32px" }}>
+          {["", "rapid", "blitz", "bullet", "daily"].map(f => {
+            const active = tc === f;
+            return (
+              <button
+                key={f || "all"}
+                onClick={() => router.push(f ? `/batch?tc=${f}` : "/batch")}
+                disabled={isRunning}
+                aria-pressed={active}
+                className={active ? "filter-chip filter-chip--active" : "filter-chip"}
+              >
+                {f ? TC_LABELS[f] : "All formats"}
+              </button>
+            );
+          })}
         </div>
 
         {/* Trigger panel */}
@@ -210,12 +228,6 @@ function BatchPageInner() {
                     <strong>{filteredGames.length}</strong> {tcLabel} game{filteredGames.length !== 1 ? "s" : ""} found on Chess.com
                   </span>
                 )}
-                <button
-                  onClick={() => router.push("/batch")}
-                  style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-secondary)", fontSize: "12px", whiteSpace: "nowrap" }}
-                >
-                  Analyze all formats
-                </button>
               </div>
             )}
             <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "16px" }}>

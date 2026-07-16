@@ -656,6 +656,44 @@ function ReportPageInner() {
             )}
           </div>
         )}
+
+        {reportData.mistakes_by_phase && (
+          <div style={sectionCard}>
+            <h3 style={{ fontSize: "16px", marginBottom: "4px" }}>
+              Mistakes by Phase
+            </h3>
+            <p style={{ fontSize: "13px", color: "var(--text-secondary)", marginBottom: "16px" }}>
+              Where your blunders, mistakes, and inaccuracies actually happen.
+            </p>
+            <ChartBar
+              data={["opening", "middlegame", "endgame"].map((phase) => ({
+                phase: phase.charAt(0).toUpperCase() + phase.slice(1),
+                blunders:     reportData.mistakes_by_phase[phase]?.blunders ?? 0,
+                mistakes:     reportData.mistakes_by_phase[phase]?.mistakes ?? 0,
+                inaccuracies: reportData.mistakes_by_phase[phase]?.inaccuracies ?? 0,
+              }))}
+              xKey="phase"
+              bars={[
+                { key: "blunders",     color: "var(--danger)",  label: "Blunders" },
+                { key: "mistakes",     color: "var(--warning)", label: "Mistakes" },
+                { key: "inaccuracies", color: "#eab308",        label: "Inaccuracies" },
+              ]}
+              height={240}
+            />
+          </div>
+        )}
+
+        {reportData.time_per_move && reportData.time_per_move.length > 0 && (
+          <div style={sectionCard}>
+            <h3 style={{ fontSize: "16px", marginBottom: "4px" }}>
+              Time per move
+            </h3>
+            <p style={{ fontSize: "13px", color: "var(--text-secondary)", marginBottom: "16px" }}>
+              Average seconds spent per move number across analyzed games.
+            </p>
+            <ChartTimePerMove data={reportData.time_per_move} />
+          </div>
+        )}
       </div>
     );
   }
@@ -876,7 +914,7 @@ function ReportPageInner() {
           </div>
         )}
 
-        {(reportData.time_analysis || reportData.mistake_frequency) && (
+        {(reportData.time_analysis || reportData.mistake_frequency || reportData.mistakes_by_phase) && (
           <div
             style={{
               display: "grid",
@@ -975,33 +1013,6 @@ function ReportPageInner() {
                 </div>
               </div>
             )}
-          </div>
-        )}
-
-        {reportData.time_per_move && reportData.time_per_move.length > 0 && (
-          <div
-            style={{
-              background: "var(--surface-1)",
-              border: "1px solid var(--border-subtle)",
-              borderRadius: "var(--radius-md)",
-              padding: "24px",
-            }}
-          >
-            <h3
-              style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 700,
-                fontSize: "16px",
-                color: "var(--text-primary)",
-                marginBottom: "4px",
-              }}
-            >
-              Time per move
-            </h3>
-            <p style={{ fontSize: "13px", color: "var(--text-secondary)", marginBottom: "16px" }}>
-              Average seconds spent per move number across analyzed games.
-            </p>
-            <ChartTimePerMove data={reportData.time_per_move} />
           </div>
         )}
       </div>
