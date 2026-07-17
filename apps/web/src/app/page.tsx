@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { checkHealth } from "@/services/api";
 import { Chessboard } from "react-chessboard";
+import { Globe, Cpu, BookOpen, BarChart3, Target, Camera, ArrowRight, GraduationCap, Crown } from "lucide-react";
 import styles from "./landing.module.css";
 
 // ─── Particle canvas ──────────────────────────────────────────
@@ -13,7 +14,7 @@ function ParticleCanvas() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d")!;
-    const COUNT = 90,
+    const COUNT = 50,
       SPEED = 0.3,
       MAX_DIST = 110;
     let W = 0,
@@ -27,6 +28,7 @@ function ParticleCanvas() {
       a: number;
     }[] = [];
     let raf: number;
+    let paused = false;
     const resize = () => {
       W = canvas.width = window.innerWidth;
       H = canvas.height = window.innerHeight;
@@ -40,6 +42,7 @@ function ParticleCanvas() {
       }));
     };
     const loop = () => {
+      if (paused) return;
       ctx.clearRect(0, 0, W, H);
       pts.forEach((p) => {
         p.x += p.dx;
@@ -70,12 +73,18 @@ function ParticleCanvas() {
       }
       raf = requestAnimationFrame(loop);
     };
+    const onVisibility = () => {
+      paused = document.hidden;
+      if (!paused) { raf = requestAnimationFrame(loop); }
+    };
     resize();
     loop();
     window.addEventListener("resize", resize);
+    document.addEventListener("visibilitychange", onVisibility);
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
   return (
@@ -257,38 +266,38 @@ const MOVE_TIERS = [
 
 const FEATURES = [
   {
-    icon: "♟",
+    Icon: Globe,
     title: "Chess.com & Lichess Integration",
     desc: "Fetch up to 50 recent games directly from Chess.com or Lichess. Games are saved, indexed, and ready for deep analysis instantly.",
     tags: ["Chess.com API", "Lichess NDJSON", "PGN Import"],
   },
   {
-    icon: "⚙",
+    Icon: Cpu,
     title: "Stockfish Deep Analysis",
     desc: "Every move evaluated by Stockfish with dual-gate classification — centipawn loss AND win-probability drop both measured per move.",
     tags: ["Stockfish 17", "Win Prob", "CP Loss"],
   },
   {
-    icon: "📖",
+    Icon: BookOpen,
     title: "Opening Repertoire Analysis",
     desc: "3000+ ECO openings. Longest-prefix match on move sequences. Win rates split by color. Problem openings flagged with study suggestions.",
     tags: ["3000+ ECO", "Win Rates", "Recommendations"],
   },
   {
-    icon: "📊",
+    Icon: BarChart3,
     title: "Pattern & Mistake Detection",
     desc: "Detects 7+ recurring patterns: hanging pieces, missed forks, missed pins, skewers, discovered attacks, back-rank mates, and more.",
     tags: ["7 Patterns", "Per-phase", "Trend Analysis"],
     wide: true,
   },
   {
-    icon: "🎯",
+    Icon: Target,
     title: "Aim Training Goals",
     desc: "Turn analysis into clear weekly aims: fewer blunders, stronger endgames, sharper opening recall, and measurable training focus.",
     tags: ["Aim Score", "Weekly Focus", "Progress"],
   },
   {
-    icon: "📷",
+    Icon: Camera,
     title: "Board Vision (Image → FEN)",
     desc: "Take a photo of any chess board. Our YOLOv8 model (99.4% mAP50) detects all 12 piece types and generates the FEN string instantly.",
     tags: ["YOLOv8n", "12 Classes", "FEN Output"],
@@ -333,6 +342,7 @@ export default function Home() {
   const [badgeSymbol, setBadgeSymbol] = useState("‼");
   const [badgeKey, setBadgeKey] = useState(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const menuFirstLinkRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const raw = localStorage.getItem("playerSession");
@@ -375,6 +385,13 @@ export default function Home() {
     };
   }, [gameIdx]);
 
+  // Move focus into the mobile menu when it opens
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      menuFirstLinkRef.current?.focus();
+    }
+  }, [mobileMenuOpen]);
+
   const scrollTo = (id: string) =>
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
@@ -395,33 +412,33 @@ export default function Home() {
 
         <ul className={styles.navLinks}>
           <li>
-            <span
+            <button
               className={styles.navLink}
               onClick={() => scrollTo("features")}
             >
               Features
-            </span>
+            </button>
           </li>
           <li>
-            <span
+            <button
               className={styles.navLink}
               onClick={() => scrollTo("analytics")}
             >
               Analytics
-            </span>
+            </button>
           </li>
           <li>
-            <span
+            <button
               className={styles.navLink}
               onClick={() => scrollTo("how-it-works")}
             >
               How It Works
-            </span>
+            </button>
           </li>
           <li>
-            <span className={styles.navLink} onClick={() => scrollTo("roles")}>
+            <button className={styles.navLink} onClick={() => scrollTo("roles")}>
               About
-            </span>
+            </button>
           </li>
         </ul>
 
@@ -434,6 +451,8 @@ export default function Home() {
             className={styles.hamburgerBtn}
             onClick={() => setMobileMenuOpen((v) => !v)}
             aria-label="Toggle menu"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-menu"
           >
             <span className={mobileMenuOpen ? styles.hamburgerOpen : ""} />
             <span className={mobileMenuOpen ? styles.hamburgerOpen : ""} />
@@ -451,7 +470,14 @@ export default function Home() {
       )}
 
       {/* Mobile menu drawer */}
-      <div className={`${styles.mobileMenu} ${mobileMenuOpen ? styles.mobileMenuOpen : ""}`}>
+      <div
+        id="mobile-menu"
+        className={`${styles.mobileMenu} ${mobileMenuOpen ? styles.mobileMenuOpen : ""}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Navigation menu"
+        onKeyDown={(e) => { if (e.key === "Escape") setMobileMenuOpen(false); }}
+      >
         <div className={styles.mobileMenuHeader}>
           <div className={styles.navBrand}>
             <div className={styles.navBrandIcon}>♛</div>
@@ -460,15 +486,16 @@ export default function Home() {
           <button
             className={styles.mobileMenuClose}
             onClick={() => setMobileMenuOpen(false)}
+            aria-label="Close menu"
           >
             ✕
           </button>
         </div>
         <div className={styles.mobileMenuLinks}>
-          <span className={styles.mobileMenuLink} onClick={() => { scrollTo("features"); setMobileMenuOpen(false); }}>Features</span>
-          <span className={styles.mobileMenuLink} onClick={() => { scrollTo("analytics"); setMobileMenuOpen(false); }}>Analytics</span>
-          <span className={styles.mobileMenuLink} onClick={() => { scrollTo("how-it-works"); setMobileMenuOpen(false); }}>How It Works</span>
-          <span className={styles.mobileMenuLink} onClick={() => { scrollTo("roles"); setMobileMenuOpen(false); }}>About</span>
+          <button ref={menuFirstLinkRef} className={styles.mobileMenuLink} onClick={() => { scrollTo("features"); setMobileMenuOpen(false); }}>Features</button>
+          <button className={styles.mobileMenuLink} onClick={() => { scrollTo("analytics"); setMobileMenuOpen(false); }}>Analytics</button>
+          <button className={styles.mobileMenuLink} onClick={() => { scrollTo("how-it-works"); setMobileMenuOpen(false); }}>How It Works</button>
+          <button className={styles.mobileMenuLink} onClick={() => { scrollTo("roles"); setMobileMenuOpen(false); }}>About</button>
         </div>
         <div className={styles.mobileMenuActions}>
           <Link href="/login" className={styles.navLogin} onClick={() => setMobileMenuOpen(false)}>
@@ -502,10 +529,10 @@ export default function Home() {
 
             <div className={styles.heroCtas}>
               <Link href="/login" className={styles.btnGetStarted}>
-                ✦ Get Started Free
+                <ArrowRight size={15} strokeWidth={2} /> Get Started Free
               </Link>
               <Link href="/coach/login" className={styles.btnDemo}>
-                👨‍🏫 Coach Login
+                <GraduationCap size={16} strokeWidth={1.75} /> Coach Login
               </Link>
             </div>
 
@@ -621,29 +648,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Numbers Bar ── */}
-      <div className={styles.numbersBar}>
-        <div className={styles.numbersGrid}>
-          {[
-            { val: "99.4%", lbl: "YOLOv8 Detection mAP50" },
-            { val: "9 Tiers", lbl: "Move Quality Classification" },
-            { val: "3000+", lbl: "ECO Opening Variations" },
-            { val: "7", lbl: "Tactical Pattern Detectors" },
-          ].map((n) => (
-            <div key={n.lbl} className={styles.numberItem}>
-              <div className={styles.numberVal}>{n.val}</div>
-              <div className={styles.numberLbl}>{n.lbl}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* ── Features ── */}
       <section id="features" className={styles.section}>
         <div className={styles.sectionContainer}>
-          <div className={styles.sectionBadgeCenter}>
-            <div className={styles.sectionTag}>Platform Features</div>
-          </div>
           <h2 className={`${styles.sectionTitle} ${styles.sectionTitleCenter}`}>
             Everything your chess academy needs
           </h2>
@@ -658,7 +665,7 @@ export default function Home() {
                 key={feat.title}
                 className={`${styles.bentoCard} ${feat.wide ? styles.bentoCardWide : ""}`}
               >
-                <div className={styles.bentoIcon}>{feat.icon}</div>
+                <div className={styles.bentoIcon}><feat.Icon size={22} strokeWidth={1.5} /></div>
                 <h3 className={styles.bentoTitle}>{feat.title}</h3>
                 <p className={styles.bentoDescription}>{feat.desc}</p>
                 <div className={styles.bentoTags}>
@@ -679,9 +686,6 @@ export default function Home() {
       {/* ── Analytics ── */}
       <div className={styles.analyticsSection} id="analytics">
         <div className={styles.sectionContainer}>
-          <div className={styles.sectionBadgeCenter}>
-            <div className={styles.sectionTag}>Live Analytics</div>
-          </div>
           <h2 className={`${styles.sectionTitle} ${styles.sectionTitleCenter}`}>
             Data-driven improvement, visualized
           </h2>
@@ -692,7 +696,7 @@ export default function Home() {
           <div className={styles.analyticsGrid}>
             <div className={styles.analyticsCard}>
               <div className={styles.analyticsCardTitle}>
-                📊 Performance Breakdown
+                <BarChart3 size={14} strokeWidth={2} /> Performance Breakdown
               </div>
               {ANALYTICS_BARS.map((bar) => (
                 <div key={bar.label} className={styles.statRow}>
@@ -703,7 +707,7 @@ export default function Home() {
                   <div className={styles.statBarTrack}>
                     <div
                       className={styles.statBarFill}
-                      style={{ width: `${bar.value}%`, background: bar.color }}
+                      style={{ transform: `scaleX(${bar.value / 100})`, background: bar.color }}
                     />
                   </div>
                 </div>
@@ -729,7 +733,7 @@ export default function Home() {
                   <div className={styles.statBarTrack}>
                     <div
                       className={styles.statBarFill}
-                      style={{ width: `${q.pct}%`, background: q.color }}
+                      style={{ transform: `scaleX(${q.pct / 100})`, background: q.color }}
                     />
                   </div>
                 </div>
@@ -744,14 +748,7 @@ export default function Home() {
       {/* ── Move Classification ── */}
       <section id="classification" className={styles.section}>
         <div className={styles.sectionContainer}>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1.2fr",
-              gap: "80px",
-              alignItems: "center",
-            }}
-          >
+          <div className={styles.classificationGrid}>
             <div className={styles.classificationLeft}>
               <div className={styles.sectionTag}>Move Classification</div>
               <h2 className={styles.classificationTitle}>
@@ -804,9 +801,6 @@ export default function Home() {
       {/* ── How It Works ── */}
       <section id="how-it-works" className={styles.section}>
         <div className={styles.sectionContainer}>
-          <div className={styles.sectionBadgeCenter}>
-            <div className={styles.sectionTag}>Process</div>
-          </div>
           <h2 className={`${styles.sectionTitle} ${styles.sectionTitleCenter}`}>
             From game to insight in 3 steps
           </h2>
@@ -828,16 +822,13 @@ export default function Home() {
       {/* ── Roles ── */}
       <section id="roles" className={styles.section}>
         <div className={styles.sectionContainer}>
-          <div className={styles.sectionBadgeCenter}>
-            <div className={styles.sectionTag}>For Everyone</div>
-          </div>
           <h2 className={`${styles.sectionTitle} ${styles.sectionTitleCenter}`}>
             One platform. Two powerful roles.
           </h2>
 
           <div className={styles.rolesGrid}>
             <div className={styles.roleCard}>
-              <div className={styles.roleIcon}>♟</div>
+              <div className={styles.roleIcon}><Crown size={22} strokeWidth={1.5} /></div>
               <h3 className={styles.roleTitle}>For Coaches</h3>
               <p className={styles.roleDescription}>
                 Monitor every student from a single dashboard. Identify who
@@ -886,7 +877,6 @@ export default function Home() {
 
       {/* ── CTA ── */}
       <section className={styles.ctaSection} id="cta">
-        <div className={styles.sectionTag}>Get Started</div>
         <h2 className={styles.ctaTitle}>Ready to play like a grandmaster?</h2>
         <p className={styles.ctaDescription}>
           Connect your Chess.com or Lichess profile. Get your first analysis in
@@ -894,10 +884,10 @@ export default function Home() {
         </p>
         <div className={styles.ctaButtons}>
           <Link href="/login" className={styles.btnGetStarted}>
-            ✦ Start Analyzing Now
+            <ArrowRight size={15} strokeWidth={2} /> Start Analyzing Now
           </Link>
           <Link href="/coach/login" className={styles.btnDemo}>
-            👨‍🏫 Coach Login
+            <GraduationCap size={16} strokeWidth={1.75} /> Coach Login
           </Link>
         </div>
       </section>
@@ -941,14 +931,14 @@ export default function Home() {
               <ul className={styles.footerLinks}>
                 {["Features", "Analytics", "How It Works", "Login"].map((l) => (
                   <li key={l}>
-                    <span
+                    <button
                       className={styles.footerLink}
                       onClick={() =>
                         scrollTo(l.toLowerCase().replace(" ", "-"))
                       }
                     >
                       {l}
-                    </span>
+                    </button>
                   </li>
                 ))}
               </ul>

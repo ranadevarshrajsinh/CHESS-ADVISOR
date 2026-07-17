@@ -82,6 +82,13 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+@media (max-width: 991px) {
+  html {
+    scroll-snap-type: y proximity;
+  }
 }
 
 body {
@@ -129,6 +136,7 @@ h3 {
   font-family: "Space Grotesk", system-ui, sans-serif;
   font-weight: 700;
   letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
 h4,

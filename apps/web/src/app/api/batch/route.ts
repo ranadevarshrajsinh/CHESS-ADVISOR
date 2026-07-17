@@ -22,6 +22,12 @@ export async function POST(request: NextRequest) {
       data: { username, game_urls, status: "pending", time_class: tc },
     });
 
+    // Wake the worker if it's spun down (Render free tier)
+    const workerUrl = process.env.STOCKFISH_WORKER_URL;
+    if (workerUrl) {
+      fetch(workerUrl).catch(() => {});
+    }
+
     return NextResponse.json(job);
   } catch (err) {
     console.error("Unexpected error in POST /api/batch:", err);

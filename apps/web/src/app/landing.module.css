@@ -13,9 +13,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(5, 5, 5, 0.88);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: rgba(5, 5, 5, 0.97);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04);
   transition: background 0.3s;
@@ -62,6 +60,10 @@
 }
 
 .navLink {
+  background: none;
+  border: none;
+  font-family: inherit;
+  padding: 0;
   color: #a1a1aa;
   font-size: 0.88rem;
   font-weight: 500;
@@ -103,8 +105,8 @@
   justify-content: center;
   align-items: center;
   gap: 5px;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
@@ -127,9 +129,8 @@
 .mobileMenuOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.7);
   z-index: 590;
-  backdrop-filter: blur(2px);
 }
 
 /* ── Mobile menu drawer ── */
@@ -139,9 +140,7 @@
   right: -300px;
   width: 280px;
   height: 100%;
-  background: rgba(8, 8, 8, 0.97);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: #0a0a0a;
   border-left: 1px solid rgba(255, 255, 255, 0.1);
   z-index: 600;
   display: flex;
@@ -187,6 +186,11 @@
 
 .mobileMenuLink {
   display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  font-family: inherit;
   padding: 12px 14px;
   color: #a1a1aa;
   font-size: 15px;
@@ -239,13 +243,13 @@
   background: #f5f5f5;
   color: #050505;
   border: 1px solid rgba(255, 255, 255, 0.72);
-  padding: 9px 22px;
+  padding: 12px 22px;
   border-radius: 8px;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
   box-shadow: 0 8px 24px rgba(255, 255, 255, 0.12);
 }
 
@@ -263,7 +267,7 @@
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding: 120px 40px 80px;
+  padding: 80px 40px 60px;
 }
 
 .heroContainer {
@@ -279,7 +283,7 @@
 .heroLeft {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 18px;
 }
 
 .heroBadge {
@@ -346,7 +350,7 @@
   font-weight: 700;
   font-size: 0.92rem;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
   text-decoration: none;
   box-shadow: 0 8px 28px rgba(255, 255, 255, 0.14);
 }
@@ -400,7 +404,7 @@
   );
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
-  padding: 20px;
+  padding: 14px 18px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045);
   transition:
     border-color 0.3s,
@@ -476,11 +480,10 @@
 /* Floating analysis cards */
 .floatingCard {
   position: absolute;
-  background: rgba(5, 5, 5, 0.9);
+  background: #161616;
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 8px;
   padding: 12px 16px;
-  backdrop-filter: blur(12px);
   font-size: 0.78rem;
   white-space: nowrap;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
@@ -489,7 +492,7 @@
 
 .floatingCardMove {
   top: 6%;
-  right: -10%;
+  right: -3%;
   animation: float1 3.5s ease-in-out infinite;
 }
 .floatingCardAccuracy {
@@ -499,7 +502,7 @@
 }
 .floatingCardOpening {
   top: 42%;
-  right: -14%;
+  right: -3%;
   animation: float3 3.2s ease-in-out infinite;
 }
 
@@ -662,7 +665,7 @@
   padding: 28px;
   height: 100%;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045);
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   position: relative;
   overflow: hidden;
   display: flex;
@@ -711,7 +714,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
   color: #ffffff;
 }
 
@@ -872,9 +874,11 @@
 
 .statBarFill {
   height: 100%;
+  width: 100%;
   border-radius: 99px;
   box-shadow: 0 0 12px rgba(255, 255, 255, 0.12);
-  transition: width 1.2s ease;
+  transform-origin: left center;
+  transition: transform 1.2s ease;
 }
 
 /* ── Roles section ───────────────────────── */
@@ -914,7 +918,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
   color: #ffffff;
   margin-bottom: 20px;
 }
@@ -1003,7 +1006,7 @@
   font-weight: 700;
   font-size: 0.92rem;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
   text-decoration: none;
   width: fit-content;
   box-shadow: 0 8px 24px rgba(255, 255, 255, 0.12);
@@ -1227,6 +1230,10 @@
 }
 
 .footerLink {
+  background: none;
+  border: none;
+  font-family: inherit;
+  padding: 0;
   color: #a1a1aa;
   font-size: 0.85rem;
   text-decoration: none;
@@ -1259,8 +1266,8 @@
 }
 
 .footerSocialLink {
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.045);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -1294,7 +1301,7 @@
   color: #48cae4;
   text-shadow: 0 0 10px #48cae4;
   pointer-events: none;
-  animation: symPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: symPop 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes symPop {
@@ -1363,6 +1370,56 @@
   }
 }
 
+/* ── Focus visible ───────────────────────── */
+.navLink:focus-visible,
+.mobileMenuLink:focus-visible,
+.footerLink:focus-visible {
+  outline: 2px solid #f5f5f5;
+  outline-offset: 3px;
+  border-radius: 3px;
+  color: #f7f7f7;
+}
+
+.hamburgerBtn:focus-visible,
+.mobileMenuClose:focus-visible {
+  outline: 2px solid #f5f5f5;
+  outline-offset: 3px;
+}
+
+.navLogin:focus-visible,
+.btnGetStarted:focus-visible,
+.btnDemo:focus-visible,
+.btnAnalyze:focus-visible {
+  outline: 2px solid #f5f5f5;
+  outline-offset: 3px;
+}
+
+.footerSocialLink:focus-visible {
+  outline: 2px solid #f5f5f5;
+  outline-offset: 3px;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* ── Reduced motion ──────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .heroBoardWrapper,
+  .floatingCard {
+    animation: none;
+  }
+  .heroBadgeDot {
+    animation: none;
+    opacity: 1;
+  }
+  .statBarFill {
+    transition: none;
+  }
+  .bentoCard,
+  .roleCard,
+  .stepCard {
+    transition: none;
+  }
+}
+
 /* ── Responsive ──────────────────────────── */
 @media (max-width: 991px) {
   .navbar {
@@ -1404,15 +1461,8 @@
   .chessboardContainer {
     max-width: 300px;
   }
-  .floatingCardMove,
-  .floatingCardOpening {
+  .floatingCard {
     display: none;
-  }
-  .floatingCardAccuracy {
-    bottom: -60px;
-    left: 50%;
-    transform: translateX(-50%);
-    animation: none;
   }
   .numbersGrid {
     grid-template-columns: repeat(2, 1fr);
@@ -1443,9 +1493,18 @@
     grid-template-columns: 1fr 1fr;
     gap: 32px;
   }
+  .hero,
+  .section,
+  .analyticsSection,
+  .ctaSection {
+    scroll-snap-align: start;
+  }
 }
 
 @media (max-width: 576px) {
+  .heroContainer {
+    gap: 32px;
+  }
   .heroTitle {
     font-size: 2.2rem;
     letter-spacing: -1px;
@@ -1510,6 +1569,37 @@
   }
   /* Chessboard max-width on small phones */
   .chessboardContainer {
-    max-width: 260px;
+    max-width: 220px;
+  }
+  /* Show text before chessboard on small phones */
+  .heroRight {
+    order: 0;
+  }
+  /* Classification rows: hide description to prevent overflow */
+  .classificationDesc {
+    display: none;
+  }
+  .classificationRow {
+    padding: 10px 12px;
+  }
+  .classificationName {
+    font-size: 0.82rem;
+  }
+  .classificationSymbol {
+    width: auto;
+  }
+  /* Tighten bento cards */
+  .bentoCard {
+    padding: 20px;
+  }
+  .bentoTitle {
+    font-size: 0.95rem;
+  }
+  .bentoDescription {
+    font-size: 0.82rem;
+  }
+  /* Tighten analytics cards */
+  .analyticsCard {
+    padding: 18px;
   }
 }
