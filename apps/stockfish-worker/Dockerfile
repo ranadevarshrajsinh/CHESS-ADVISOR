@@ -4,6 +4,8 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends stockfish \
     && rm -rf /var/lib/apt/lists/*
 
+ENV PATH="/usr/games:${PATH}"
+
 WORKDIR /app
 
 COPY requirements.txt .
