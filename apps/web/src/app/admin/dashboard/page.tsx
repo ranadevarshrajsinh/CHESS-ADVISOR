@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import CoachHeader from "@/components/CoachHeader";
 import Loader from "@/components/Loader";
-import { CheckCircle, XCircle, Shield } from "lucide-react";
+import { CheckCircle, XCircle, Shield, Search } from "lucide-react";
 
 type Academy = {
   id: string;
@@ -11,6 +11,7 @@ type Academy = {
   status: string;
   created_at: string;
   owner_id: string;
+  invite_code?: string | null;
   ownerName?: string;
   ownerEmail?: string;
 };
@@ -22,6 +23,7 @@ type Coach = {
   status: string;
   created_at: string;
   academy_id: string | null;
+  invite_code?: string | null;
   academyName?: string;
   playerCount?: number;
 };
@@ -29,6 +31,7 @@ type Coach = {
 type Player = {
   id: string;
   full_name: string;
+  email?: string | null;
   chess_username: string;
   status: string;
   created_at: string;
@@ -58,6 +61,12 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
+
+function matches(query: string, ...fields: (string | null | undefined)[]): boolean {
+  const q = query.toLowerCase();
+  return fields.some((f) => f && f.toLowerCase().includes(q));
+}
+
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("pending_academies");
   const [pendingAcademies, setPendingAcademies] = useState<Academy[]>([]);
@@ -66,8 +75,10 @@ export default function AdminDashboard() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => { loadData(); }, []);
+  useEffect(() => { setSearchQuery(""); }, [activeTab]);
 
   async function loadData() {
     setLoading(true);
@@ -174,6 +185,22 @@ export default function AdminDashboard() {
   };
   const tdStyle: React.CSSProperties = { padding: "12px 16px", fontSize: "13px", borderTop: "1px solid var(--border-subtle)" };
 
+  const filteredPending = searchQuery
+    ? pendingAcademies.filter((a) => matches(searchQuery, a.name, a.city, a.ownerName, a.ownerEmail))
+    : pendingAcademies;
+
+  const filteredAcademies = searchQuery
+    ? allAcademies.filter((a) => matches(searchQuery, a.name, a.city, a.ownerName, a.ownerEmail))
+    : allAcademies;
+
+  const filteredCoaches = searchQuery
+    ? coaches.filter((c) => matches(searchQuery, c.full_name, c.email, c.academyName))
+    : coaches;
+
+  const filteredPlayers = searchQuery
+    ? players.filter((p) => matches(searchQuery, p.full_name, p.email, p.chess_username, p.coachName, p.academyName))
+    : players;
+
   return (
     <>
       <CoachHeader />
@@ -203,26 +230,49 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        <div className="glass-card" style={{ display: "inline-flex", gap: "4px", padding: "4px", borderRadius: "12px", marginBottom: "24px", flexWrap: "wrap" }}>
-          {TABS.map((t) => (
-            <button
-              key={t.key}
-              onClick={() => setActiveTab(t.key)}
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "24px", flexWrap: "wrap" }}>
+          <div className="glass-card" style={{ display: "inline-flex", gap: "4px", padding: "4px", borderRadius: "12px", flexWrap: "wrap", flexShrink: 0 }}>
+            {TABS.map((t) => (
+              <button
+                key={t.key}
+                onClick={() => setActiveTab(t.key)}
+                style={{
+                  padding: "8px 18px", borderRadius: "9px", fontSize: "14px", fontWeight: "600",
+                  background: activeTab === t.key ? "rgba(255,255,255,0.9)" : "transparent",
+                  color: activeTab === t.key ? "#111" : "var(--text-secondary)",
+                  border: "none", cursor: "pointer", transition: "all 0.2s",
+                }}
+              >
+                {t.label}
+                {t.key === "pending_academies" && pendingAcademies.length > 0 && (
+                  <span style={{ marginLeft: "6px", background: "var(--warning)", color: "#fff", borderRadius: "10px", padding: "1px 6px", fontSize: "11px", fontWeight: "700" }}>
+                    {pendingAcademies.length}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+          <div style={{ position: "relative", flex: 1, minWidth: "200px" }}>
+            <Search size={15} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--text-secondary)", pointerEvents: "none" }} />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={
+                activeTab === "pending_academies" ? "Search pending academies…" :
+                activeTab === "academies"         ? "Search academies…" :
+                activeTab === "coaches"           ? "Search coaches…" :
+                                                    "Search players…"
+              }
               style={{
-                padding: "8px 18px", borderRadius: "9px", fontSize: "14px", fontWeight: "600",
-                background: activeTab === t.key ? "rgba(255,255,255,0.9)" : "transparent",
-                color: activeTab === t.key ? "#111" : "var(--text-secondary)",
-                border: "none", cursor: "pointer", transition: "all 0.2s",
+                width: "100%", boxSizing: "border-box",
+                padding: "9px 12px 9px 34px", borderRadius: "9px", fontSize: "13px",
+                background: "var(--glass-bg, rgba(255,255,255,0.06))",
+                border: "1px solid var(--border-subtle, rgba(255,255,255,0.1))",
+                color: "var(--text-primary)", outline: "none",
               }}
-            >
-              {t.label}
-              {t.key === "pending_academies" && pendingAcademies.length > 0 && (
-                <span style={{ marginLeft: "6px", background: "var(--warning)", color: "#fff", borderRadius: "10px", padding: "1px 6px", fontSize: "11px", fontWeight: "700" }}>
-                  {pendingAcademies.length}
-                </span>
-              )}
-            </button>
-          ))}
+            />
+          </div>
         </div>
 
         {loading ? (
@@ -231,11 +281,13 @@ export default function AdminDashboard() {
           <>
             {activeTab === "pending_academies" && (
               <div>
-                {pendingAcademies.length === 0 ? (
-                  <div className="glass" style={{ padding: "32px", textAlign: "center", color: "var(--text-secondary)" }}>No pending academy requests.</div>
+                {filteredPending.length === 0 ? (
+                  <div className="glass" style={{ padding: "32px", textAlign: "center", color: "var(--text-secondary)" }}>
+                    {searchQuery ? `No results for "${searchQuery}"` : "No pending academy requests."}
+                  </div>
                 ) : (
                   <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                    {pendingAcademies.map((a) => (
+                    {filteredPending.map((a) => (
                       <div key={a.id} className="glass-card" style={{ padding: "20px 24px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
                         <div>
                           <div style={{ fontWeight: "700", fontSize: "16px", marginBottom: "4px" }}>{a.name}{a.city ? ` — ${a.city}` : ""}</div>
@@ -267,21 +319,25 @@ export default function AdminDashboard() {
 
             {activeTab === "academies" && (
               <div>
-                {allAcademies.length === 0 ? (
-                  <div className="glass" style={{ padding: "32px", textAlign: "center", color: "var(--text-secondary)" }}>No approved academies yet.</div>
+                {filteredAcademies.length === 0 ? (
+                  <div className="glass" style={{ padding: "32px", textAlign: "center", color: "var(--text-secondary)" }}>
+                    {searchQuery ? `No results for "${searchQuery}"` : "No approved academies yet."}
+                  </div>
                 ) : (
                   <div className="glass-card" style={{ overflow: "auto" }}>
                     <table style={{ width: "100%", borderCollapse: "collapse" }}>
                       <thead>
-                        <tr>{["Academy", "City", "Owner", "Status", "Joined", "Actions"].map((h) => <th key={h} style={thStyle}>{h}</th>)}</tr>
+                        <tr>{["Academy", "City", "Owner", "Owner Email", "Status", "Invite Code", "Joined", "Actions"].map((h) => <th key={h} style={thStyle}>{h}</th>)}</tr>
                       </thead>
                       <tbody>
-                        {allAcademies.map((a) => (
+                        {filteredAcademies.map((a) => (
                           <tr key={a.id}>
                             <td style={tdStyle}><strong>{a.name}</strong></td>
                             <td style={tdStyle}>{a.city ?? "—"}</td>
                             <td style={{ ...tdStyle, color: "var(--text-secondary)" }}>{a.ownerName}</td>
+                            <td style={{ ...tdStyle, color: "var(--text-secondary)", fontFamily: "monospace", fontSize: "12px" }}>{a.ownerEmail ?? "—"}</td>
                             <td style={tdStyle}><StatusBadge status={a.status} /></td>
+                            <td style={{ ...tdStyle, color: "var(--text-secondary)", fontFamily: "monospace", fontSize: "12px" }}>{a.invite_code ?? "—"}</td>
                             <td style={{ ...tdStyle, color: "var(--text-secondary)" }}>{new Date(a.created_at).toLocaleDateString()}</td>
                             <td style={tdStyle}>
                               <button
@@ -302,68 +358,78 @@ export default function AdminDashboard() {
             )}
 
             {activeTab === "coaches" && (
-              <div className="glass-card" style={{ overflow: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                  <thead>
-                    <tr>{["Coach", "Email", "Academy", "Players", "Status", "Joined", "Actions"].map((h) => <th key={h} style={thStyle}>{h}</th>)}</tr>
-                  </thead>
-                  <tbody>
-                    {coaches.length === 0 ? (
-                      <tr><td colSpan={7} style={{ ...tdStyle, textAlign: "center", color: "var(--text-secondary)" }}>No coaches yet.</td></tr>
-                    ) : coaches.map((c) => (
-                      <tr key={c.id}>
-                        <td style={tdStyle}><strong>{c.full_name}</strong></td>
-                        <td style={{ ...tdStyle, color: "var(--text-secondary)" }}>{c.email}</td>
-                        <td style={tdStyle}>{c.academyName}</td>
-                        <td style={{ ...tdStyle, textAlign: "center" }}>{c.playerCount}</td>
-                        <td style={tdStyle}><StatusBadge status={c.status} /></td>
-                        <td style={{ ...tdStyle, color: "var(--text-secondary)" }}>{new Date(c.created_at).toLocaleDateString()}</td>
-                        <td style={tdStyle}>
-                          <button
-                            onClick={() => handleRemoveCoach(c.id)}
-                            disabled={actionLoading === c.id}
-                            style={{ background: "rgba(239,68,68,0.1)", color: "var(--danger)", border: "none", padding: "6px 12px", borderRadius: "6px", cursor: "pointer", fontSize: "12px", fontWeight: "bold" }}
-                          >
-                            {actionLoading === c.id ? "Removing..." : "Remove"}
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div>
+                <div className="glass-card" style={{ overflow: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                    <thead>
+                      <tr>{["Coach", "Email", "Academy", "Players", "Status", "Invite Code", "Joined", "Actions"].map((h) => <th key={h} style={thStyle}>{h}</th>)}</tr>
+                    </thead>
+                    <tbody>
+                      {filteredCoaches.length === 0 ? (
+                        <tr><td colSpan={8} style={{ ...tdStyle, textAlign: "center", color: "var(--text-secondary)" }}>
+                          {searchQuery ? `No results for "${searchQuery}"` : "No coaches yet."}
+                        </td></tr>
+                      ) : filteredCoaches.map((c) => (
+                        <tr key={c.id}>
+                          <td style={tdStyle}><strong>{c.full_name}</strong></td>
+                          <td style={{ ...tdStyle, color: "var(--text-secondary)" }}>{c.email}</td>
+                          <td style={tdStyle}>{c.academyName}</td>
+                          <td style={{ ...tdStyle, textAlign: "center" }}>{c.playerCount}</td>
+                          <td style={tdStyle}><StatusBadge status={c.status} /></td>
+                          <td style={{ ...tdStyle, color: "var(--text-secondary)", fontFamily: "monospace", fontSize: "12px" }}>{c.invite_code ?? "—"}</td>
+                          <td style={{ ...tdStyle, color: "var(--text-secondary)" }}>{new Date(c.created_at).toLocaleDateString()}</td>
+                          <td style={tdStyle}>
+                            <button
+                              onClick={() => handleRemoveCoach(c.id)}
+                              disabled={actionLoading === c.id}
+                              style={{ background: "rgba(239,68,68,0.1)", color: "var(--danger)", border: "none", padding: "6px 12px", borderRadius: "6px", cursor: "pointer", fontSize: "12px", fontWeight: "bold" }}
+                            >
+                              {actionLoading === c.id ? "Removing..." : "Remove"}
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
 
             {activeTab === "players" && (
-              <div className="glass-card" style={{ overflow: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                  <thead>
-                    <tr>{["Player", "Chess Username", "Coach", "Academy", "Status", "Joined", ""].map((h, i) => <th key={i} style={thStyle}>{h}</th>)}</tr>
-                  </thead>
-                  <tbody>
-                    {players.length === 0 ? (
-                      <tr><td colSpan={7} style={{ ...tdStyle, textAlign: "center", color: "var(--text-secondary)" }}>No players yet.</td></tr>
-                    ) : players.map((p) => (
-                      <tr key={p.id}>
-                        <td style={tdStyle}><strong>{p.full_name}</strong></td>
-                        <td style={{ ...tdStyle, color: "var(--text-secondary)", fontFamily: "monospace" }}>{p.chess_username}</td>
-                        <td style={tdStyle}>{p.coachName}</td>
-                        <td style={tdStyle}>{p.academyName}</td>
-                        <td style={tdStyle}><StatusBadge status={p.status} /></td>
-                        <td style={{ ...tdStyle, color: "var(--text-secondary)" }}>{new Date(p.created_at).toLocaleDateString()}</td>
-                        <td style={{ ...tdStyle, textAlign: "right" }}>
-                          <button
-                            onClick={() => handleRemovePlayer(p.id)}
-                            disabled={actionLoading === p.id}
-                            style={{ background: "rgba(239,68,68,0.1)", color: "var(--danger)", border: "none", padding: "6px 12px", borderRadius: "6px", cursor: "pointer", fontSize: "12px", fontWeight: "bold" }}
-                          >
-                            {actionLoading === p.id ? "Removing..." : "Remove"}
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div>
+                <div className="glass-card" style={{ overflow: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                    <thead>
+                      <tr>{["Player", "Email", "Chess Username", "Coach", "Academy", "Status", "Joined", ""].map((h, i) => <th key={i} style={thStyle}>{h}</th>)}</tr>
+                    </thead>
+                    <tbody>
+                      {filteredPlayers.length === 0 ? (
+                        <tr><td colSpan={8} style={{ ...tdStyle, textAlign: "center", color: "var(--text-secondary)" }}>
+                          {searchQuery ? `No results for "${searchQuery}"` : "No players yet."}
+                        </td></tr>
+                      ) : filteredPlayers.map((p) => (
+                        <tr key={p.id}>
+                          <td style={tdStyle}><strong>{p.full_name}</strong></td>
+                          <td style={{ ...tdStyle, color: "var(--text-secondary)" }}>{p.email ?? "—"}</td>
+                          <td style={{ ...tdStyle, color: "var(--text-secondary)", fontFamily: "monospace" }}>{p.chess_username}</td>
+                          <td style={tdStyle}>{p.coachName}</td>
+                          <td style={tdStyle}>{p.academyName}</td>
+                          <td style={tdStyle}><StatusBadge status={p.status} /></td>
+                          <td style={{ ...tdStyle, color: "var(--text-secondary)" }}>{new Date(p.created_at).toLocaleDateString()}</td>
+                          <td style={{ ...tdStyle, textAlign: "right" }}>
+                            <button
+                              onClick={() => handleRemovePlayer(p.id)}
+                              disabled={actionLoading === p.id}
+                              style={{ background: "rgba(239,68,68,0.1)", color: "var(--danger)", border: "none", padding: "6px 12px", borderRadius: "6px", cursor: "pointer", fontSize: "12px", fontWeight: "bold" }}
+                            >
+                              {actionLoading === p.id ? "Removing..." : "Remove"}
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
           </>
