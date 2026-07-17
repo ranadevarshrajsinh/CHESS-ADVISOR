@@ -382,13 +382,13 @@ export default function PuzzlesPage() {
 
       <div className="container page-content-mobile puzzle-viewport" style={{ paddingTop: "32px", paddingBottom: "48px" }}>
 
-        {/* ── Page header — compact when a puzzle is on screen ── */}
+        {/* ── Page header — fixed size, never changes with puzzle state ── */}
         {(() => {
           const hasPuzzle = !loading && puzzle != null && !(mode === "survival" && gameOver);
           return (
-        <div style={{ marginBottom: hasPuzzle ? "8px" : "24px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: hasPuzzle ? "0" : "6px", flexWrap: "wrap" }}>
-            <h1 style={{ margin: 0, fontSize: hasPuzzle ? "15px" : "clamp(20px, 4vw, 28px)", fontWeight: 800 }}>
+        <div style={{ marginBottom: "16px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "4px", flexWrap: "wrap" }}>
+            <h1 style={{ margin: 0, fontSize: "20px", fontWeight: 800, letterSpacing: "-0.01em" }}>
               Puzzle Training
             </h1>
             {streakDays > 0 && (
@@ -402,35 +402,38 @@ export default function PuzzlesPage() {
               </span>
             )}
           </div>
-          {!hasPuzzle && (
-            <p style={{ margin: 0, color: "var(--text-secondary)", fontSize: "14px" }}>
-              Sharpen your tactics — from your own games and the Lichess library
-            </p>
-          )}
-
-          {showCalibration && !isActiveMode && !hasPuzzle && (
-            <div style={{
-              marginTop: "14px", padding: "14px 18px", borderRadius: "12px",
-              background: "rgba(29,193,137,0.08)", border: "1px solid rgba(29,193,137,0.25)",
-              display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px", flexWrap: "wrap",
-            }}>
-              <div>
-                <p style={{ margin: 0, fontWeight: 700, fontSize: "14px" }}>Set your puzzle rating</p>
-                <p style={{ margin: "2px 0 0", color: "var(--text-secondary)", fontSize: "13px" }}>
-                  Solve 10 quick puzzles so we can serve the right difficulty for you.
-                </p>
-              </div>
-              <div style={{ display: "flex", gap: "8px" }}>
-                <button onClick={() => setShowCalibration(false)} style={secondaryBtn}>Skip</button>
-                <button
-                  onClick={() => { /* TODO Phase 2: CalibrationFlow */ setShowCalibration(false); }}
-                  style={{ padding: "8px 16px", borderRadius: "8px", cursor: "pointer", background: "var(--accent-color)", color: "#050505", border: "none", fontWeight: 700, fontSize: "13px" }}
-                >
-                  Start Calibration →
-                </button>
-              </div>
+          <div style={{ overflow: "hidden" }}>
+            <div>
+              <p style={{ margin: 0, color: "var(--text-secondary)", fontSize: "14px", paddingTop: "2px" }}>
+                {source === "own"
+                  ? "Sharpen your tactics — positions extracted from your own blunders and missed tactics"
+                  : "Train with thousands of curated positions across tactics, endgames, and openings"}
+              </p>
+              {showCalibration && !isActiveMode && (
+                <div style={{
+                  marginTop: "14px", padding: "14px 18px", borderRadius: "12px",
+                  background: "rgba(29,193,137,0.08)", border: "1px solid rgba(29,193,137,0.25)",
+                  display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px", flexWrap: "wrap",
+                }}>
+                  <div>
+                    <p style={{ margin: 0, fontWeight: 700, fontSize: "14px" }}>Set your puzzle rating</p>
+                    <p style={{ margin: "2px 0 0", color: "var(--text-secondary)", fontSize: "13px" }}>
+                      Solve 10 quick puzzles so we can serve the right difficulty for you.
+                    </p>
+                  </div>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <button onClick={() => setShowCalibration(false)} style={secondaryBtn}>Skip</button>
+                    <button
+                      onClick={() => { setShowCalibration(false); }}
+                      style={{ padding: "8px 16px", borderRadius: "8px", cursor: "pointer", background: "var(--accent-color)", color: "#050505", border: "none", fontWeight: 700, fontSize: "13px" }}
+                    >
+                      Start Calibration →
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
           );
         })()}
@@ -477,7 +480,7 @@ export default function PuzzlesPage() {
                   <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                     {([
                       { value: "own" as Source,     icon: <Swords size={13}/>,   label: "Your Games" },
-                      { value: "library" as Source, icon: <BookOpen size={13}/>, label: "Lichess Library" },
+                      { value: "library" as Source, icon: <BookOpen size={13}/>, label: "Puzzle Library" },
                     ]).map(s => (
                       <button
                         key={s.value}
@@ -497,9 +500,15 @@ export default function PuzzlesPage() {
                   </div>
                 </div>
 
-                {/* Own games filters */}
-                {source === "own" && (
-                  <>
+                {/* Own games filters — always in DOM, collapses when library active */}
+                <div style={{
+                  display: "grid",
+                  gridTemplateRows: source === "own" ? "1fr" : "0fr",
+                  opacity: source === "own" ? 1 : 0,
+                  transition: "grid-template-rows 0.2s ease, opacity 0.15s ease",
+                  pointerEvents: source === "own" ? "auto" : "none",
+                }}>
+                  <div style={{ overflow: "hidden" }}>
                     <div className="puzzle-filter-section">
                       <FilterLabel>Phase</FilterLabel>
                       <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
@@ -545,12 +554,18 @@ export default function PuzzlesPage() {
                         </div>
                       </div>
                     </div>
-                  </>
-                )}
+                  </div>
+                </div>
 
-                {/* Library filters */}
-                {source === "library" && (
-                  <>
+                {/* Library filters — always in DOM, collapses when own active */}
+                <div style={{
+                  display: "grid",
+                  gridTemplateRows: source === "library" ? "1fr" : "0fr",
+                  opacity: source === "library" ? 1 : 0,
+                  transition: "grid-template-rows 0.2s ease, opacity 0.15s ease",
+                  pointerEvents: source === "library" ? "auto" : "none",
+                }}>
+                  <div style={{ overflow: "hidden" }}>
                     <div className="puzzle-filter-section">
                       <FilterLabel>Difficulty</FilterLabel>
                       <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
@@ -629,8 +644,8 @@ export default function PuzzlesPage() {
                         })}
                       </div>
                     </div>
-                  </>
-                )}
+                  </div>
+                </div>
               </>
             )}
           </aside>
@@ -734,36 +749,78 @@ export default function PuzzlesPage() {
               </div>
             )}
 
-            {/* Own-game context banner */}
-            {!loading && puzzle && source === "own" && !(mode === "survival" && gameOver) && !(mode === "time") && (
+            {/* Context banner — always shown when a puzzle is active, content adapts to source */}
+            {!loading && puzzle && !(mode === "survival" && gameOver) && !(mode === "time") && (
               <div style={{
                 marginBottom: "10px", padding: "10px 14px", borderRadius: "8px",
                 background: "rgba(255,255,255,0.03)", border: "1px solid var(--border-subtle)",
                 display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap",
               }}>
-                {(() => {
-                  const meta = THEME_META[puzzle.theme] ?? { label: puzzle.theme || "Tactic", icon: <Zap size={12} />, color: "#6366f1" };
-                  return (
-                    <span style={{
-                      display: "inline-flex", alignItems: "center", gap: "4px",
-                      padding: "4px 10px", borderRadius: "6px",
-                      background: `${meta.color}1a`, color: meta.color,
-                      border: `1px solid ${meta.color}30`,
-                      fontWeight: 700, fontSize: "12px",
-                    }}>
-                      {meta.icon} {meta.label}
+                {source === "own" ? (
+                  <>
+                    {(() => {
+                      const meta = THEME_META[puzzle.theme] ?? { label: puzzle.theme || "Tactic", icon: <Zap size={12} />, color: "#6366f1" };
+                      return (
+                        <span style={{
+                          display: "inline-flex", alignItems: "center", gap: "4px",
+                          padding: "4px 10px", borderRadius: "6px",
+                          background: `${meta.color}1a`, color: meta.color,
+                          border: `1px solid ${meta.color}30`,
+                          fontWeight: 700, fontSize: "12px",
+                        }}>
+                          {meta.icon} {meta.label}
+                        </span>
+                      );
+                    })()}
+                    {puzzle.move_number != null && (
+                      <span style={{ fontSize: "12px", color: "var(--text-secondary)", fontWeight: 600 }}>
+                        Move {puzzle.move_number}
+                      </span>
+                    )}
+                    <span style={{ color: "var(--border-subtle)", fontSize: "10px" }}>·</span>
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "12px", color: "var(--text-secondary)" }}>
+                      <FileText size={11} /> {formatGameName(puzzle.game_filename)}
                     </span>
-                  );
-                })()}
-                {puzzle.move_number != null && (
-                  <span style={{ fontSize: "12px", color: "var(--text-secondary)", fontWeight: 600 }}>
-                    Move {puzzle.move_number}
-                  </span>
+                  </>
+                ) : (
+                  <>
+                    {(() => {
+                      const typeLabel = TYPE_BY_CATEGORY[category].find(t => t.value === puzzleType)?.label ?? "Puzzle";
+                      const diffObj   = DIFFICULTIES.find(d => d.value === difficulty);
+                      return (
+                        <>
+                          <span style={{
+                            display: "inline-flex", alignItems: "center", gap: "4px",
+                            padding: "4px 10px", borderRadius: "6px",
+                            background: "rgba(255,255,255,0.05)", border: "1px solid var(--border-subtle)",
+                            fontWeight: 700, fontSize: "12px", color: "var(--text-primary)",
+                          }}>
+                            {typeLabel}
+                          </span>
+                          {diffObj && (
+                            <span style={{
+                              display: "inline-flex", alignItems: "center", gap: "4px",
+                              padding: "4px 10px", borderRadius: "6px",
+                              background: `${diffObj.color}18`, color: diffObj.color,
+                              border: `1px solid ${diffObj.color}30`,
+                              fontWeight: 700, fontSize: "12px",
+                            }}>
+                              {diffObj.label}
+                            </span>
+                          )}
+                          {puzzle.rating != null && (
+                            <>
+                              <span style={{ color: "var(--border-subtle)", fontSize: "10px" }}>·</span>
+                              <span style={{ fontSize: "12px", color: "var(--text-secondary)", fontWeight: 600 }}>
+                                {puzzle.rating}
+                              </span>
+                            </>
+                          )}
+                        </>
+                      );
+                    })()}
+                  </>
                 )}
-                <span style={{ color: "var(--border-subtle)", fontSize: "10px" }}>·</span>
-                <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "12px", color: "var(--text-secondary)" }}>
-                  <FileText size={11} /> {formatGameName(puzzle.game_filename)}
-                </span>
                 <span style={{ marginLeft: "auto", fontSize: "11px", color: "var(--text-secondary)", opacity: 0.7 }}>
                   {currentIndex + 1} / {puzzles.length}
                 </span>
