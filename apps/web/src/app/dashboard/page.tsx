@@ -103,7 +103,11 @@ export default function Dashboard() {
     localStorage.removeItem("recentGames"); // remove unnamespaced key that could leak across players
     const gamesKey = `recentGames_${chessUsername}`;
     const storedGames = localStorage.getItem(gamesKey);
-    if (storedGames) setGames(JSON.parse(storedGames));
+    if (storedGames) {
+      setGames(JSON.parse(storedGames));
+    } else {
+      setShowFetchPanel(true);
+    }
 
     const STATS_CACHE_VERSION = "v2";
     const statsKey = `stats_${chessUsername}_${STATS_CACHE_VERSION}`;
