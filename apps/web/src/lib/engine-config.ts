@@ -8,7 +8,7 @@ export const engineConfig = {
     10
   ),
   maxWorkers: parseInt(
-    process.env.NEXT_PUBLIC_ANALYSIS_MAX_WORKERS || "2",
+    process.env.NEXT_PUBLIC_ANALYSIS_MAX_WORKERS || "8",
     10
   ),
   hashSize: parseInt(
@@ -16,7 +16,7 @@ export const engineConfig = {
     10
   ),
   lite:
-    process.env.NEXT_PUBLIC_ANALYSIS_USE_LITE === "true",
+    process.env.NEXT_PUBLIC_ANALYSIS_USE_LITE !== "false",
   enabled:
     process.env.NEXT_PUBLIC_ANALYSIS_ENABLE_WASM !== "false",
 };

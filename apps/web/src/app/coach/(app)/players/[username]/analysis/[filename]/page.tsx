@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { analyzeGame, fetchAnnotations, type Annotation } from "@/services/api";
 import AnnotationPanel from "@/components/AnnotationPanel";
+import { PillTabs } from "@/components/PillTabs";
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
 import {
@@ -148,6 +149,7 @@ export default function CoachGameAnalysisPage({
 
   const [analysis, setAnalysis] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [analysisProgress, setAnalysisProgress] = useState(0);
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const [mistakeFilter, setMistakeFilter] = useState<MistakeFilter>("All");
@@ -159,6 +161,7 @@ export default function CoachGameAnalysisPage({
   >([]);
   const [currentMoveIndex, setCurrentMoveIndex] = useState(0);
   const activeMoveRef = useRef<HTMLTableRowElement>(null);
+  const progressRef = useRef(0);
 
   const moveHistoryToPly = useMemo<number[]>(() => {
     if (!analysis?.full_history) return [];
@@ -221,7 +224,10 @@ export default function CoachGameAnalysisPage({
     }
     if (!username || !filename) return;
 
-    analyzeGame(username, filename, false, multiPv)
+    analyzeGame(username, filename, false, multiPv, (pct) => {
+      progressRef.current = pct;
+      setAnalysisProgress(pct);
+    })
       .then((data) => {
         setAnalysis(data);
         if (data?.full_history) {
@@ -245,12 +251,25 @@ export default function CoachGameAnalysisPage({
           setFenHistory(fens);
           setMovePairs(pairs);
         }
+        const startPct = progressRef.current;
+        const remaining = 100 - startPct;
+        const duration = startPct < 5 ? 700 : 250;
+        const steps = 20;
+        let step = 0;
+        const id = setInterval(() => {
+          step++;
+          setAnalysisProgress(Math.min(100, startPct + (remaining * step) / steps));
+          if (step >= steps) {
+            clearInterval(id);
+            setTimeout(() => setLoading(false), 150);
+          }
+        }, duration / steps);
       })
       .catch((e) => {
         console.error(e);
         alert("Failed to analyze game.");
-      })
-      .finally(() => setLoading(false));
+        setLoading(false);
+      });
   }, [authLoading, user, username, filename, router]);
 
   useEffect(() => {
@@ -579,7 +598,7 @@ export default function CoachGameAnalysisPage({
         </div>
 
         {loading ? (
-          <Loader message={`Analyzing ${username}'s game with Stockfish…`} />
+          <Loader message={`Analyzing ${username}'s game with Stockfish…`} progress={analysisProgress} />
         ) : analysis ? (
           <div
             style={{
@@ -841,40 +860,8 @@ export default function CoachGameAnalysisPage({
               }}
             >
               {/* Tab bar */}
-              <div
-                style={{
-                  display: "flex",
-                  gap: "2px",
-                  marginBottom: "10px",
-                  borderBottom: "1px solid var(--glass-border)",
-                }}
-              >
-                {TABS.map((t) => (
-                  <button
-                    key={t.id}
-                    onClick={() => setActiveTab(t.id)}
-                    style={{
-                      padding: "8px 13px",
-                      fontSize: "13px",
-                      fontWeight: activeTab === t.id ? "700" : "500",
-                      color:
-                        activeTab === t.id
-                          ? "#6366f1"
-                          : "var(--text-secondary)",
-                      background: "none",
-                      border: "none",
-                      borderBottom:
-                        activeTab === t.id
-                          ? "2px solid #6366f1"
-                          : "2px solid transparent",
-                      cursor: "pointer",
-                      marginBottom: "-1px",
-                      transition: "color 0.2s",
-                    }}
-                  >
-                    {t.label}
-                  </button>
-                ))}
+              <div style={{ marginBottom: "10px" }}>
+                <PillTabs tabs={TABS} activeTab={activeTab} onChange={(id) => setActiveTab(id)} />
               </div>
 
               {/* Annotation panel — persists across all tabs */}
@@ -1087,7 +1074,7 @@ export default function CoachGameAnalysisPage({
                                   <div
                                     style={{
                                       height: "100%",
-                                      width: `${Math.min(pct, 100)}%`,
+                                      width: "100%",
                                       background:
                                         pct >= 70
                                           ? "var(--success)"
@@ -1095,7 +1082,9 @@ export default function CoachGameAnalysisPage({
                                             ? "var(--warning)"
                                             : "var(--danger)",
                                       borderRadius: "3px",
-                                      transition: "width 0.6s",
+                                      transform: `scaleX(${Math.min(pct, 100) / 100})`,
+                                      transformOrigin: "left",
+                                      transition: "transform 0.6s ease",
                                     }}
                                   />
                                 </div>

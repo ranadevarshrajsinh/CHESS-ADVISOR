@@ -11,6 +11,7 @@ import { computeEstimatedElo } from "./helpers/estimate-elo";
 import { getEngineWorker, sendCommandsToWorker } from "./worker-loader";
 import type { WorkerJob } from "@/types/engine-types";
 import { Chess } from "chess.js";
+import { fetchLichessCloudEval } from "./helpers/lichess-cloud-eval";
 
 export class EnginePool {
   private workers: EngineWorker[] = [];
@@ -19,6 +20,7 @@ export class EnginePool {
   private enginePath: string;
   private multiPv = 3;
   private hashSize = 16;
+  private evalCache = new Map<string, PositionEval>();
 
   private constructor(enginePath: string) {
     this.enginePath = enginePath;
@@ -86,6 +88,7 @@ export class EnginePool {
   public shutdown(): void {
     this.isReady = false;
     this.workerQueue = [];
+    this.evalCache.clear();
 
     for (const worker of this.workers) {
       this.terminateWorker(worker);
@@ -326,11 +329,22 @@ export class EnginePool {
     fen: string,
     depth = 16
   ): Promise<PositionEval> {
+    const cacheKey = `${fen}:${depth}:${this.multiPv}`;
+    const cached = this.evalCache.get(cacheKey);
+    if (cached) return cached;
+
+    const cloudResult = await fetchLichessCloudEval(fen, this.multiPv);
+    if (cloudResult) {
+      this.evalCache.set(cacheKey, cloudResult);
+      return cloudResult;
+    }
+
     const results = await this.sendCommands(
       [`position fen ${fen}`, `go depth ${depth}`],
       "bestmove"
     );
-
-    return parseEvaluationResults(results, fen);
+    const result = parseEvaluationResults(results, fen);
+    this.evalCache.set(cacheKey, result);
+    return result;
   }
 }

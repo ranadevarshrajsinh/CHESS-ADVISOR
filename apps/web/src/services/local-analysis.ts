@@ -11,7 +11,8 @@ import { CLIENT_ANALYSIS_VERSION } from "@/lib/analysis-version";
 export async function analyzeLocally(
   username: string,
   filename: string,
-  multiPvOverride?: number
+  multiPvOverride?: number,
+  onProgress?: (pct: number) => void
 ): Promise<any> {
   if (!isWasmSupported()) {
     throw new Error("WebAssembly is not supported in this browser");
@@ -55,6 +56,7 @@ export async function analyzeLocally(
     depth: engineConfig.depth,
     multiPv,
     workersNb: workers,
+    setEvaluationProgress: onProgress,
   });
 
   engine.shutdown();

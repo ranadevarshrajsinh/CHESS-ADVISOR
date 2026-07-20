@@ -17,6 +17,8 @@ export const getEngineWorker = (enginePath: string): EngineWorker => {
   return engineWorker;
 };
 
+const THROTTLE_MS = 60;
+
 export const sendCommandsToWorker = (
   worker: EngineWorker,
   commands: string[],
@@ -25,13 +27,22 @@ export const sendCommandsToWorker = (
 ): Promise<string[]> => {
   return new Promise((resolve) => {
     const messages: string[] = [];
+    let lastNotify = 0;
 
     worker.listen = (data) => {
       messages.push(data);
-      onNewMessage?.(messages);
+
+      if (onNewMessage) {
+        const now = Date.now();
+        if (now - lastNotify >= THROTTLE_MS) {
+          lastNotify = now;
+          onNewMessage(messages);
+        }
+      }
 
       if (data.startsWith(finalMessage)) {
         worker.listen = () => null;
+        onNewMessage?.(messages);
         resolve(messages);
       }
     };

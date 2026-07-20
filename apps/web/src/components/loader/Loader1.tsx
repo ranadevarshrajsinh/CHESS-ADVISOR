@@ -15,7 +15,7 @@ export default function ChessLoader({
     duration = 2.8,
     color = "#fff",
 }: ChessLoaderProps) {
-    const [position, setPosition] = useState(steps - 1); // starts rightmost
+    const [position, setPosition] = useState(0); // starts leftmost
     const [queen, setQueen] = useState(false);
     const [cycleId, setCycleId] = useState(0);           // bumped each full cycle to remount pawn
     const reduced = useReducedMotion();
@@ -28,15 +28,15 @@ export default function ChessLoader({
     useEffect(() => {
         if (queen) return;
         const t = setTimeout(() => {
-            if (position > 0) {
-                setPosition(p => p - 1);
+            if (position < steps - 1) {
+                setPosition(p => p + 1);
             } else {
-                // Reached left — promote
+                // Reached right — promote
                 setQueen(true);
                 setTimeout(() => {
-                    // Instant teleport: bump cycleId so pawn remounts at right
+                    // Instant teleport: bump cycleId so pawn remounts at left
                     setCycleId(id => id + 1);
-                    setPosition(steps - 1);
+                    setPosition(0);
                     setQueen(false);
                 }, 680);
             }
@@ -81,7 +81,7 @@ export default function ChessLoader({
                         key={`pawn-${cycleId}`}
                         style={{ position: "absolute", top: 0, left: 0 }}
                         initial={reduced ? false : {
-                            x: pieceX(steps - 1),
+                            x: pieceX(0),
                             opacity: 0,
                         }}
                         animate={{
@@ -105,7 +105,7 @@ export default function ChessLoader({
                         style={{
                             position: "absolute",
                             top: 0,
-                            left: 0,
+                            left: pieceX(steps - 1),
                             filter: `drop-shadow(0 0 ${Math.round(size * 0.12)}px ${color})`,
                         }}
                         initial={reduced ? false : { scale: 0, opacity: 0, rotate: -25 }}

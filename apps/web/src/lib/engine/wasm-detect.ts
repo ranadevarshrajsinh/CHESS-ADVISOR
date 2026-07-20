@@ -18,13 +18,16 @@ export const getRecommendedWorkersNb = (): number => {
   const memory = getDeviceMemory();
   const threads = navigator.hardwareConcurrency || 4;
 
-  const maxFromThreads = Math.max(1, Math.floor(threads / 2));
+  const maxFromThreads = Math.max(
+    1,
+    Math.round(threads - 4),
+    Math.floor((threads * 2) / 3)
+  );
 
-  const maxFromMemory = Math.max(1, Math.floor(memory / 4));
+  const maxFromMemory = Math.max(1, Math.round(memory));
 
-  const maxFromDevice = isMobileDevice() ? 1 : 2;
+  const isIos = isIosDevice();
+  const maxFromDevice = isIos ? 2 : isMobileDevice() ? 4 : 8;
 
-  const conservative = Math.min(maxFromThreads, maxFromMemory, maxFromDevice);
-
-  return conservative;
+  return Math.min(maxFromThreads, maxFromMemory, maxFromDevice);
 };

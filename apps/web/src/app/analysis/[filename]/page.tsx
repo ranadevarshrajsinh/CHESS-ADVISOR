@@ -10,6 +10,7 @@ import { usePlayer } from "@/contexts/PlayerContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { analyzeGame, fetchAnnotations, type Annotation } from "@/services/api";
 import AnnotationPanel from "@/components/AnnotationPanel";
+import { PillTabs } from "@/components/PillTabs";
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
 import {
@@ -150,6 +151,7 @@ export default function GameAnalysisPage({
 
   const [analysis, setAnalysis] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [analysisProgress, setAnalysisProgress] = useState(0);
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [mistakeFilter, setMistakeFilter] = useState<MistakeFilter>("All");
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
@@ -162,6 +164,7 @@ export default function GameAnalysisPage({
   >([]);
   const [currentMoveIndex, setCurrentMoveIndex] = useState(0);
   const activeMoveRef = useRef<HTMLTableRowElement>(null);
+  const progressRef = useRef(0);
 
   // Maps move_history[k] → ply index in fenHistory (fenHistory[0] = start position).
   const moveHistoryToPly = useMemo<number[]>(() => {
@@ -230,7 +233,10 @@ export default function GameAnalysisPage({
     }
     if (!filename) return;
 
-    analyzeGame(chessUsername, filename, false, multiPv)
+    analyzeGame(chessUsername, filename, false, multiPv, (pct) => {
+      progressRef.current = pct;
+      setAnalysisProgress(pct);
+    })
       .then((data) => {
         setAnalysis(data);
         if (data?.full_history) {
@@ -254,12 +260,27 @@ export default function GameAnalysisPage({
           setFenHistory(fens);
           setMovePairs(pairs);
         }
+        // Always animate to 100% before revealing — gives cached games a quick
+        // but visible loading bar instead of an instant flash.
+        const startPct = progressRef.current;
+        const remaining = 100 - startPct;
+        const duration = startPct < 5 ? 700 : 250;
+        const steps = 20;
+        let step = 0;
+        const id = setInterval(() => {
+          step++;
+          setAnalysisProgress(Math.min(100, startPct + (remaining * step) / steps));
+          if (step >= steps) {
+            clearInterval(id);
+            setTimeout(() => setLoading(false), 150);
+          }
+        }, duration / steps);
       })
       .catch((e) => {
         console.error(e);
         alert("Failed to analyze game.");
-      })
-      .finally(() => setLoading(false));
+        setLoading(false);
+      });
   }, [chessUsername, isApproved, playerLoading, filename, router]);
 
   useEffect(() => {
@@ -513,8 +534,9 @@ export default function GameAnalysisPage({
   async function handleReanalyze() {
     if (!chessUsername || !filename) return;
     setReanalyzing(true);
+    setAnalysisProgress(0);
     try {
-      const data = await analyzeGame(chessUsername, filename, true, multiPv);
+      const data = await analyzeGame(chessUsername, filename, true, multiPv, setAnalysisProgress);
       setAnalysis(data);
       if (data?.full_history) {
         const game = new Chess();
@@ -657,7 +679,7 @@ export default function GameAnalysisPage({
         </div>
 
         {loading ? (
-          <Loader message="Analyzing game with Stockfish… This may take a moment." />
+          <Loader message="Analyzing game with Stockfish… This may take a moment." progress={analysisProgress} />
         ) : analysis ? (
           <div
             className="analysis-main-grid"
@@ -923,41 +945,8 @@ export default function GameAnalysisPage({
               }}
             >
               {/* Tab bar */}
-              <div
-                style={{
-                  display: "flex",
-                  gap: "2px",
-                  marginBottom: "12px",
-                  borderBottom: "1px solid var(--glass-border)",
-                  paddingBottom: "0",
-                }}
-              >
-                {TABS.map((t) => (
-                  <button
-                    key={t.id}
-                    onClick={() => setActiveTab(t.id)}
-                    style={{
-                      padding: "8px 14px",
-                      fontSize: "13px",
-                      fontWeight: activeTab === t.id ? "700" : "500",
-                      color:
-                        activeTab === t.id
-                          ? "var(--accent-color)"
-                          : "var(--text-secondary)",
-                      background: "none",
-                      border: "none",
-                      borderBottom:
-                        activeTab === t.id
-                          ? "2px solid var(--accent-color)"
-                          : "2px solid transparent",
-                      cursor: "pointer",
-                      transition: "color 0.2s",
-                      marginBottom: "-1px",
-                    }}
-                  >
-                    {t.label}
-                  </button>
-                ))}
+              <div style={{ marginBottom: "12px" }}>
+                <PillTabs tabs={TABS} activeTab={activeTab} onChange={(id) => setActiveTab(id)} />
               </div>
 
               {/* Coach note for current move — student read-only view */}
