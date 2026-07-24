@@ -281,19 +281,26 @@ export async function registerStaffUser(data: {
 export async function registerPlayerUser(data: {
   email: string;
   fullName: string;
-  chessUsername: string;
+  chessUsername?: string;
+  lichessUsername?: string;
+  activePlatform?: string;
   coachId: string;
 }) {
   const emailLower = data.email.toLowerCase();
-  const usernameLower = data.chessUsername.toLowerCase();
+  const chessLower = data.chessUsername?.toLowerCase() || null;
+  const lichessLower = data.lichessUsername?.toLowerCase() || null;
 
-  const [existingEmail, existingUsername] = await Promise.all([
+  const [existingEmail, existingByChess, existingByLichess] = await Promise.all([
     prisma.app_users.findUnique({ where: { email_lower: emailLower } }),
-    prisma.players.findUnique({ where: { chess_username: usernameLower } }),
+    chessLower ? prisma.players.findUnique({ where: { chess_username: chessLower } }) : Promise.resolve(null),
+    lichessLower ? prisma.players.findUnique({ where: { lichess_username: lichessLower } }) : Promise.resolve(null),
   ]);
 
   if (existingEmail) throw new Error("EMAIL_TAKEN");
-  if (existingUsername && existingUsername.user_id) throw new Error("USERNAME_TAKEN");
+  if (existingByChess?.user_id || existingByLichess?.user_id) throw new Error("USERNAME_TAKEN");
+
+  const existingUsername = existingByChess ?? existingByLichess;
+  const activePlatform = data.activePlatform ?? (chessLower ? "chess.com" : "lichess");
 
   // Players have no password — store an unusable placeholder that bcrypt.compare always rejects
   const passwordHash = `*${crypto.randomBytes(32).toString("hex")}`;
@@ -313,13 +320,18 @@ export async function registerPlayerUser(data: {
           user_id: newUser.id,
           email: data.email,
           full_name: data.fullName,
+          ...(chessLower ? { chess_username: chessLower } : {}),
+          ...(lichessLower ? { lichess_username: lichessLower } : {}),
+          active_platform: activePlatform,
           ...(existingUsername.coach_id == null ? { coach_id: data.coachId } : {}),
         },
       });
     } else {
       await tx.players.create({
         data: {
-          chess_username: usernameLower,
+          chess_username: chessLower,
+          lichess_username: lichessLower,
+          active_platform: activePlatform,
           full_name: data.fullName,
           coach_id: data.coachId,
           status: "pending",

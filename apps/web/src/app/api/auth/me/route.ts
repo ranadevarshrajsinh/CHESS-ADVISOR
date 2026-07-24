@@ -24,6 +24,8 @@ export async function GET(request: Request) {
     inviteCode: profile?.invite_code ?? null,
     // Player fields
     chessUsername: player?.chess_username ?? null,
+    lichessUsername: player?.lichess_username ?? null,
+    activePlatform: player?.active_platform ?? "chess.com",
     coachId: player?.coach_id ?? null,
     isApproved: (profile?.status ?? player?.status) === "approved",
   });

@@ -140,7 +140,7 @@ function OpeningCard({
 
 export default function OpeningDrillPage() {
   const router = useRouter();
-  const { chessUsername, isApproved, loading: playerLoading } = usePlayer();
+  const { activeUsername, activePlatform, isApproved, loading: playerLoading } = usePlayer();
   const engine = useDrillEngine();
 
   // ── Setup state
@@ -174,7 +174,7 @@ export default function OpeningDrillPage() {
   const selectedOpeningRef  = useRef<DrillOpening | null>(null);
   const userColorRef        = useRef<UserColor>("white");
   const targetEloRef        = useRef(1200);
-  const chessUsernameRef    = useRef("");
+  const activeUsernameRef    = useRef("");
   const completedGameRef    = useRef<{
     sanHistory: string[];
     openingMoveCount: number;
@@ -207,25 +207,25 @@ export default function OpeningDrillPage() {
   useEffect(() => { selectedOpeningRef.current = selectedOpening; }, [selectedOpening]);
   useEffect(() => { userColorRef.current = userColor; },           [userColor]);
   useEffect(() => { targetEloRef.current = targetElo; },           [targetElo]);
-  useEffect(() => { chessUsernameRef.current = chessUsername || ""; }, [chessUsername]);
+  useEffect(() => { activeUsernameRef.current = activeUsername || ""; }, [activeUsername]);
 
   // ── Auth guard
   useEffect(() => {
     if (playerLoading) return;
-    if (!chessUsername || !isApproved) router.push("/login");
-  }, [chessUsername, isApproved, playerLoading, router]);
+    if (!activeUsername || !isApproved) router.push("/login");
+  }, [activeUsername, isApproved, playerLoading, router]);
 
   // ── Initialize engine on mount and when ELO changes
   useEffect(() => {
-    if (!chessUsername) return;
+    if (!activeUsername) return;
     engine.init(targetElo);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chessUsername, targetElo]);
+  }, [activeUsername, targetElo]);
 
   // ── Pull opening recommendations from report
   useEffect(() => {
-    if (!chessUsername) return;
-    fetch(`/api/report/${chessUsername}`)
+    if (!activeUsername) return;
+    fetch(`/api/report/${activeUsername}?platform=${activePlatform}`)
       .then((r) => r.json())
       .then((data) => {
         const byOpening: any[] = data?.openings?.performance?.by_opening ?? [];
@@ -249,7 +249,7 @@ export default function OpeningDrillPage() {
         setRecommendations(matched);
       })
       .catch(() => {});
-  }, [chessUsername]);
+  }, [activeUsername, activePlatform]);
 
   // ── Filtered opening list
   const visibleOpenings = DRILL_OPENINGS.filter((o) => {
@@ -269,7 +269,7 @@ export default function OpeningDrillPage() {
       opening:          selectedOpeningRef.current,
       userColor:        userColorRef.current,
       targetElo:        targetEloRef.current,
-      username:         chessUsernameRef.current,
+      username:         activeUsernameRef.current,
     };
     setGameResult(result);
     setPhase("gameover");
@@ -545,7 +545,7 @@ export default function OpeningDrillPage() {
   const engineReady       = engine.status === "ready" || engine.status === "thinking";
   const isEngineThinking  = engine.status === "thinking";
 
-  if (!chessUsername) return null;
+  if (!activeUsername) return null;
 
   // ─── PLAYING / STARTING / GAMEOVER ───────────────────────────────────────────
   if (phase === "playing" || phase === "gameover" || phase === "starting") {

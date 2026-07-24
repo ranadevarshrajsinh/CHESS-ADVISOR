@@ -3,6 +3,9 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 type PlayerContextType = {
   chessUsername: string | null;
+  lichessUsername: string | null;
+  activePlatform: string;
+  activeUsername: string | null;
   fullName: string | null;
   coachId: string | null;
   status: string | null;
@@ -14,6 +17,9 @@ type PlayerContextType = {
 
 const PlayerContext = createContext<PlayerContextType>({
   chessUsername: null,
+  lichessUsername: null,
+  activePlatform: "chess.com",
+  activeUsername: null,
   fullName: null,
   coachId: null,
   status: null,
@@ -25,6 +31,8 @@ const PlayerContext = createContext<PlayerContextType>({
 
 export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [chessUsername, setChessUsername] = useState<string | null>(null);
+  const [lichessUsername, setLichessUsername] = useState<string | null>(null);
+  const [activePlatform, setActivePlatform] = useState<string>("chess.com");
   const [fullName, setFullName] = useState<string | null>(null);
   const [coachId, setCoachId] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
@@ -43,6 +51,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         return;
       }
       setChessUsername(data.chessUsername);
+      setLichessUsername(data.lichessUsername);
+      setActivePlatform(data.activePlatform ?? "chess.com");
       setFullName(data.fullName);
       setCoachId(data.coachId);
       setStatus(data.status);
@@ -55,6 +65,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
   function clearState() {
     setChessUsername(null);
+    setLichessUsername(null);
+    setActivePlatform("chess.com");
     setFullName(null);
     setCoachId(null);
     setStatus(null);
@@ -63,6 +75,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     fetchMe();
   }, []);
+
+  const activeUsername = activePlatform === "lichess" ? lichessUsername : chessUsername;
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -78,6 +92,9 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     <PlayerContext.Provider
       value={{
         chessUsername,
+        lichessUsername,
+        activePlatform,
+        activeUsername,
         fullName,
         coachId,
         status,

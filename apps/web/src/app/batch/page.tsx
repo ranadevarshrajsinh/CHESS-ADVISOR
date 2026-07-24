@@ -7,7 +7,7 @@ import { usePlayer } from "@/contexts/PlayerContext";
 import { createBatchJob, getBatchJob, getBatchJobs, fetchGamesByTimeControl } from "@/services/api";
 
 const TC_LABELS: Record<string, string> = {
-  rapid: "Rapid", blitz: "Blitz", bullet: "Bullet", daily: "Daily",
+  rapid: "Rapid", blitz: "Blitz", bullet: "Bullet", daily: "Daily", classical: "Classical",
 };
 
 function fmtDate(iso: string) {
@@ -22,7 +22,7 @@ function BatchPageInner() {
   const searchParams = useSearchParams();
   const tc = searchParams.get("tc") || "";
   const tcLabel = TC_LABELS[tc] || "";
-  const { chessUsername, isApproved, loading: playerLoading } = usePlayer();
+  const { activeUsername, activePlatform, isApproved, loading: playerLoading } = usePlayer();
 
   const [games, setGames] = useState<any[]>([]);
   const [tcGames, setTcGames] = useState<any[]>([]);
@@ -42,9 +42,9 @@ function BatchPageInner() {
 
   useEffect(() => {
     if (playerLoading) return;
-    if (!chessUsername || !isApproved) { router.push("/login"); return; }
+    if (!activeUsername || !isApproved) { router.push("/login"); return; }
 
-    const stored = localStorage.getItem(`recentGames_${chessUsername}`);
+    const stored = localStorage.getItem(`recentGames_${activeUsername}`);
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
@@ -52,7 +52,7 @@ function BatchPageInner() {
       } catch {}
     }
 
-    getBatchJobs(chessUsername)
+    getBatchJobs(activeUsername)
       .then(jobs => {
         // Match jobs to the current tc filter (null = all-games)
         const matchesTc = (j: any) =>
@@ -69,21 +69,21 @@ function BatchPageInner() {
       })
       .catch(() => {})
       .finally(() => setPageLoading(false));
-  }, [chessUsername, isApproved, playerLoading, router]);
+  }, [activeUsername, isApproved, playerLoading, router]);
 
   useEffect(() => () => { if (pollRef.current) clearInterval(pollRef.current); }, []);
 
-  // When a tc filter is active, fetch matching games directly from Chess.com
+  // When a tc filter is active, fetch matching games directly from the active platform
   useEffect(() => {
-    if (!tc || !chessUsername || playerLoading) return;
+    if (!tc || !activeUsername || playerLoading) return;
     setFetchingTc(true);
     setFetchTcError("");
     setTcGames([]);
-    fetchGamesByTimeControl(chessUsername, tc, 50)
+    fetchGamesByTimeControl(activeUsername, tc, 50, activePlatform)
       .then(fetched => setTcGames(fetched))
-      .catch(() => setFetchTcError("Could not fetch games from Chess.com. Check your connection and try again."))
+      .catch(() => setFetchTcError(`Could not fetch games from ${activePlatform === "lichess" ? "Lichess" : "Chess.com"}. Check your connection and try again.`))
       .finally(() => setFetchingTc(false));
-  }, [tc, chessUsername, playerLoading]);
+  }, [tc, activeUsername, activePlatform, playerLoading]);
 
   function startPolling(jobId: string) {
     if (pollRef.current) clearInterval(pollRef.current);
@@ -94,7 +94,7 @@ function BatchPageInner() {
         if (job.status === "completed" || job.status === "failed") {
           clearInterval(pollRef.current!);
           pollRef.current = null;
-          getBatchJobs(chessUsername!).then(jobs =>
+          getBatchJobs(activeUsername!).then(jobs =>
             setPastJobs(jobs.filter(j => j.status === "completed" || j.status === "failed").slice(0, 5))
           ).catch(() => {});
         }
@@ -105,12 +105,12 @@ function BatchPageInner() {
   async function handleStart() {
     const count = analyzeCount > 0 ? analyzeCount : filteredGames.length;
     const gamesToSubmit = filteredGames.slice(0, count);
-    if (!chessUsername || gamesToSubmit.length === 0) return;
+    if (!activeUsername || gamesToSubmit.length === 0) return;
     setSubmitting(true);
     setError("");
     try {
       const urls = gamesToSubmit.map((g: any) => g.filename).filter(Boolean);
-      const job = await createBatchJob(chessUsername, urls, tc || undefined);
+      const job = await createBatchJob(activeUsername, urls, tc || undefined);
       sessionJobIdRef.current = job.id;
       setActiveJob(job);
       jobStartRef.current = Date.now();
@@ -181,7 +181,7 @@ function BatchPageInner() {
 
         {/* Time control picker */}
         <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "32px" }}>
-          {["", "rapid", "blitz", "bullet", "daily"].map(f => {
+          {["", "rapid", "blitz", "bullet", activePlatform === "lichess" ? "classical" : "daily"].map(f => {
             const active = tc === f;
             return (
               <button
@@ -216,13 +216,13 @@ function BatchPageInner() {
               }}>
                 {fetchingTc ? (
                   <span style={{ color: "var(--text-secondary)" }}>
-                    Finding your {tcLabel} games on Chess.com…
+                    Finding your {tcLabel} games on {activePlatform === "lichess" ? "Lichess" : "Chess.com"}…
                   </span>
                 ) : fetchTcError ? (
                   <span style={{ color: "var(--danger)" }}>{fetchTcError}</span>
                 ) : (
                   <span>
-                    <strong>{filteredGames.length}</strong> {tcLabel} game{filteredGames.length !== 1 ? "s" : ""} found on Chess.com
+                    <strong>{filteredGames.length}</strong> {tcLabel} game{filteredGames.length !== 1 ? "s" : ""} found on {activePlatform === "lichess" ? "Lichess" : "Chess.com"}
                   </span>
                 )}
               </div>
@@ -236,12 +236,12 @@ function BatchPageInner() {
                 </div>
                 <div style={{ fontSize: "13px", color: "var(--text-secondary)", marginBottom: !fetchingTc && filteredGames.length > 0 ? "16px" : "0" }}>
                   {fetchingTc
-                    ? `Searching your Chess.com history for ${tcLabel} games…`
+                    ? `Searching your ${activePlatform === "lichess" ? "Lichess" : "Chess.com"} history for ${tcLabel} games…`
                     : filteredGames.length === 0
                       ? tc
                         ? fetchTcError
                           ? "Failed to load games. Check your connection and try again."
-                          : `No ${tcLabel} games found in your recent Chess.com history.`
+                          : `No ${tcLabel} games found in your recent ${activePlatform === "lichess" ? "Lichess" : "Chess.com"} history.`
                         : "Go to the dashboard and load some games first."
                       : "The Python worker will fetch PGNs and run Stockfish on each game. Results appear in the Report section when done."}
                 </div>

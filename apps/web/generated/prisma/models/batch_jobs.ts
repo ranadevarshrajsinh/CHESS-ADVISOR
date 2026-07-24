@@ -20,25 +20,43 @@ export type batch_jobsModel = runtime.Types.Result.DefaultSelection<Prisma.$batc
 
 export type AggregateBatch_jobs = {
   _count: Batch_jobsCountAggregateOutputType | null
+  _avg: Batch_jobsAvgAggregateOutputType | null
+  _sum: Batch_jobsSumAggregateOutputType | null
   _min: Batch_jobsMinAggregateOutputType | null
   _max: Batch_jobsMaxAggregateOutputType | null
+}
+
+export type Batch_jobsAvgAggregateOutputType = {
+  games_done: number | null
+  games_total: number | null
+}
+
+export type Batch_jobsSumAggregateOutputType = {
+  games_done: number | null
+  games_total: number | null
 }
 
 export type Batch_jobsMinAggregateOutputType = {
   id: string | null
   username: string | null
-  time_class: string | null
   status: string | null
   created_at: Date | null
+  games_done: number | null
+  games_total: number | null
+  current_game: string | null
+  time_class: string | null
   updated_at: Date | null
 }
 
 export type Batch_jobsMaxAggregateOutputType = {
   id: string | null
   username: string | null
-  time_class: string | null
   status: string | null
   created_at: Date | null
+  games_done: number | null
+  games_total: number | null
+  current_game: string | null
+  time_class: string | null
   updated_at: Date | null
 }
 
@@ -46,30 +64,49 @@ export type Batch_jobsCountAggregateOutputType = {
   id: number
   username: number
   game_urls: number
-  time_class: number
   status: number
   result: number
   created_at: number
+  games_done: number
+  games_total: number
+  current_game: number
+  time_class: number
   updated_at: number
   _all: number
 }
 
 
+export type Batch_jobsAvgAggregateInputType = {
+  games_done?: true
+  games_total?: true
+}
+
+export type Batch_jobsSumAggregateInputType = {
+  games_done?: true
+  games_total?: true
+}
+
 export type Batch_jobsMinAggregateInputType = {
   id?: true
   username?: true
-  time_class?: true
   status?: true
   created_at?: true
+  games_done?: true
+  games_total?: true
+  current_game?: true
+  time_class?: true
   updated_at?: true
 }
 
 export type Batch_jobsMaxAggregateInputType = {
   id?: true
   username?: true
-  time_class?: true
   status?: true
   created_at?: true
+  games_done?: true
+  games_total?: true
+  current_game?: true
+  time_class?: true
   updated_at?: true
 }
 
@@ -77,10 +114,13 @@ export type Batch_jobsCountAggregateInputType = {
   id?: true
   username?: true
   game_urls?: true
-  time_class?: true
   status?: true
   result?: true
   created_at?: true
+  games_done?: true
+  games_total?: true
+  current_game?: true
+  time_class?: true
   updated_at?: true
   _all?: true
 }
@@ -123,6 +163,18 @@ export type Batch_jobsAggregateArgs<ExtArgs extends runtime.Types.Extensions.Int
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: Batch_jobsAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: Batch_jobsSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: Batch_jobsMinAggregateInputType
@@ -153,6 +205,8 @@ export type batch_jobsGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   _count?: Batch_jobsCountAggregateInputType | true
+  _avg?: Batch_jobsAvgAggregateInputType
+  _sum?: Batch_jobsSumAggregateInputType
   _min?: Batch_jobsMinAggregateInputType
   _max?: Batch_jobsMaxAggregateInputType
 }
@@ -161,12 +215,17 @@ export type Batch_jobsGroupByOutputType = {
   id: string
   username: string
   game_urls: runtime.JsonValue
-  time_class: string | null
   status: string
   result: runtime.JsonValue | null
   created_at: Date
+  games_done: number | null
+  games_total: number | null
+  current_game: string | null
+  time_class: string | null
   updated_at: Date
   _count: Batch_jobsCountAggregateOutputType | null
+  _avg: Batch_jobsAvgAggregateOutputType | null
+  _sum: Batch_jobsSumAggregateOutputType | null
   _min: Batch_jobsMinAggregateOutputType | null
   _max: Batch_jobsMaxAggregateOutputType | null
 }
@@ -193,10 +252,13 @@ export type batch_jobsWhereInput = {
   id?: Prisma.UuidFilter<"batch_jobs"> | string
   username?: Prisma.StringFilter<"batch_jobs"> | string
   game_urls?: Prisma.JsonFilter<"batch_jobs">
-  time_class?: Prisma.StringNullableFilter<"batch_jobs"> | string | null
   status?: Prisma.StringFilter<"batch_jobs"> | string
   result?: Prisma.JsonNullableFilter<"batch_jobs">
   created_at?: Prisma.DateTimeFilter<"batch_jobs"> | Date | string
+  games_done?: Prisma.IntNullableFilter<"batch_jobs"> | number | null
+  games_total?: Prisma.IntNullableFilter<"batch_jobs"> | number | null
+  current_game?: Prisma.StringNullableFilter<"batch_jobs"> | string | null
+  time_class?: Prisma.StringNullableFilter<"batch_jobs"> | string | null
   updated_at?: Prisma.DateTimeFilter<"batch_jobs"> | Date | string
 }
 
@@ -204,10 +266,13 @@ export type batch_jobsOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   username?: Prisma.SortOrder
   game_urls?: Prisma.SortOrder
-  time_class?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   result?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  games_done?: Prisma.SortOrderInput | Prisma.SortOrder
+  games_total?: Prisma.SortOrderInput | Prisma.SortOrder
+  current_game?: Prisma.SortOrderInput | Prisma.SortOrder
+  time_class?: Prisma.SortOrderInput | Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
 
@@ -218,10 +283,13 @@ export type batch_jobsWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.batch_jobsWhereInput | Prisma.batch_jobsWhereInput[]
   username?: Prisma.StringFilter<"batch_jobs"> | string
   game_urls?: Prisma.JsonFilter<"batch_jobs">
-  time_class?: Prisma.StringNullableFilter<"batch_jobs"> | string | null
   status?: Prisma.StringFilter<"batch_jobs"> | string
   result?: Prisma.JsonNullableFilter<"batch_jobs">
   created_at?: Prisma.DateTimeFilter<"batch_jobs"> | Date | string
+  games_done?: Prisma.IntNullableFilter<"batch_jobs"> | number | null
+  games_total?: Prisma.IntNullableFilter<"batch_jobs"> | number | null
+  current_game?: Prisma.StringNullableFilter<"batch_jobs"> | string | null
+  time_class?: Prisma.StringNullableFilter<"batch_jobs"> | string | null
   updated_at?: Prisma.DateTimeFilter<"batch_jobs"> | Date | string
 }, "id">
 
@@ -229,14 +297,19 @@ export type batch_jobsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   username?: Prisma.SortOrder
   game_urls?: Prisma.SortOrder
-  time_class?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   result?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  games_done?: Prisma.SortOrderInput | Prisma.SortOrder
+  games_total?: Prisma.SortOrderInput | Prisma.SortOrder
+  current_game?: Prisma.SortOrderInput | Prisma.SortOrder
+  time_class?: Prisma.SortOrderInput | Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   _count?: Prisma.batch_jobsCountOrderByAggregateInput
+  _avg?: Prisma.batch_jobsAvgOrderByAggregateInput
   _max?: Prisma.batch_jobsMaxOrderByAggregateInput
   _min?: Prisma.batch_jobsMinOrderByAggregateInput
+  _sum?: Prisma.batch_jobsSumOrderByAggregateInput
 }
 
 export type batch_jobsScalarWhereWithAggregatesInput = {
@@ -246,32 +319,41 @@ export type batch_jobsScalarWhereWithAggregatesInput = {
   id?: Prisma.UuidWithAggregatesFilter<"batch_jobs"> | string
   username?: Prisma.StringWithAggregatesFilter<"batch_jobs"> | string
   game_urls?: Prisma.JsonWithAggregatesFilter<"batch_jobs">
-  time_class?: Prisma.StringNullableWithAggregatesFilter<"batch_jobs"> | string | null
   status?: Prisma.StringWithAggregatesFilter<"batch_jobs"> | string
   result?: Prisma.JsonNullableWithAggregatesFilter<"batch_jobs">
   created_at?: Prisma.DateTimeWithAggregatesFilter<"batch_jobs"> | Date | string
+  games_done?: Prisma.IntNullableWithAggregatesFilter<"batch_jobs"> | number | null
+  games_total?: Prisma.IntNullableWithAggregatesFilter<"batch_jobs"> | number | null
+  current_game?: Prisma.StringNullableWithAggregatesFilter<"batch_jobs"> | string | null
+  time_class?: Prisma.StringNullableWithAggregatesFilter<"batch_jobs"> | string | null
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"batch_jobs"> | Date | string
 }
 
 export type batch_jobsCreateInput = {
   id?: string
   username: string
-  game_urls: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  time_class?: string | null
+  game_urls?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   status?: string
   result?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Date | string
+  games_done?: number | null
+  games_total?: number | null
+  current_game?: string | null
+  time_class?: string | null
   updated_at?: Date | string
 }
 
 export type batch_jobsUncheckedCreateInput = {
   id?: string
   username: string
-  game_urls: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  time_class?: string | null
+  game_urls?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   status?: string
   result?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Date | string
+  games_done?: number | null
+  games_total?: number | null
+  current_game?: string | null
+  time_class?: string | null
   updated_at?: Date | string
 }
 
@@ -279,10 +361,13 @@ export type batch_jobsUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   game_urls?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  time_class?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   result?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  games_done?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  games_total?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  current_game?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  time_class?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -290,21 +375,27 @@ export type batch_jobsUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   game_urls?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  time_class?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   result?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  games_done?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  games_total?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  current_game?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  time_class?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type batch_jobsCreateManyInput = {
   id?: string
   username: string
-  game_urls: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  time_class?: string | null
+  game_urls?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   status?: string
   result?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Date | string
+  games_done?: number | null
+  games_total?: number | null
+  current_game?: string | null
+  time_class?: string | null
   updated_at?: Date | string
 }
 
@@ -312,10 +403,13 @@ export type batch_jobsUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   game_urls?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  time_class?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   result?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  games_done?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  games_total?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  current_game?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  time_class?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -323,10 +417,13 @@ export type batch_jobsUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   game_urls?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  time_class?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   result?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  games_done?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  games_total?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  current_game?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  time_class?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -334,29 +431,48 @@ export type batch_jobsCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   username?: Prisma.SortOrder
   game_urls?: Prisma.SortOrder
-  time_class?: Prisma.SortOrder
   status?: Prisma.SortOrder
   result?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  games_done?: Prisma.SortOrder
+  games_total?: Prisma.SortOrder
+  current_game?: Prisma.SortOrder
+  time_class?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+}
+
+export type batch_jobsAvgOrderByAggregateInput = {
+  games_done?: Prisma.SortOrder
+  games_total?: Prisma.SortOrder
 }
 
 export type batch_jobsMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   username?: Prisma.SortOrder
-  time_class?: Prisma.SortOrder
   status?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  games_done?: Prisma.SortOrder
+  games_total?: Prisma.SortOrder
+  current_game?: Prisma.SortOrder
+  time_class?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
 
 export type batch_jobsMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   username?: Prisma.SortOrder
-  time_class?: Prisma.SortOrder
   status?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  games_done?: Prisma.SortOrder
+  games_total?: Prisma.SortOrder
+  current_game?: Prisma.SortOrder
+  time_class?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+}
+
+export type batch_jobsSumOrderByAggregateInput = {
+  games_done?: Prisma.SortOrder
+  games_total?: Prisma.SortOrder
 }
 
 
@@ -365,10 +481,13 @@ export type batch_jobsSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   id?: boolean
   username?: boolean
   game_urls?: boolean
-  time_class?: boolean
   status?: boolean
   result?: boolean
   created_at?: boolean
+  games_done?: boolean
+  games_total?: boolean
+  current_game?: boolean
+  time_class?: boolean
   updated_at?: boolean
 }, ExtArgs["result"]["batch_jobs"]>
 
@@ -376,10 +495,13 @@ export type batch_jobsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   id?: boolean
   username?: boolean
   game_urls?: boolean
-  time_class?: boolean
   status?: boolean
   result?: boolean
   created_at?: boolean
+  games_done?: boolean
+  games_total?: boolean
+  current_game?: boolean
+  time_class?: boolean
   updated_at?: boolean
 }, ExtArgs["result"]["batch_jobs"]>
 
@@ -387,10 +509,13 @@ export type batch_jobsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   id?: boolean
   username?: boolean
   game_urls?: boolean
-  time_class?: boolean
   status?: boolean
   result?: boolean
   created_at?: boolean
+  games_done?: boolean
+  games_total?: boolean
+  current_game?: boolean
+  time_class?: boolean
   updated_at?: boolean
 }, ExtArgs["result"]["batch_jobs"]>
 
@@ -398,14 +523,17 @@ export type batch_jobsSelectScalar = {
   id?: boolean
   username?: boolean
   game_urls?: boolean
-  time_class?: boolean
   status?: boolean
   result?: boolean
   created_at?: boolean
+  games_done?: boolean
+  games_total?: boolean
+  current_game?: boolean
+  time_class?: boolean
   updated_at?: boolean
 }
 
-export type batch_jobsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "game_urls" | "time_class" | "status" | "result" | "created_at" | "updated_at", ExtArgs["result"]["batch_jobs"]>
+export type batch_jobsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "game_urls" | "status" | "result" | "created_at" | "games_done" | "games_total" | "current_game" | "time_class" | "updated_at", ExtArgs["result"]["batch_jobs"]>
 
 export type $batch_jobsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "batch_jobs"
@@ -414,10 +542,13 @@ export type $batch_jobsPayload<ExtArgs extends runtime.Types.Extensions.Internal
     id: string
     username: string
     game_urls: runtime.JsonValue
-    time_class: string | null
     status: string
     result: runtime.JsonValue | null
     created_at: Date
+    games_done: number | null
+    games_total: number | null
+    current_game: string | null
+    time_class: string | null
     updated_at: Date
   }, ExtArgs["result"]["batch_jobs"]>
   composites: {}
@@ -845,10 +976,13 @@ export interface batch_jobsFieldRefs {
   readonly id: Prisma.FieldRef<"batch_jobs", 'String'>
   readonly username: Prisma.FieldRef<"batch_jobs", 'String'>
   readonly game_urls: Prisma.FieldRef<"batch_jobs", 'Json'>
-  readonly time_class: Prisma.FieldRef<"batch_jobs", 'String'>
   readonly status: Prisma.FieldRef<"batch_jobs", 'String'>
   readonly result: Prisma.FieldRef<"batch_jobs", 'Json'>
   readonly created_at: Prisma.FieldRef<"batch_jobs", 'DateTime'>
+  readonly games_done: Prisma.FieldRef<"batch_jobs", 'Int'>
+  readonly games_total: Prisma.FieldRef<"batch_jobs", 'Int'>
+  readonly current_game: Prisma.FieldRef<"batch_jobs", 'String'>
+  readonly time_class: Prisma.FieldRef<"batch_jobs", 'String'>
   readonly updated_at: Prisma.FieldRef<"batch_jobs", 'DateTime'>
 }
     

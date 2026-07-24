@@ -32,7 +32,16 @@ function resolveOutcome(
   return "Draw";
 }
 
-export default function GameCard({ game, username = "" }: { game: any; username?: string }) {
+export default function GameCard({
+  game,
+  chessUsername = "",
+  lichessUsername = "",
+}: {
+  game: any;
+  chessUsername?: string;
+  lichessUsername?: string;
+}) {
+  const username = game.platform === "lichess" ? lichessUsername : chessUsername;
   const outcome = resolveOutcome(game.result, game.white, game.black, username);
   const isUserWhite = (game.white || "").toLowerCase() === username.toLowerCase();
 

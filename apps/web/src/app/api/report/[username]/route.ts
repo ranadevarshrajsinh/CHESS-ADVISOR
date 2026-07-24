@@ -1,27 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { fetchChessComGames, fetchLichessGames } from "@/lib/chess/integrations";
+import type { Game } from "@repo/types";
 
-const CHESS_COM_HEADERS = { "User-Agent": "ChessAdvisor/1.0" };
+// Both platforms embed an opening tag in the PGN header — chess.com uses
+// ECOUrl (a slug we can turn into a readable name), Lichess uses Opening
+// directly when available; ECO code is the last-resort fallback either way.
+function extractOpeningFromPgn(pgn?: string): string {
+  if (!pgn) return "Unknown Opening";
+  const ecoUrlMatch = pgn.match(/\[ECOUrl "([^"]+)"\]/);
+  if (ecoUrlMatch) {
+    return decodeURIComponent(ecoUrlMatch[1].split("/").pop() || "").replace(/-/g, " ");
+  }
+  const openingMatch = pgn.match(/\[Opening "([^"]+)"\]/);
+  if (openingMatch) return openingMatch[1];
+  const ecoMatch = pgn.match(/\[ECO "([^"]+)"\]/);
+  if (ecoMatch) return ecoMatch[1];
+  return "Unknown Opening";
+}
 
-async function fetchRecentChessComGames(username: string, limit: number) {
+async function fetchRecentGames(username: string, limit: number, platform: string): Promise<Game[]> {
   try {
-    const archivesRes = await fetch(
-      `https://api.chess.com/pub/player/${username}/games/archives`,
-      { headers: CHESS_COM_HEADERS }
-    );
-    if (!archivesRes.ok) return [];
-    const { archives } = await archivesRes.json();
-    if (!archives?.length) return [];
-
-    const games: any[] = [];
-    for (const archiveUrl of [...archives].reverse()) {
-      if (games.length >= limit) break;
-      const res = await fetch(archiveUrl, { headers: CHESS_COM_HEADERS });
-      if (!res.ok) continue;
-      const { games: ag } = await res.json();
-      games.push(...[...ag].reverse().slice(0, limit - games.length));
-    }
-    return games;
+    return platform === "lichess"
+      ? await fetchLichessGames(username, limit)
+      : await fetchChessComGames(username, limit);
   } catch {
     return [];
   }
@@ -147,28 +149,29 @@ function buildReportFromJobs(username: string, jobs: any[]) {
   };
 }
 
-function buildBasicReport(username: string, games: any[]) {
+function buildBasicReport(username: string, games: Game[]) {
   let wins = 0, losses = 0, draws = 0;
   const openingMap: Record<string, { wins: number; losses: number; draws: number }> = {};
   const whiteOpenings: string[] = [];
   const blackOpenings: string[] = [];
 
   for (const game of games) {
-    const isWhite = game.white?.username?.toLowerCase() === username.toLowerCase();
-    const result  = isWhite ? game.white?.result : game.black?.result;
-    const ecoUrl: string = game.eco_url || "";
-    const opening = ecoUrl
-      ? decodeURIComponent(ecoUrl.split("/").pop() || "").replace(/-/g, " ")
-      : (game.eco || "Unknown Opening");
+    const isWhite = (game.white || "").toLowerCase() === username.toLowerCase();
+    const opening = extractOpeningFromPgn(game.pgn);
 
     if (!openingMap[opening]) openingMap[opening] = { wins: 0, losses: 0, draws: 0 };
 
-    if (result === "win") {
+    let outcome: "win" | "loss" | "draw";
+    if (game.result === "1-0") outcome = isWhite ? "win" : "loss";
+    else if (game.result === "0-1") outcome = isWhite ? "loss" : "win";
+    else outcome = "draw";
+
+    if (outcome === "win") {
       wins++;
       openingMap[opening].wins++;
       if (isWhite && !whiteOpenings.includes(opening)) whiteOpenings.push(opening);
       if (!isWhite && !blackOpenings.includes(opening)) blackOpenings.push(opening);
-    } else if (["checkmated", "resigned", "timeout", "abandoned"].includes(result)) {
+    } else if (outcome === "loss") {
       losses++;
       openingMap[opening].losses++;
     } else {
@@ -771,6 +774,7 @@ export async function GET(
   const { username } = await params;
   const { searchParams } = new URL(request.url);
   const limit = parseInt(searchParams.get("limit") || "50", 10);
+  const platform = searchParams.get("platform") || "chess.com";
 
   try {
     const tc = searchParams.get("tc");
@@ -844,7 +848,7 @@ export async function GET(
       }
     }
 
-    const games = await fetchRecentChessComGames(username, 20);
+    const games = await fetchRecentGames(username, 20, platform);
     if (games.length > 0) {
       return NextResponse.json(buildBasicReport(username, games));
     }

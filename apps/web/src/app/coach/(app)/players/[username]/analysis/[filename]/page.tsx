@@ -30,6 +30,7 @@ import {
   ArrowLeft,
   Play,
   Pause,
+  FlipVertical2,
 } from "lucide-react";
 
 const PIECE_SYMBOLS: Record<string, string> = {
@@ -156,6 +157,11 @@ export default function CoachGameAnalysisPage({
   const [fenHistory, setFenHistory] = useState<string[]>([]);
   const { boardTheme, setBoardTheme, multiPv } = useSettings();
   const [themeFlash, setThemeFlash] = useState(false);
+  const [manualOrientation, setManualOrientation] = useState<"white" | "black" | null>(null);
+
+  useEffect(() => {
+    setManualOrientation(null);
+  }, [filename]);
   const [movePairs, setMovePairs] = useState<
     Array<{ from: string; to: string }>
   >([]);
@@ -464,13 +470,20 @@ export default function CoachGameAnalysisPage({
     };
   }
 
+  // Default to the student's own perspective (their pieces at the bottom); a manual
+  // flip overrides this until a different game is loaded (reset above).
+  const isStudentWhite = analysis?.white_player?.toLowerCase() === username?.toLowerCase();
+  const boardOrientation: "white" | "black" = manualOrientation ?? (isStudentWhite ? "white" : "black");
+
   const badgeSymbol = currentQuality ? BADGE[currentQuality] : undefined;
   const badgePos =
     currentMove?.to && badgeSymbol
       ? (() => {
-          const col = currentMove.to.charCodeAt(0) - 97;
+          const file = currentMove.to.charCodeAt(0) - 97;
           const rank = parseInt(currentMove.to[1]);
-          return { left: `${col * 12.5}%`, top: `${(8 - rank) * 12.5}%` };
+          const col = boardOrientation === "white" ? file : 7 - file;
+          const row = boardOrientation === "white" ? 8 - rank : rank - 1;
+          return { left: `${col * 12.5}%`, top: `${row * 12.5}%` };
         })()
       : null;
 
@@ -618,7 +631,7 @@ export default function CoachGameAnalysisPage({
                 overflow: "hidden",
               }}
             >
-              {/* Black player info */}
+              {/* Black player info — shown above the board unless the board is flipped */}
               <div
                 style={{
                   flexShrink: 0,
@@ -627,6 +640,7 @@ export default function CoachGameAnalysisPage({
                   alignItems: "center",
                   marginBottom: "6px",
                   padding: "0 4px",
+                  order: boardOrientation === "white" ? 0 : 2,
                 }}
               >
                 <div
@@ -668,6 +682,7 @@ export default function CoachGameAnalysisPage({
                   alignItems: "center",
                   justifyContent: "center",
                   overflow: "hidden",
+                  order: 1,
                 }}
               >
                 <div
@@ -688,6 +703,7 @@ export default function CoachGameAnalysisPage({
                   <Chessboard
                     options={{
                       position: displayFen,
+                      boardOrientation,
                       darkSquareStyle: { backgroundColor: BOARD_THEMES[boardTheme]?.dark ?? "#b58863" },
                       lightSquareStyle: { backgroundColor: BOARD_THEMES[boardTheme]?.light ?? "#f0d9b5" },
                       animationDurationInMs: 200,
@@ -737,7 +753,7 @@ export default function CoachGameAnalysisPage({
                 </div>
               </div>
 
-              {/* White player info */}
+              {/* White player info — shown below the board unless the board is flipped */}
               <div
                 style={{
                   flexShrink: 0,
@@ -746,6 +762,7 @@ export default function CoachGameAnalysisPage({
                   alignItems: "center",
                   marginTop: "6px",
                   padding: "0 4px",
+                  order: boardOrientation === "white" ? 2 : 0,
                 }}
               >
                 <div
@@ -788,6 +805,7 @@ export default function CoachGameAnalysisPage({
                   gap: "8px",
                   padding: "8px",
                   marginTop: "8px",
+                  order: 3,
                 }}
               >
                 <button
@@ -845,6 +863,13 @@ export default function CoachGameAnalysisPage({
                   title="End (↓)"
                 >
                   <SkipForward size={18} />
+                </button>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setManualOrientation(boardOrientation === "white" ? "black" : "white")}
+                  title="Flip board"
+                >
+                  <FlipVertical2 size={18} />
                 </button>
               </div>
 

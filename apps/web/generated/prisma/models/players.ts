@@ -31,9 +31,11 @@ export type PlayersMinAggregateOutputType = {
   full_name: string | null
   status: string | null
   coach_id: string | null
+  created_at: Date | null
   email: string | null
   user_id: string | null
-  created_at: Date | null
+  lichess_username: string | null
+  active_platform: string | null
 }
 
 export type PlayersMaxAggregateOutputType = {
@@ -42,9 +44,11 @@ export type PlayersMaxAggregateOutputType = {
   full_name: string | null
   status: string | null
   coach_id: string | null
+  created_at: Date | null
   email: string | null
   user_id: string | null
-  created_at: Date | null
+  lichess_username: string | null
+  active_platform: string | null
 }
 
 export type PlayersCountAggregateOutputType = {
@@ -53,9 +57,11 @@ export type PlayersCountAggregateOutputType = {
   full_name: number
   status: number
   coach_id: number
+  created_at: number
   email: number
   user_id: number
-  created_at: number
+  lichess_username: number
+  active_platform: number
   _all: number
 }
 
@@ -66,9 +72,11 @@ export type PlayersMinAggregateInputType = {
   full_name?: true
   status?: true
   coach_id?: true
+  created_at?: true
   email?: true
   user_id?: true
-  created_at?: true
+  lichess_username?: true
+  active_platform?: true
 }
 
 export type PlayersMaxAggregateInputType = {
@@ -77,9 +85,11 @@ export type PlayersMaxAggregateInputType = {
   full_name?: true
   status?: true
   coach_id?: true
+  created_at?: true
   email?: true
   user_id?: true
-  created_at?: true
+  lichess_username?: true
+  active_platform?: true
 }
 
 export type PlayersCountAggregateInputType = {
@@ -88,9 +98,11 @@ export type PlayersCountAggregateInputType = {
   full_name?: true
   status?: true
   coach_id?: true
+  created_at?: true
   email?: true
   user_id?: true
-  created_at?: true
+  lichess_username?: true
+  active_platform?: true
   _all?: true
 }
 
@@ -168,13 +180,15 @@ export type playersGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 
 export type PlayersGroupByOutputType = {
   id: string
-  chess_username: string
+  chess_username: string | null
   full_name: string
   status: string
   coach_id: string | null
+  created_at: Date | null
   email: string | null
   user_id: string | null
-  created_at: Date | null
+  lichess_username: string | null
+  active_platform: string
   _count: PlayersCountAggregateOutputType | null
   _min: PlayersMinAggregateOutputType | null
   _max: PlayersMaxAggregateOutputType | null
@@ -200,26 +214,30 @@ export type playersWhereInput = {
   OR?: Prisma.playersWhereInput[]
   NOT?: Prisma.playersWhereInput | Prisma.playersWhereInput[]
   id?: Prisma.UuidFilter<"players"> | string
-  chess_username?: Prisma.StringFilter<"players"> | string
+  chess_username?: Prisma.StringNullableFilter<"players"> | string | null
   full_name?: Prisma.StringFilter<"players"> | string
   status?: Prisma.StringFilter<"players"> | string
   coach_id?: Prisma.UuidNullableFilter<"players"> | string | null
+  created_at?: Prisma.DateTimeNullableFilter<"players"> | Date | string | null
   email?: Prisma.StringNullableFilter<"players"> | string | null
   user_id?: Prisma.UuidNullableFilter<"players"> | string | null
-  created_at?: Prisma.DateTimeNullableFilter<"players"> | Date | string | null
+  lichess_username?: Prisma.StringNullableFilter<"players"> | string | null
+  active_platform?: Prisma.StringFilter<"players"> | string
   profiles?: Prisma.XOR<Prisma.ProfilesNullableScalarRelationFilter, Prisma.profilesWhereInput> | null
   app_user?: Prisma.XOR<Prisma.App_usersNullableScalarRelationFilter, Prisma.app_usersWhereInput> | null
 }
 
 export type playersOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  chess_username?: Prisma.SortOrder
+  chess_username?: Prisma.SortOrderInput | Prisma.SortOrder
   full_name?: Prisma.SortOrder
   status?: Prisma.SortOrder
   coach_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  created_at?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   user_id?: Prisma.SortOrderInput | Prisma.SortOrder
-  created_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  lichess_username?: Prisma.SortOrderInput | Prisma.SortOrder
+  active_platform?: Prisma.SortOrder
   profiles?: Prisma.profilesOrderByWithRelationInput
   app_user?: Prisma.app_usersOrderByWithRelationInput
 }
@@ -229,6 +247,7 @@ export type playersWhereUniqueInput = Prisma.AtLeast<{
   chess_username?: string
   email?: string
   user_id?: string
+  lichess_username?: string
   AND?: Prisma.playersWhereInput | Prisma.playersWhereInput[]
   OR?: Prisma.playersWhereInput[]
   NOT?: Prisma.playersWhereInput | Prisma.playersWhereInput[]
@@ -236,19 +255,22 @@ export type playersWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.StringFilter<"players"> | string
   coach_id?: Prisma.UuidNullableFilter<"players"> | string | null
   created_at?: Prisma.DateTimeNullableFilter<"players"> | Date | string | null
+  active_platform?: Prisma.StringFilter<"players"> | string
   profiles?: Prisma.XOR<Prisma.ProfilesNullableScalarRelationFilter, Prisma.profilesWhereInput> | null
   app_user?: Prisma.XOR<Prisma.App_usersNullableScalarRelationFilter, Prisma.app_usersWhereInput> | null
-}, "id" | "chess_username" | "email" | "user_id">
+}, "id" | "chess_username" | "email" | "user_id" | "lichess_username">
 
 export type playersOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  chess_username?: Prisma.SortOrder
+  chess_username?: Prisma.SortOrderInput | Prisma.SortOrder
   full_name?: Prisma.SortOrder
   status?: Prisma.SortOrder
   coach_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  created_at?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   user_id?: Prisma.SortOrderInput | Prisma.SortOrder
-  created_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  lichess_username?: Prisma.SortOrderInput | Prisma.SortOrder
+  active_platform?: Prisma.SortOrder
   _count?: Prisma.playersCountOrderByAggregateInput
   _max?: Prisma.playersMaxOrderByAggregateInput
   _min?: Prisma.playersMinOrderByAggregateInput
@@ -259,88 +281,104 @@ export type playersScalarWhereWithAggregatesInput = {
   OR?: Prisma.playersScalarWhereWithAggregatesInput[]
   NOT?: Prisma.playersScalarWhereWithAggregatesInput | Prisma.playersScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"players"> | string
-  chess_username?: Prisma.StringWithAggregatesFilter<"players"> | string
+  chess_username?: Prisma.StringNullableWithAggregatesFilter<"players"> | string | null
   full_name?: Prisma.StringWithAggregatesFilter<"players"> | string
   status?: Prisma.StringWithAggregatesFilter<"players"> | string
   coach_id?: Prisma.UuidNullableWithAggregatesFilter<"players"> | string | null
+  created_at?: Prisma.DateTimeNullableWithAggregatesFilter<"players"> | Date | string | null
   email?: Prisma.StringNullableWithAggregatesFilter<"players"> | string | null
   user_id?: Prisma.UuidNullableWithAggregatesFilter<"players"> | string | null
-  created_at?: Prisma.DateTimeNullableWithAggregatesFilter<"players"> | Date | string | null
+  lichess_username?: Prisma.StringNullableWithAggregatesFilter<"players"> | string | null
+  active_platform?: Prisma.StringWithAggregatesFilter<"players"> | string
 }
 
 export type playersCreateInput = {
   id?: string
-  chess_username: string
+  chess_username?: string | null
   full_name: string
   status?: string
-  email?: string | null
   created_at?: Date | string | null
+  email?: string | null
+  lichess_username?: string | null
+  active_platform?: string
   profiles?: Prisma.profilesCreateNestedOneWithoutPlayersInput
   app_user?: Prisma.app_usersCreateNestedOneWithoutPlayerInput
 }
 
 export type playersUncheckedCreateInput = {
   id?: string
-  chess_username: string
+  chess_username?: string | null
   full_name: string
   status?: string
   coach_id?: string | null
+  created_at?: Date | string | null
   email?: string | null
   user_id?: string | null
-  created_at?: Date | string | null
+  lichess_username?: string | null
+  active_platform?: string
 }
 
 export type playersUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  chess_username?: Prisma.StringFieldUpdateOperationsInput | string
+  chess_username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   full_name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lichess_username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active_platform?: Prisma.StringFieldUpdateOperationsInput | string
   profiles?: Prisma.profilesUpdateOneWithoutPlayersNestedInput
   app_user?: Prisma.app_usersUpdateOneWithoutPlayerNestedInput
 }
 
 export type playersUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  chess_username?: Prisma.StringFieldUpdateOperationsInput | string
+  chess_username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   full_name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   coach_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lichess_username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active_platform?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type playersCreateManyInput = {
   id?: string
-  chess_username: string
+  chess_username?: string | null
   full_name: string
   status?: string
   coach_id?: string | null
+  created_at?: Date | string | null
   email?: string | null
   user_id?: string | null
-  created_at?: Date | string | null
+  lichess_username?: string | null
+  active_platform?: string
 }
 
 export type playersUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  chess_username?: Prisma.StringFieldUpdateOperationsInput | string
+  chess_username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   full_name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lichess_username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active_platform?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type playersUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  chess_username?: Prisma.StringFieldUpdateOperationsInput | string
+  chess_username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   full_name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   coach_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lichess_username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active_platform?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type playersCountOrderByAggregateInput = {
@@ -349,9 +387,11 @@ export type playersCountOrderByAggregateInput = {
   full_name?: Prisma.SortOrder
   status?: Prisma.SortOrder
   coach_id?: Prisma.SortOrder
+  created_at?: Prisma.SortOrder
   email?: Prisma.SortOrder
   user_id?: Prisma.SortOrder
-  created_at?: Prisma.SortOrder
+  lichess_username?: Prisma.SortOrder
+  active_platform?: Prisma.SortOrder
 }
 
 export type playersMaxOrderByAggregateInput = {
@@ -360,9 +400,11 @@ export type playersMaxOrderByAggregateInput = {
   full_name?: Prisma.SortOrder
   status?: Prisma.SortOrder
   coach_id?: Prisma.SortOrder
+  created_at?: Prisma.SortOrder
   email?: Prisma.SortOrder
   user_id?: Prisma.SortOrder
-  created_at?: Prisma.SortOrder
+  lichess_username?: Prisma.SortOrder
+  active_platform?: Prisma.SortOrder
 }
 
 export type playersMinOrderByAggregateInput = {
@@ -371,9 +413,11 @@ export type playersMinOrderByAggregateInput = {
   full_name?: Prisma.SortOrder
   status?: Prisma.SortOrder
   coach_id?: Prisma.SortOrder
+  created_at?: Prisma.SortOrder
   email?: Prisma.SortOrder
   user_id?: Prisma.SortOrder
-  created_at?: Prisma.SortOrder
+  lichess_username?: Prisma.SortOrder
+  active_platform?: Prisma.SortOrder
 }
 
 export type PlayersListRelationFilter = {
@@ -467,22 +511,26 @@ export type playersUncheckedUpdateOneWithoutApp_userNestedInput = {
 
 export type playersCreateWithoutProfilesInput = {
   id?: string
-  chess_username: string
+  chess_username?: string | null
   full_name: string
   status?: string
-  email?: string | null
   created_at?: Date | string | null
+  email?: string | null
+  lichess_username?: string | null
+  active_platform?: string
   app_user?: Prisma.app_usersCreateNestedOneWithoutPlayerInput
 }
 
 export type playersUncheckedCreateWithoutProfilesInput = {
   id?: string
-  chess_username: string
+  chess_username?: string | null
   full_name: string
   status?: string
+  created_at?: Date | string | null
   email?: string | null
   user_id?: string | null
-  created_at?: Date | string | null
+  lichess_username?: string | null
+  active_platform?: string
 }
 
 export type playersCreateOrConnectWithoutProfilesInput = {
@@ -516,33 +564,39 @@ export type playersScalarWhereInput = {
   OR?: Prisma.playersScalarWhereInput[]
   NOT?: Prisma.playersScalarWhereInput | Prisma.playersScalarWhereInput[]
   id?: Prisma.UuidFilter<"players"> | string
-  chess_username?: Prisma.StringFilter<"players"> | string
+  chess_username?: Prisma.StringNullableFilter<"players"> | string | null
   full_name?: Prisma.StringFilter<"players"> | string
   status?: Prisma.StringFilter<"players"> | string
   coach_id?: Prisma.UuidNullableFilter<"players"> | string | null
+  created_at?: Prisma.DateTimeNullableFilter<"players"> | Date | string | null
   email?: Prisma.StringNullableFilter<"players"> | string | null
   user_id?: Prisma.UuidNullableFilter<"players"> | string | null
-  created_at?: Prisma.DateTimeNullableFilter<"players"> | Date | string | null
+  lichess_username?: Prisma.StringNullableFilter<"players"> | string | null
+  active_platform?: Prisma.StringFilter<"players"> | string
 }
 
 export type playersCreateWithoutApp_userInput = {
   id?: string
-  chess_username: string
+  chess_username?: string | null
   full_name: string
   status?: string
-  email?: string | null
   created_at?: Date | string | null
+  email?: string | null
+  lichess_username?: string | null
+  active_platform?: string
   profiles?: Prisma.profilesCreateNestedOneWithoutPlayersInput
 }
 
 export type playersUncheckedCreateWithoutApp_userInput = {
   id?: string
-  chess_username: string
+  chess_username?: string | null
   full_name: string
   status?: string
   coach_id?: string | null
-  email?: string | null
   created_at?: Date | string | null
+  email?: string | null
+  lichess_username?: string | null
+  active_platform?: string
 }
 
 export type playersCreateOrConnectWithoutApp_userInput = {
@@ -563,62 +617,74 @@ export type playersUpdateToOneWithWhereWithoutApp_userInput = {
 
 export type playersUpdateWithoutApp_userInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  chess_username?: Prisma.StringFieldUpdateOperationsInput | string
+  chess_username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   full_name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lichess_username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active_platform?: Prisma.StringFieldUpdateOperationsInput | string
   profiles?: Prisma.profilesUpdateOneWithoutPlayersNestedInput
 }
 
 export type playersUncheckedUpdateWithoutApp_userInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  chess_username?: Prisma.StringFieldUpdateOperationsInput | string
+  chess_username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   full_name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   coach_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lichess_username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active_platform?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type playersCreateManyProfilesInput = {
   id?: string
-  chess_username: string
+  chess_username?: string | null
   full_name: string
   status?: string
+  created_at?: Date | string | null
   email?: string | null
   user_id?: string | null
-  created_at?: Date | string | null
+  lichess_username?: string | null
+  active_platform?: string
 }
 
 export type playersUpdateWithoutProfilesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  chess_username?: Prisma.StringFieldUpdateOperationsInput | string
+  chess_username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   full_name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lichess_username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active_platform?: Prisma.StringFieldUpdateOperationsInput | string
   app_user?: Prisma.app_usersUpdateOneWithoutPlayerNestedInput
 }
 
 export type playersUncheckedUpdateWithoutProfilesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  chess_username?: Prisma.StringFieldUpdateOperationsInput | string
+  chess_username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   full_name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lichess_username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active_platform?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type playersUncheckedUpdateManyWithoutProfilesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  chess_username?: Prisma.StringFieldUpdateOperationsInput | string
+  chess_username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   full_name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lichess_username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active_platform?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 
@@ -629,9 +695,11 @@ export type playersSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   full_name?: boolean
   status?: boolean
   coach_id?: boolean
+  created_at?: boolean
   email?: boolean
   user_id?: boolean
-  created_at?: boolean
+  lichess_username?: boolean
+  active_platform?: boolean
   profiles?: boolean | Prisma.players$profilesArgs<ExtArgs>
   app_user?: boolean | Prisma.players$app_userArgs<ExtArgs>
 }, ExtArgs["result"]["players"]>
@@ -642,9 +710,11 @@ export type playersSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   full_name?: boolean
   status?: boolean
   coach_id?: boolean
+  created_at?: boolean
   email?: boolean
   user_id?: boolean
-  created_at?: boolean
+  lichess_username?: boolean
+  active_platform?: boolean
   profiles?: boolean | Prisma.players$profilesArgs<ExtArgs>
   app_user?: boolean | Prisma.players$app_userArgs<ExtArgs>
 }, ExtArgs["result"]["players"]>
@@ -655,9 +725,11 @@ export type playersSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   full_name?: boolean
   status?: boolean
   coach_id?: boolean
+  created_at?: boolean
   email?: boolean
   user_id?: boolean
-  created_at?: boolean
+  lichess_username?: boolean
+  active_platform?: boolean
   profiles?: boolean | Prisma.players$profilesArgs<ExtArgs>
   app_user?: boolean | Prisma.players$app_userArgs<ExtArgs>
 }, ExtArgs["result"]["players"]>
@@ -668,12 +740,14 @@ export type playersSelectScalar = {
   full_name?: boolean
   status?: boolean
   coach_id?: boolean
+  created_at?: boolean
   email?: boolean
   user_id?: boolean
-  created_at?: boolean
+  lichess_username?: boolean
+  active_platform?: boolean
 }
 
-export type playersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "chess_username" | "full_name" | "status" | "coach_id" | "email" | "user_id" | "created_at", ExtArgs["result"]["players"]>
+export type playersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "chess_username" | "full_name" | "status" | "coach_id" | "created_at" | "email" | "user_id" | "lichess_username" | "active_platform", ExtArgs["result"]["players"]>
 export type playersInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   profiles?: boolean | Prisma.players$profilesArgs<ExtArgs>
   app_user?: boolean | Prisma.players$app_userArgs<ExtArgs>
@@ -695,13 +769,15 @@ export type $playersPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    chess_username: string
+    chess_username: string | null
     full_name: string
     status: string
     coach_id: string | null
+    created_at: Date | null
     email: string | null
     user_id: string | null
-    created_at: Date | null
+    lichess_username: string | null
+    active_platform: string
   }, ExtArgs["result"]["players"]>
   composites: {}
 }
@@ -1132,9 +1208,11 @@ export interface playersFieldRefs {
   readonly full_name: Prisma.FieldRef<"players", 'String'>
   readonly status: Prisma.FieldRef<"players", 'String'>
   readonly coach_id: Prisma.FieldRef<"players", 'String'>
+  readonly created_at: Prisma.FieldRef<"players", 'DateTime'>
   readonly email: Prisma.FieldRef<"players", 'String'>
   readonly user_id: Prisma.FieldRef<"players", 'String'>
-  readonly created_at: Prisma.FieldRef<"players", 'DateTime'>
+  readonly lichess_username: Prisma.FieldRef<"players", 'String'>
+  readonly active_platform: Prisma.FieldRef<"players", 'String'>
 }
     
 

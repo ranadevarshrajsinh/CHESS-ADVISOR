@@ -129,7 +129,7 @@ const sectionCard: React.CSSProperties = {
 function ReportPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { chessUsername, isApproved, loading: playerLoading } = usePlayer();
+  const { activeUsername, activePlatform, isApproved, loading: playerLoading } = usePlayer();
   const [reportData, setReportData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [pdfLoading, setPdfLoading] = useState(false);
@@ -148,31 +148,31 @@ function ReportPageInner() {
 
   useEffect(() => {
     if (playerLoading) return;
-    if (!chessUsername || !isApproved) {
+    if (!activeUsername || !isApproved) {
       router.push("/login");
       return;
     }
     setLoading(true);
     setReportData(null);
-    getReport(chessUsername, 50, tc === "all" ? undefined : tc)
+    getReport(activeUsername, 50, tc === "all" ? undefined : tc, activePlatform)
       .then(setReportData)
       .catch((e) => {
         console.error(e);
         alert("Failed to load report. Ensure you have run Batch Analysis first.");
       })
       .finally(() => setLoading(false));
-  }, [chessUsername, isApproved, playerLoading, router, tc]);
+  }, [activeUsername, activePlatform, isApproved, playerLoading, router, tc]);
 
   const handleDownloadPdf = async () => {
     setPdfLoading(true);
     try {
-      const res = await fetch(`/api/backend/api/report/${chessUsername}/pdf`);
+      const res = await fetch(`/api/backend/api/report/${activeUsername}/pdf`);
       if (!res.ok) throw new Error("PDF generation failed");
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${chessUsername}_chess_report.pdf`;
+      a.download = `${activeUsername}_chess_report.pdf`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (e) {
@@ -183,7 +183,7 @@ function ReportPageInner() {
     }
   };
 
-  if (!chessUsername) return null;
+  if (!activeUsername) return null;
 
   // ─── Tab panel renderers ───────────────────────────────────────────────────
 

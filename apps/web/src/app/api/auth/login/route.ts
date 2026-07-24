@@ -24,15 +24,16 @@ export async function POST(request: Request) {
 
   try {
 
-  // ── Player login (no @ → chess username) ─────────────────────────────────────
+  // ── Player login (no @ → chess.com or lichess username) ───────────────────────
   if (!id.includes("@")) {
-    const player = await prisma.players.findUnique({
-      where: { chess_username: id.toLowerCase().trim() },
+    const idLower = id.toLowerCase().trim();
+    const player = await prisma.players.findFirst({
+      where: { OR: [{ chess_username: idLower }, { lichess_username: idLower }] },
       include: { app_user: true },
     });
 
     if (!player) {
-      return NextResponse.json({ error: "Username not found. Please check your chess.com username." }, { status: 401 });
+      return NextResponse.json({ error: "Username not found. Please check your Chess.com or Lichess username." }, { status: 401 });
     }
 
     if (player.status !== "approved") {
@@ -45,7 +46,7 @@ export async function POST(request: Request) {
     // Auto-create an app_users account on first login for coach-added players
     let userId = player.user_id;
     if (!userId || !player.app_user) {
-      const placeholderEmail = `${player.chess_username}@players.chessadvisor.internal`;
+      const placeholderEmail = `${player.chess_username ?? player.lichess_username}@players.chessadvisor.internal`;
       const passwordHash = `*${crypto.randomBytes(32).toString("hex")}`;
       const newUser = await prisma.app_users.create({
         data: { email: placeholderEmail, password_hash: passwordHash, email_verified: true },

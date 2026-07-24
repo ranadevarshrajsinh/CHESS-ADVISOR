@@ -39,6 +39,7 @@ export function PillTabs<T extends string>({
         return (
           <button
             key={t.id}
+            type="button"
             role="tab"
             aria-selected={isActive}
             onClick={() => onChange(t.id)}

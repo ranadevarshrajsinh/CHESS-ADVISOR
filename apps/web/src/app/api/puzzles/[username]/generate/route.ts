@@ -46,7 +46,11 @@ function extractMoves(
 ) {
   const moves: any[] = gameResult?.move_history ?? [];
   moves.forEach((m, idx) => {
-    if (!m.fen || !m.best_move) return;
+    // Single-game analysis (analysis_jobs) and batch analysis
+    // (batch_jobs.individual_games) use different field names for the
+    // position a move was played from — support both.
+    const fen = m.fen ?? m.fen_before;
+    if (!fen || !m.best_move) return;
 
     const quality    = m.quality ?? "";
     const cpLoss     = m.cp_loss ?? 0;
@@ -58,21 +62,21 @@ function extractMoves(
 
     if (Math.abs(evalBefore) > 500) return;
 
-    if (seen.has(m.fen)) return;
-    seen.add(m.fen);
+    if (seen.has(fen)) return;
+    seen.add(fen);
 
     const puzzleId = `${filename.replace(/\.pgn$/, "")}_mv${idx}`;
 
     rows.push({
       puzzle_id:     puzzleId,
       username,
-      fen:           m.fen,
+      fen,
       best_move:     m.best_move,
       theme:         deriveTheme(m),
       difficulty:    isBlunder ? 3 : 2,
       source:        "own_game",
       game_filename: filename,
-      move_number:   m.move_num ?? idx,
+      move_number:   m.move_num ?? m.move_number ?? idx,
       phase:         m.phase ?? "middlegame",
       puzzle_rating: ratePuzzle(cpLoss),
     });
@@ -85,19 +89,27 @@ export async function GET(
 ) {
   const { username } = await params;
 
-  const jobs = await prisma.analysis_jobs.findMany({
-    where:   { username, status: "completed" },
-    select:  { filename: true, result: true },
-    orderBy: { created_at: "desc" },
-    take:    30,
-  });
+  const [analysisJobs, batchJobs] = await Promise.all([
+    prisma.analysis_jobs.findMany({
+      where:   { username, status: "completed" },
+      select:  { filename: true, result: true },
+      orderBy: { created_at: "desc" },
+      take:    30,
+    }),
+    prisma.batch_jobs.findMany({
+      where:   { username, status: "completed" },
+      select:  { id: true, result: true },
+      orderBy: { created_at: "desc" },
+      take:    10,
+    }),
+  ]);
 
-  if (!jobs.length) return NextResponse.json({ generated: 0 });
+  if (!analysisJobs.length && !batchJobs.length) return NextResponse.json({ generated: 0 });
 
   const rows: any[] = [];
   const seen = new Set<string>();
 
-  for (const job of jobs) {
+  for (const job of analysisJobs) {
     const result = job.result as any;
     if (!result) continue;
 
@@ -111,6 +123,15 @@ export async function GET(
         extractMoves(game, game.filename ?? job.filename, rows, username, seen);
       }
     }
+  }
+
+  for (const job of batchJobs) {
+    const result = job.result as any;
+    if (!result || !Array.isArray(result.individual_games)) continue;
+    result.individual_games.forEach((game: any, idx: number) => {
+      const filename = game.filename ?? `${job.id}_g${idx}`;
+      extractMoves(game, filename, rows, username, seen);
+    });
   }
 
   if (rows.length === 0) return NextResponse.json({ generated: 0 });

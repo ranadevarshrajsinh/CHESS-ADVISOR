@@ -24,11 +24,14 @@ export async function POST(request: Request) {
 
   try {
     if (type === "player") {
-      const { chessUsername, coachId } = body;
-      if (!chessUsername || !coachId) {
-        return NextResponse.json({ error: "Missing chessUsername or coachId" }, { status: 400 });
+      const { chessUsername, lichessUsername, activePlatform, coachId } = body;
+      if (!coachId) {
+        return NextResponse.json({ error: "Missing coachId" }, { status: 400 });
       }
-      const result = await registerPlayerUser({ email, fullName, chessUsername, coachId });
+      if (!chessUsername && !lichessUsername) {
+        return NextResponse.json({ error: "Enter your Chess.com or Lichess username" }, { status: 400 });
+      }
+      const result = await registerPlayerUser({ email, fullName, chessUsername, lichessUsername, activePlatform, coachId });
       if (result.preApproved) {
         return NextResponse.json({ preApproved: true, message: "Your account is ready! You can now log in with your chess username." }, { status: 201 });
       }

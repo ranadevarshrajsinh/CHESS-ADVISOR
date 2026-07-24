@@ -40,9 +40,10 @@ export async function POST(request: Request) {
   if (identifier.includes("@")) {
     user = await prisma.app_users.findUnique({ where: { email_lower: identifier.toLowerCase() } });
   } else {
-    // Player login — look up by chess username
-    const player = await prisma.players.findUnique({
-      where: { chess_username: identifier.toLowerCase() },
+    // Player login — look up by chess.com or lichess username
+    const idLower = identifier.toLowerCase();
+    const player = await prisma.players.findFirst({
+      where: { OR: [{ chess_username: idLower }, { lichess_username: idLower }] },
       include: { app_user: true },
     });
     user = player?.app_user ?? null;

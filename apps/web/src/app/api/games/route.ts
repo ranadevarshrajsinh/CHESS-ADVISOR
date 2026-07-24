@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     const games = await fetchChessComGames(username, limit, tc);
     return NextResponse.json(games);
   } else if (platform.toLowerCase() === "lichess") {
-    const games = await fetchLichessGames(username, limit);
+    const games = await fetchLichessGames(username, limit, tc);
     return NextResponse.json(games);
   } else {
     return NextResponse.json({ error: "Invalid platform" }, { status: 400 });

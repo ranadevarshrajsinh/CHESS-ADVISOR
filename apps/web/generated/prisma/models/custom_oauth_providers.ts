@@ -93,6 +93,7 @@ export type Custom_oauth_providersCountAggregateOutputType = {
   jwks_uri: number
   created_at: number
   updated_at: number
+  custom_claims_allowlist: number
   _all: number
 }
 
@@ -166,6 +167,7 @@ export type Custom_oauth_providersCountAggregateInputType = {
   jwks_uri?: true
   created_at?: true
   updated_at?: true
+  custom_claims_allowlist?: true
   _all?: true
 }
 
@@ -266,6 +268,7 @@ export type Custom_oauth_providersGroupByOutputType = {
   jwks_uri: string | null
   created_at: Date
   updated_at: Date
+  custom_claims_allowlist: string[]
   _count: Custom_oauth_providersCountAggregateOutputType | null
   _min: Custom_oauth_providersMinAggregateOutputType | null
   _max: Custom_oauth_providersMaxAggregateOutputType | null
@@ -314,6 +317,7 @@ export type custom_oauth_providersWhereInput = {
   jwks_uri?: Prisma.StringNullableFilter<"custom_oauth_providers"> | string | null
   created_at?: Prisma.DateTimeFilter<"custom_oauth_providers"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"custom_oauth_providers"> | Date | string
+  custom_claims_allowlist?: Prisma.StringNullableListFilter<"custom_oauth_providers">
 }
 
 export type custom_oauth_providersOrderByWithRelationInput = {
@@ -341,6 +345,7 @@ export type custom_oauth_providersOrderByWithRelationInput = {
   jwks_uri?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  custom_claims_allowlist?: Prisma.SortOrder
 }
 
 export type custom_oauth_providersWhereUniqueInput = Prisma.AtLeast<{
@@ -371,6 +376,7 @@ export type custom_oauth_providersWhereUniqueInput = Prisma.AtLeast<{
   jwks_uri?: Prisma.StringNullableFilter<"custom_oauth_providers"> | string | null
   created_at?: Prisma.DateTimeFilter<"custom_oauth_providers"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"custom_oauth_providers"> | Date | string
+  custom_claims_allowlist?: Prisma.StringNullableListFilter<"custom_oauth_providers">
 }, "id" | "identifier">
 
 export type custom_oauth_providersOrderByWithAggregationInput = {
@@ -398,6 +404,7 @@ export type custom_oauth_providersOrderByWithAggregationInput = {
   jwks_uri?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  custom_claims_allowlist?: Prisma.SortOrder
   _count?: Prisma.custom_oauth_providersCountOrderByAggregateInput
   _max?: Prisma.custom_oauth_providersMaxOrderByAggregateInput
   _min?: Prisma.custom_oauth_providersMinOrderByAggregateInput
@@ -431,6 +438,7 @@ export type custom_oauth_providersScalarWhereWithAggregatesInput = {
   jwks_uri?: Prisma.StringNullableWithAggregatesFilter<"custom_oauth_providers"> | string | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"custom_oauth_providers"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"custom_oauth_providers"> | Date | string
+  custom_claims_allowlist?: Prisma.StringNullableListFilter<"custom_oauth_providers">
 }
 
 export type custom_oauth_providersCreateInput = {
@@ -458,6 +466,7 @@ export type custom_oauth_providersCreateInput = {
   jwks_uri?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  custom_claims_allowlist?: Prisma.custom_oauth_providersCreatecustom_claims_allowlistInput | string[]
 }
 
 export type custom_oauth_providersUncheckedCreateInput = {
@@ -485,6 +494,7 @@ export type custom_oauth_providersUncheckedCreateInput = {
   jwks_uri?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  custom_claims_allowlist?: Prisma.custom_oauth_providersCreatecustom_claims_allowlistInput | string[]
 }
 
 export type custom_oauth_providersUpdateInput = {
@@ -512,6 +522,7 @@ export type custom_oauth_providersUpdateInput = {
   jwks_uri?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  custom_claims_allowlist?: Prisma.custom_oauth_providersUpdatecustom_claims_allowlistInput | string[]
 }
 
 export type custom_oauth_providersUncheckedUpdateInput = {
@@ -539,6 +550,7 @@ export type custom_oauth_providersUncheckedUpdateInput = {
   jwks_uri?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  custom_claims_allowlist?: Prisma.custom_oauth_providersUpdatecustom_claims_allowlistInput | string[]
 }
 
 export type custom_oauth_providersCreateManyInput = {
@@ -566,6 +578,7 @@ export type custom_oauth_providersCreateManyInput = {
   jwks_uri?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  custom_claims_allowlist?: Prisma.custom_oauth_providersCreatecustom_claims_allowlistInput | string[]
 }
 
 export type custom_oauth_providersUpdateManyMutationInput = {
@@ -593,6 +606,7 @@ export type custom_oauth_providersUpdateManyMutationInput = {
   jwks_uri?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  custom_claims_allowlist?: Prisma.custom_oauth_providersUpdatecustom_claims_allowlistInput | string[]
 }
 
 export type custom_oauth_providersUncheckedUpdateManyInput = {
@@ -620,6 +634,7 @@ export type custom_oauth_providersUncheckedUpdateManyInput = {
   jwks_uri?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  custom_claims_allowlist?: Prisma.custom_oauth_providersUpdatecustom_claims_allowlistInput | string[]
 }
 
 export type StringNullableListFilter<$PrismaModel = never> = {
@@ -655,6 +670,7 @@ export type custom_oauth_providersCountOrderByAggregateInput = {
   jwks_uri?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  custom_claims_allowlist?: Prisma.SortOrder
 }
 
 export type custom_oauth_providersMaxOrderByAggregateInput = {
@@ -709,6 +725,10 @@ export type custom_oauth_providersCreatescopesInput = {
   set: string[]
 }
 
+export type custom_oauth_providersCreatecustom_claims_allowlistInput = {
+  set: string[]
+}
+
 export type custom_oauth_providersUpdateacceptable_client_idsInput = {
   set?: string[]
   push?: string | string[]
@@ -725,6 +745,11 @@ export type BoolFieldUpdateOperationsInput = {
 
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
+}
+
+export type custom_oauth_providersUpdatecustom_claims_allowlistInput = {
+  set?: string[]
+  push?: string | string[]
 }
 
 
@@ -754,6 +779,7 @@ export type custom_oauth_providersSelect<ExtArgs extends runtime.Types.Extension
   jwks_uri?: boolean
   created_at?: boolean
   updated_at?: boolean
+  custom_claims_allowlist?: boolean
 }, ExtArgs["result"]["custom_oauth_providers"]>
 
 export type custom_oauth_providersSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -781,6 +807,7 @@ export type custom_oauth_providersSelectCreateManyAndReturn<ExtArgs extends runt
   jwks_uri?: boolean
   created_at?: boolean
   updated_at?: boolean
+  custom_claims_allowlist?: boolean
 }, ExtArgs["result"]["custom_oauth_providers"]>
 
 export type custom_oauth_providersSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -808,6 +835,7 @@ export type custom_oauth_providersSelectUpdateManyAndReturn<ExtArgs extends runt
   jwks_uri?: boolean
   created_at?: boolean
   updated_at?: boolean
+  custom_claims_allowlist?: boolean
 }, ExtArgs["result"]["custom_oauth_providers"]>
 
 export type custom_oauth_providersSelectScalar = {
@@ -835,9 +863,10 @@ export type custom_oauth_providersSelectScalar = {
   jwks_uri?: boolean
   created_at?: boolean
   updated_at?: boolean
+  custom_claims_allowlist?: boolean
 }
 
-export type custom_oauth_providersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "provider_type" | "identifier" | "name" | "client_id" | "client_secret" | "acceptable_client_ids" | "scopes" | "pkce_enabled" | "attribute_mapping" | "authorization_params" | "enabled" | "email_optional" | "issuer" | "discovery_url" | "skip_nonce_check" | "cached_discovery" | "discovery_cached_at" | "authorization_url" | "token_url" | "userinfo_url" | "jwks_uri" | "created_at" | "updated_at", ExtArgs["result"]["custom_oauth_providers"]>
+export type custom_oauth_providersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "provider_type" | "identifier" | "name" | "client_id" | "client_secret" | "acceptable_client_ids" | "scopes" | "pkce_enabled" | "attribute_mapping" | "authorization_params" | "enabled" | "email_optional" | "issuer" | "discovery_url" | "skip_nonce_check" | "cached_discovery" | "discovery_cached_at" | "authorization_url" | "token_url" | "userinfo_url" | "jwks_uri" | "created_at" | "updated_at" | "custom_claims_allowlist", ExtArgs["result"]["custom_oauth_providers"]>
 
 export type $custom_oauth_providersPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "custom_oauth_providers"
@@ -867,6 +896,7 @@ export type $custom_oauth_providersPayload<ExtArgs extends runtime.Types.Extensi
     jwks_uri: string | null
     created_at: Date
     updated_at: Date
+    custom_claims_allowlist: string[]
   }, ExtArgs["result"]["custom_oauth_providers"]>
   composites: {}
 }
@@ -1314,6 +1344,7 @@ export interface custom_oauth_providersFieldRefs {
   readonly jwks_uri: Prisma.FieldRef<"custom_oauth_providers", 'String'>
   readonly created_at: Prisma.FieldRef<"custom_oauth_providers", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"custom_oauth_providers", 'DateTime'>
+  readonly custom_claims_allowlist: Prisma.FieldRef<"custom_oauth_providers", 'String[]'>
 }
     
 

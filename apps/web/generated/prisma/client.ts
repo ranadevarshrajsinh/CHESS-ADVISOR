@@ -264,3 +264,8 @@ export type email_verification_tokens = Prisma.email_verification_tokensModel
  * 
  */
 export type password_reset_tokens = Prisma.password_reset_tokensModel
+/**
+ * Model game_analysis_cache
+ * This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+ */
+export type game_analysis_cache = Prisma.game_analysis_cacheModel

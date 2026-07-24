@@ -243,7 +243,7 @@ export type email_verification_tokensScalarWhereWithAggregatesInput = {
 export type email_verification_tokensCreateInput = {
   id?: string
   token_hash: string
-  expires_at: Date | string
+  expires_at?: Date | string
   used_at?: Date | string | null
   created_at?: Date | string
   app_user: Prisma.app_usersCreateNestedOneWithoutEmail_verification_tokensInput
@@ -253,7 +253,7 @@ export type email_verification_tokensUncheckedCreateInput = {
   id?: string
   user_id: string
   token_hash: string
-  expires_at: Date | string
+  expires_at?: Date | string
   used_at?: Date | string | null
   created_at?: Date | string
 }
@@ -280,7 +280,7 @@ export type email_verification_tokensCreateManyInput = {
   id?: string
   user_id: string
   token_hash: string
-  expires_at: Date | string
+  expires_at?: Date | string
   used_at?: Date | string | null
   created_at?: Date | string
 }
@@ -384,7 +384,7 @@ export type email_verification_tokensUncheckedUpdateManyWithoutApp_userNestedInp
 export type email_verification_tokensCreateWithoutApp_userInput = {
   id?: string
   token_hash: string
-  expires_at: Date | string
+  expires_at?: Date | string
   used_at?: Date | string | null
   created_at?: Date | string
 }
@@ -392,7 +392,7 @@ export type email_verification_tokensCreateWithoutApp_userInput = {
 export type email_verification_tokensUncheckedCreateWithoutApp_userInput = {
   id?: string
   token_hash: string
-  expires_at: Date | string
+  expires_at?: Date | string
   used_at?: Date | string | null
   created_at?: Date | string
 }
@@ -438,7 +438,7 @@ export type email_verification_tokensScalarWhereInput = {
 export type email_verification_tokensCreateManyApp_userInput = {
   id?: string
   token_hash: string
-  expires_at: Date | string
+  expires_at?: Date | string
   used_at?: Date | string | null
   created_at?: Date | string
 }

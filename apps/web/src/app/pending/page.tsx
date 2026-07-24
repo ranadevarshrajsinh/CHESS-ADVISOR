@@ -6,14 +6,14 @@ import { Loader2 } from "lucide-react";
 
 export default function PendingPage() {
   const router = useRouter();
-  const { chessUsername, fullName, coachId, status, loading, refreshSession, logout } = usePlayer();
+  const { chessUsername, lichessUsername, activeUsername, fullName, coachId, status, loading, refreshSession, logout } = usePlayer();
   const [coachName, setCoachName] = useState("");
   const [checking, setChecking] = useState(false);
   const [statusMsg, setStatusMsg] = useState("");
 
   useEffect(() => {
     if (loading) return;
-    if (!chessUsername) { router.push("/login"); return; }
+    if (!activeUsername) { router.push("/login"); return; }
     if (status === "approved") { router.push("/dashboard"); return; }
 
     if (coachId) {
@@ -22,7 +22,7 @@ export default function PendingPage() {
         .then((d) => { if (d.coachName) setCoachName(d.coachName); })
         .catch(() => {});
     }
-  }, [loading, chessUsername, status, coachId, router]);
+  }, [loading, activeUsername, status, coachId, router]);
 
   const checkStatus = async () => {
     setChecking(true);
@@ -39,7 +39,7 @@ export default function PendingPage() {
     }
   };
 
-  if (loading || !chessUsername) {
+  if (loading || !activeUsername) {
     return (
       <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Loader2 size={32} className="animate-spin" style={{ color: "var(--text-secondary)" }} />
@@ -79,9 +79,16 @@ export default function PendingPage() {
         )}
 
         <div style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: "12px", padding: "16px", marginBottom: "28px" }}>
-          <p style={{ fontSize: "13px", color: "var(--warning)", fontWeight: "600" }}>
-            Your Chess.com username: <code style={{ fontFamily: "monospace" }}>{chessUsername}</code>
-          </p>
+          {chessUsername && (
+            <p style={{ fontSize: "13px", color: "var(--warning)", fontWeight: "600" }}>
+              Chess.com username: <code style={{ fontFamily: "monospace" }}>{chessUsername}</code>
+            </p>
+          )}
+          {lichessUsername && (
+            <p style={{ fontSize: "13px", color: "var(--warning)", fontWeight: "600", marginTop: chessUsername ? "6px" : 0 }}>
+              Lichess username: <code style={{ fontFamily: "monospace" }}>{lichessUsername}</code>
+            </p>
+          )}
         </div>
 
         {statusMsg && (

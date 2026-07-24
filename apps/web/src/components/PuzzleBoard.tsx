@@ -105,7 +105,18 @@ export default function PuzzleBoard({
 
   const solutionMoves = useMemo(() => {
     if (puzzle.moves?.trim()) return puzzle.moves.trim().split(" ");
-    if (puzzle.best_move)     return [puzzle.best_move];
+    if (puzzle.best_move) {
+      // Own-game puzzles store best_move in SAN (e.g. "Nf3"), produced by the
+      // Python worker's python-chess output — convert to a UCI from+to string
+      // here so it matches the from/to comparison below. Library puzzles with
+      // a populated `moves` field are already UCI and skip this branch.
+      try {
+        const probe = new Chess(puzzle.fen);
+        const mv = probe.move(puzzle.best_move);
+        if (mv) return [mv.from + mv.to + (mv.promotion ?? "")];
+      } catch {}
+      return [puzzle.best_move];
+    }
     return [];
   }, [puzzle.puzzle_id]);
 
@@ -119,6 +130,11 @@ export default function PuzzleBoard({
 
   const currentExpected  = moveIndex < solutionMoves.length ? solutionMoves[moveIndex] : null;
   const hintSquare       = currentExpected?.slice(0, 2) ?? "";
+  // Human-readable form for hint text / feedback — own-game puzzles already
+  // have a proper SAN string (best_move); fall back to the UCI form for
+  // multi-move library puzzles, which don't carry a pretty version per ply.
+  const currentExpectedDisplay =
+    !puzzle.moves?.trim() && puzzle.best_move ? puzzle.best_move : currentExpected;
   // Solver moves are at indices 1, 3, 5... (index 0 is setup move)
   const totalPlayerMoves = isLichessFormat
     ? Math.ceil((solutionMoves.length - 1) / 2)
@@ -243,7 +259,7 @@ export default function PuzzleBoard({
       play("wrong");
       flash("red");
       setSolveState("failed");
-      setFailMove(currentExpected);
+      setFailMove(currentExpectedDisplay);
       if (!firedRef.current) {
         firedRef.current = true;
         onAttempt(false, (Date.now() - startTime.current) / 1000);
@@ -432,7 +448,7 @@ export default function PuzzleBoard({
         </div>
       )}
       {hintLevel === 3 && solveState === "waiting" && (
-        <div style={hintBox}>Solution: <strong>{currentExpected}</strong></div>
+        <div style={hintBox}>Solution: <strong>{currentExpectedDisplay}</strong></div>
       )}
 
       </div>{/* end nonBoardRef */}
