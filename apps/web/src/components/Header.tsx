@@ -28,7 +28,7 @@ const BOTTOM_NAV_ITEMS = [
 
 export default function Header() {
   const pathname = usePathname();
-  const { chessUsername, logout } = usePlayer();
+  const { activeUsername, logout } = usePlayer();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [coachNotes, setCoachNotes] = useState<any[]>([]);
   const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
@@ -36,8 +36,8 @@ export default function Header() {
   const notifRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!chessUsername) return;
-    const stored = localStorage.getItem(`coachNotesDismissed_${chessUsername}`);
+    if (!activeUsername) return;
+    const stored = localStorage.getItem(`coachNotesDismissed_${activeUsername}`);
     if (stored) {
       try { setDismissedIds(new Set(JSON.parse(stored))); } catch {}
     }
@@ -45,7 +45,7 @@ export default function Header() {
       .then((r) => r.json())
       .then(({ notes }) => { if (Array.isArray(notes)) setCoachNotes(notes); })
       .catch(() => {});
-  }, [chessUsername]);
+  }, [activeUsername]);
 
   useEffect(() => {
     if (!showNotif) return;
@@ -64,12 +64,12 @@ export default function Header() {
     const next = new Set(dismissedIds);
     next.add(note.id);
     setDismissedIds(next);
-    localStorage.setItem(`coachNotesDismissed_${chessUsername}`, JSON.stringify([...next]));
+    localStorage.setItem(`coachNotesDismissed_${activeUsername}`, JSON.stringify([...next]));
     setShowNotif(false);
     window.location.href = `/analysis/${encodeURIComponent(note.filename)}?annotation=${note.move_index}`;
   };
 
-  if (!chessUsername) return null;
+  if (!activeUsername) return null;
 
   return (
     <>
@@ -156,7 +156,7 @@ export default function Header() {
           isOpen={settingsOpen}
           onClose={() => setSettingsOpen(false)}
           userType="player"
-          username={chessUsername}
+          username={activeUsername}
           onLogout={logout}
         />
       </header>

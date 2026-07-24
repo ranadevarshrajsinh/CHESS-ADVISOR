@@ -162,7 +162,7 @@ export type app_usersGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
 export type App_usersGroupByOutputType = {
   id: string
   email: string
-  email_lower: string
+  email_lower: string | null
   password_hash: string
   email_verified: boolean
   created_at: Date
@@ -193,31 +193,31 @@ export type app_usersWhereInput = {
   NOT?: Prisma.app_usersWhereInput | Prisma.app_usersWhereInput[]
   id?: Prisma.UuidFilter<"app_users"> | string
   email?: Prisma.StringFilter<"app_users"> | string
-  email_lower?: Prisma.StringFilter<"app_users"> | string
+  email_lower?: Prisma.StringNullableFilter<"app_users"> | string | null
   password_hash?: Prisma.StringFilter<"app_users"> | string
   email_verified?: Prisma.BoolFilter<"app_users"> | boolean
   created_at?: Prisma.DateTimeFilter<"app_users"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"app_users"> | Date | string
-  profile?: Prisma.XOR<Prisma.ProfilesNullableScalarRelationFilter, Prisma.profilesWhereInput> | null
-  player?: Prisma.XOR<Prisma.PlayersNullableScalarRelationFilter, Prisma.playersWhereInput> | null
-  user_sessions?: Prisma.User_sessionsListRelationFilter
   email_verification_tokens?: Prisma.Email_verification_tokensListRelationFilter
   password_reset_tokens?: Prisma.Password_reset_tokensListRelationFilter
+  player?: Prisma.XOR<Prisma.PlayersNullableScalarRelationFilter, Prisma.playersWhereInput> | null
+  profile?: Prisma.XOR<Prisma.ProfilesNullableScalarRelationFilter, Prisma.profilesWhereInput> | null
+  user_sessions?: Prisma.User_sessionsListRelationFilter
 }
 
 export type app_usersOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
-  email_lower?: Prisma.SortOrder
+  email_lower?: Prisma.SortOrderInput | Prisma.SortOrder
   password_hash?: Prisma.SortOrder
   email_verified?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
-  profile?: Prisma.profilesOrderByWithRelationInput
-  player?: Prisma.playersOrderByWithRelationInput
-  user_sessions?: Prisma.user_sessionsOrderByRelationAggregateInput
   email_verification_tokens?: Prisma.email_verification_tokensOrderByRelationAggregateInput
   password_reset_tokens?: Prisma.password_reset_tokensOrderByRelationAggregateInput
+  player?: Prisma.playersOrderByWithRelationInput
+  profile?: Prisma.profilesOrderByWithRelationInput
+  user_sessions?: Prisma.user_sessionsOrderByRelationAggregateInput
 }
 
 export type app_usersWhereUniqueInput = Prisma.AtLeast<{
@@ -231,17 +231,17 @@ export type app_usersWhereUniqueInput = Prisma.AtLeast<{
   email_verified?: Prisma.BoolFilter<"app_users"> | boolean
   created_at?: Prisma.DateTimeFilter<"app_users"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"app_users"> | Date | string
-  profile?: Prisma.XOR<Prisma.ProfilesNullableScalarRelationFilter, Prisma.profilesWhereInput> | null
-  player?: Prisma.XOR<Prisma.PlayersNullableScalarRelationFilter, Prisma.playersWhereInput> | null
-  user_sessions?: Prisma.User_sessionsListRelationFilter
   email_verification_tokens?: Prisma.Email_verification_tokensListRelationFilter
   password_reset_tokens?: Prisma.Password_reset_tokensListRelationFilter
+  player?: Prisma.XOR<Prisma.PlayersNullableScalarRelationFilter, Prisma.playersWhereInput> | null
+  profile?: Prisma.XOR<Prisma.ProfilesNullableScalarRelationFilter, Prisma.profilesWhereInput> | null
+  user_sessions?: Prisma.User_sessionsListRelationFilter
 }, "id" | "email_lower">
 
 export type app_usersOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
-  email_lower?: Prisma.SortOrder
+  email_lower?: Prisma.SortOrderInput | Prisma.SortOrder
   password_hash?: Prisma.SortOrder
   email_verified?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
@@ -257,7 +257,7 @@ export type app_usersScalarWhereWithAggregatesInput = {
   NOT?: Prisma.app_usersScalarWhereWithAggregatesInput | Prisma.app_usersScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"app_users"> | string
   email?: Prisma.StringWithAggregatesFilter<"app_users"> | string
-  email_lower?: Prisma.StringWithAggregatesFilter<"app_users"> | string
+  email_lower?: Prisma.StringNullableWithAggregatesFilter<"app_users"> | string | null
   password_hash?: Prisma.StringWithAggregatesFilter<"app_users"> | string
   email_verified?: Prisma.BoolWithAggregatesFilter<"app_users"> | boolean
   created_at?: Prisma.DateTimeWithAggregatesFilter<"app_users"> | Date | string
@@ -267,67 +267,67 @@ export type app_usersScalarWhereWithAggregatesInput = {
 export type app_usersCreateInput = {
   id?: string
   email: string
-  email_lower?: string
+  email_lower?: string | null
   password_hash: string
   email_verified?: boolean
   created_at?: Date | string
   updated_at?: Date | string
-  profile?: Prisma.profilesCreateNestedOneWithoutApp_userInput
-  player?: Prisma.playersCreateNestedOneWithoutApp_userInput
-  user_sessions?: Prisma.user_sessionsCreateNestedManyWithoutApp_userInput
   email_verification_tokens?: Prisma.email_verification_tokensCreateNestedManyWithoutApp_userInput
   password_reset_tokens?: Prisma.password_reset_tokensCreateNestedManyWithoutApp_userInput
+  player?: Prisma.playersCreateNestedOneWithoutApp_userInput
+  profile?: Prisma.profilesCreateNestedOneWithoutApp_userInput
+  user_sessions?: Prisma.user_sessionsCreateNestedManyWithoutApp_userInput
 }
 
 export type app_usersUncheckedCreateInput = {
   id?: string
   email: string
-  email_lower?: string
+  email_lower?: string | null
   password_hash: string
   email_verified?: boolean
   created_at?: Date | string
   updated_at?: Date | string
-  profile?: Prisma.profilesUncheckedCreateNestedOneWithoutApp_userInput
-  player?: Prisma.playersUncheckedCreateNestedOneWithoutApp_userInput
-  user_sessions?: Prisma.user_sessionsUncheckedCreateNestedManyWithoutApp_userInput
   email_verification_tokens?: Prisma.email_verification_tokensUncheckedCreateNestedManyWithoutApp_userInput
   password_reset_tokens?: Prisma.password_reset_tokensUncheckedCreateNestedManyWithoutApp_userInput
+  player?: Prisma.playersUncheckedCreateNestedOneWithoutApp_userInput
+  profile?: Prisma.profilesUncheckedCreateNestedOneWithoutApp_userInput
+  user_sessions?: Prisma.user_sessionsUncheckedCreateNestedManyWithoutApp_userInput
 }
 
 export type app_usersUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  email_lower?: Prisma.StringFieldUpdateOperationsInput | string
+  email_lower?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  profile?: Prisma.profilesUpdateOneWithoutApp_userNestedInput
-  player?: Prisma.playersUpdateOneWithoutApp_userNestedInput
-  user_sessions?: Prisma.user_sessionsUpdateManyWithoutApp_userNestedInput
   email_verification_tokens?: Prisma.email_verification_tokensUpdateManyWithoutApp_userNestedInput
   password_reset_tokens?: Prisma.password_reset_tokensUpdateManyWithoutApp_userNestedInput
+  player?: Prisma.playersUpdateOneWithoutApp_userNestedInput
+  profile?: Prisma.profilesUpdateOneWithoutApp_userNestedInput
+  user_sessions?: Prisma.user_sessionsUpdateManyWithoutApp_userNestedInput
 }
 
 export type app_usersUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  email_lower?: Prisma.StringFieldUpdateOperationsInput | string
+  email_lower?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  profile?: Prisma.profilesUncheckedUpdateOneWithoutApp_userNestedInput
-  player?: Prisma.playersUncheckedUpdateOneWithoutApp_userNestedInput
-  user_sessions?: Prisma.user_sessionsUncheckedUpdateManyWithoutApp_userNestedInput
   email_verification_tokens?: Prisma.email_verification_tokensUncheckedUpdateManyWithoutApp_userNestedInput
   password_reset_tokens?: Prisma.password_reset_tokensUncheckedUpdateManyWithoutApp_userNestedInput
+  player?: Prisma.playersUncheckedUpdateOneWithoutApp_userNestedInput
+  profile?: Prisma.profilesUncheckedUpdateOneWithoutApp_userNestedInput
+  user_sessions?: Prisma.user_sessionsUncheckedUpdateManyWithoutApp_userNestedInput
 }
 
 export type app_usersCreateManyInput = {
   id?: string
   email: string
-  email_lower?: string
+  email_lower?: string | null
   password_hash: string
   email_verified?: boolean
   created_at?: Date | string
@@ -337,7 +337,7 @@ export type app_usersCreateManyInput = {
 export type app_usersUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  email_lower?: Prisma.StringFieldUpdateOperationsInput | string
+  email_lower?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -347,7 +347,7 @@ export type app_usersUpdateManyMutationInput = {
 export type app_usersUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  email_lower?: Prisma.StringFieldUpdateOperationsInput | string
+  email_lower?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -469,29 +469,29 @@ export type app_usersUpdateOneRequiredWithoutPassword_reset_tokensNestedInput = 
 export type app_usersCreateWithoutPlayerInput = {
   id?: string
   email: string
-  email_lower?: string
+  email_lower?: string | null
   password_hash: string
   email_verified?: boolean
   created_at?: Date | string
   updated_at?: Date | string
-  profile?: Prisma.profilesCreateNestedOneWithoutApp_userInput
-  user_sessions?: Prisma.user_sessionsCreateNestedManyWithoutApp_userInput
   email_verification_tokens?: Prisma.email_verification_tokensCreateNestedManyWithoutApp_userInput
   password_reset_tokens?: Prisma.password_reset_tokensCreateNestedManyWithoutApp_userInput
+  profile?: Prisma.profilesCreateNestedOneWithoutApp_userInput
+  user_sessions?: Prisma.user_sessionsCreateNestedManyWithoutApp_userInput
 }
 
 export type app_usersUncheckedCreateWithoutPlayerInput = {
   id?: string
   email: string
-  email_lower?: string
+  email_lower?: string | null
   password_hash: string
   email_verified?: boolean
   created_at?: Date | string
   updated_at?: Date | string
-  profile?: Prisma.profilesUncheckedCreateNestedOneWithoutApp_userInput
-  user_sessions?: Prisma.user_sessionsUncheckedCreateNestedManyWithoutApp_userInput
   email_verification_tokens?: Prisma.email_verification_tokensUncheckedCreateNestedManyWithoutApp_userInput
   password_reset_tokens?: Prisma.password_reset_tokensUncheckedCreateNestedManyWithoutApp_userInput
+  profile?: Prisma.profilesUncheckedCreateNestedOneWithoutApp_userInput
+  user_sessions?: Prisma.user_sessionsUncheckedCreateNestedManyWithoutApp_userInput
 }
 
 export type app_usersCreateOrConnectWithoutPlayerInput = {
@@ -513,57 +513,57 @@ export type app_usersUpdateToOneWithWhereWithoutPlayerInput = {
 export type app_usersUpdateWithoutPlayerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  email_lower?: Prisma.StringFieldUpdateOperationsInput | string
+  email_lower?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  profile?: Prisma.profilesUpdateOneWithoutApp_userNestedInput
-  user_sessions?: Prisma.user_sessionsUpdateManyWithoutApp_userNestedInput
   email_verification_tokens?: Prisma.email_verification_tokensUpdateManyWithoutApp_userNestedInput
   password_reset_tokens?: Prisma.password_reset_tokensUpdateManyWithoutApp_userNestedInput
+  profile?: Prisma.profilesUpdateOneWithoutApp_userNestedInput
+  user_sessions?: Prisma.user_sessionsUpdateManyWithoutApp_userNestedInput
 }
 
 export type app_usersUncheckedUpdateWithoutPlayerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  email_lower?: Prisma.StringFieldUpdateOperationsInput | string
+  email_lower?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  profile?: Prisma.profilesUncheckedUpdateOneWithoutApp_userNestedInput
-  user_sessions?: Prisma.user_sessionsUncheckedUpdateManyWithoutApp_userNestedInput
   email_verification_tokens?: Prisma.email_verification_tokensUncheckedUpdateManyWithoutApp_userNestedInput
   password_reset_tokens?: Prisma.password_reset_tokensUncheckedUpdateManyWithoutApp_userNestedInput
+  profile?: Prisma.profilesUncheckedUpdateOneWithoutApp_userNestedInput
+  user_sessions?: Prisma.user_sessionsUncheckedUpdateManyWithoutApp_userNestedInput
 }
 
 export type app_usersCreateWithoutProfileInput = {
   id?: string
   email: string
-  email_lower?: string
+  email_lower?: string | null
   password_hash: string
   email_verified?: boolean
   created_at?: Date | string
   updated_at?: Date | string
-  player?: Prisma.playersCreateNestedOneWithoutApp_userInput
-  user_sessions?: Prisma.user_sessionsCreateNestedManyWithoutApp_userInput
   email_verification_tokens?: Prisma.email_verification_tokensCreateNestedManyWithoutApp_userInput
   password_reset_tokens?: Prisma.password_reset_tokensCreateNestedManyWithoutApp_userInput
+  player?: Prisma.playersCreateNestedOneWithoutApp_userInput
+  user_sessions?: Prisma.user_sessionsCreateNestedManyWithoutApp_userInput
 }
 
 export type app_usersUncheckedCreateWithoutProfileInput = {
   id?: string
   email: string
-  email_lower?: string
+  email_lower?: string | null
   password_hash: string
   email_verified?: boolean
   created_at?: Date | string
   updated_at?: Date | string
-  player?: Prisma.playersUncheckedCreateNestedOneWithoutApp_userInput
-  user_sessions?: Prisma.user_sessionsUncheckedCreateNestedManyWithoutApp_userInput
   email_verification_tokens?: Prisma.email_verification_tokensUncheckedCreateNestedManyWithoutApp_userInput
   password_reset_tokens?: Prisma.password_reset_tokensUncheckedCreateNestedManyWithoutApp_userInput
+  player?: Prisma.playersUncheckedCreateNestedOneWithoutApp_userInput
+  user_sessions?: Prisma.user_sessionsUncheckedCreateNestedManyWithoutApp_userInput
 }
 
 export type app_usersCreateOrConnectWithoutProfileInput = {
@@ -585,57 +585,57 @@ export type app_usersUpdateToOneWithWhereWithoutProfileInput = {
 export type app_usersUpdateWithoutProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  email_lower?: Prisma.StringFieldUpdateOperationsInput | string
+  email_lower?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  player?: Prisma.playersUpdateOneWithoutApp_userNestedInput
-  user_sessions?: Prisma.user_sessionsUpdateManyWithoutApp_userNestedInput
   email_verification_tokens?: Prisma.email_verification_tokensUpdateManyWithoutApp_userNestedInput
   password_reset_tokens?: Prisma.password_reset_tokensUpdateManyWithoutApp_userNestedInput
+  player?: Prisma.playersUpdateOneWithoutApp_userNestedInput
+  user_sessions?: Prisma.user_sessionsUpdateManyWithoutApp_userNestedInput
 }
 
 export type app_usersUncheckedUpdateWithoutProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  email_lower?: Prisma.StringFieldUpdateOperationsInput | string
+  email_lower?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  player?: Prisma.playersUncheckedUpdateOneWithoutApp_userNestedInput
-  user_sessions?: Prisma.user_sessionsUncheckedUpdateManyWithoutApp_userNestedInput
   email_verification_tokens?: Prisma.email_verification_tokensUncheckedUpdateManyWithoutApp_userNestedInput
   password_reset_tokens?: Prisma.password_reset_tokensUncheckedUpdateManyWithoutApp_userNestedInput
+  player?: Prisma.playersUncheckedUpdateOneWithoutApp_userNestedInput
+  user_sessions?: Prisma.user_sessionsUncheckedUpdateManyWithoutApp_userNestedInput
 }
 
 export type app_usersCreateWithoutUser_sessionsInput = {
   id?: string
   email: string
-  email_lower?: string
+  email_lower?: string | null
   password_hash: string
   email_verified?: boolean
   created_at?: Date | string
   updated_at?: Date | string
-  profile?: Prisma.profilesCreateNestedOneWithoutApp_userInput
-  player?: Prisma.playersCreateNestedOneWithoutApp_userInput
   email_verification_tokens?: Prisma.email_verification_tokensCreateNestedManyWithoutApp_userInput
   password_reset_tokens?: Prisma.password_reset_tokensCreateNestedManyWithoutApp_userInput
+  player?: Prisma.playersCreateNestedOneWithoutApp_userInput
+  profile?: Prisma.profilesCreateNestedOneWithoutApp_userInput
 }
 
 export type app_usersUncheckedCreateWithoutUser_sessionsInput = {
   id?: string
   email: string
-  email_lower?: string
+  email_lower?: string | null
   password_hash: string
   email_verified?: boolean
   created_at?: Date | string
   updated_at?: Date | string
-  profile?: Prisma.profilesUncheckedCreateNestedOneWithoutApp_userInput
-  player?: Prisma.playersUncheckedCreateNestedOneWithoutApp_userInput
   email_verification_tokens?: Prisma.email_verification_tokensUncheckedCreateNestedManyWithoutApp_userInput
   password_reset_tokens?: Prisma.password_reset_tokensUncheckedCreateNestedManyWithoutApp_userInput
+  player?: Prisma.playersUncheckedCreateNestedOneWithoutApp_userInput
+  profile?: Prisma.profilesUncheckedCreateNestedOneWithoutApp_userInput
 }
 
 export type app_usersCreateOrConnectWithoutUser_sessionsInput = {
@@ -657,57 +657,57 @@ export type app_usersUpdateToOneWithWhereWithoutUser_sessionsInput = {
 export type app_usersUpdateWithoutUser_sessionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  email_lower?: Prisma.StringFieldUpdateOperationsInput | string
+  email_lower?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  profile?: Prisma.profilesUpdateOneWithoutApp_userNestedInput
-  player?: Prisma.playersUpdateOneWithoutApp_userNestedInput
   email_verification_tokens?: Prisma.email_verification_tokensUpdateManyWithoutApp_userNestedInput
   password_reset_tokens?: Prisma.password_reset_tokensUpdateManyWithoutApp_userNestedInput
+  player?: Prisma.playersUpdateOneWithoutApp_userNestedInput
+  profile?: Prisma.profilesUpdateOneWithoutApp_userNestedInput
 }
 
 export type app_usersUncheckedUpdateWithoutUser_sessionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  email_lower?: Prisma.StringFieldUpdateOperationsInput | string
+  email_lower?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  profile?: Prisma.profilesUncheckedUpdateOneWithoutApp_userNestedInput
-  player?: Prisma.playersUncheckedUpdateOneWithoutApp_userNestedInput
   email_verification_tokens?: Prisma.email_verification_tokensUncheckedUpdateManyWithoutApp_userNestedInput
   password_reset_tokens?: Prisma.password_reset_tokensUncheckedUpdateManyWithoutApp_userNestedInput
+  player?: Prisma.playersUncheckedUpdateOneWithoutApp_userNestedInput
+  profile?: Prisma.profilesUncheckedUpdateOneWithoutApp_userNestedInput
 }
 
 export type app_usersCreateWithoutEmail_verification_tokensInput = {
   id?: string
   email: string
-  email_lower?: string
+  email_lower?: string | null
   password_hash: string
   email_verified?: boolean
   created_at?: Date | string
   updated_at?: Date | string
-  profile?: Prisma.profilesCreateNestedOneWithoutApp_userInput
-  player?: Prisma.playersCreateNestedOneWithoutApp_userInput
-  user_sessions?: Prisma.user_sessionsCreateNestedManyWithoutApp_userInput
   password_reset_tokens?: Prisma.password_reset_tokensCreateNestedManyWithoutApp_userInput
+  player?: Prisma.playersCreateNestedOneWithoutApp_userInput
+  profile?: Prisma.profilesCreateNestedOneWithoutApp_userInput
+  user_sessions?: Prisma.user_sessionsCreateNestedManyWithoutApp_userInput
 }
 
 export type app_usersUncheckedCreateWithoutEmail_verification_tokensInput = {
   id?: string
   email: string
-  email_lower?: string
+  email_lower?: string | null
   password_hash: string
   email_verified?: boolean
   created_at?: Date | string
   updated_at?: Date | string
-  profile?: Prisma.profilesUncheckedCreateNestedOneWithoutApp_userInput
-  player?: Prisma.playersUncheckedCreateNestedOneWithoutApp_userInput
-  user_sessions?: Prisma.user_sessionsUncheckedCreateNestedManyWithoutApp_userInput
   password_reset_tokens?: Prisma.password_reset_tokensUncheckedCreateNestedManyWithoutApp_userInput
+  player?: Prisma.playersUncheckedCreateNestedOneWithoutApp_userInput
+  profile?: Prisma.profilesUncheckedCreateNestedOneWithoutApp_userInput
+  user_sessions?: Prisma.user_sessionsUncheckedCreateNestedManyWithoutApp_userInput
 }
 
 export type app_usersCreateOrConnectWithoutEmail_verification_tokensInput = {
@@ -729,57 +729,57 @@ export type app_usersUpdateToOneWithWhereWithoutEmail_verification_tokensInput =
 export type app_usersUpdateWithoutEmail_verification_tokensInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  email_lower?: Prisma.StringFieldUpdateOperationsInput | string
+  email_lower?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  profile?: Prisma.profilesUpdateOneWithoutApp_userNestedInput
-  player?: Prisma.playersUpdateOneWithoutApp_userNestedInput
-  user_sessions?: Prisma.user_sessionsUpdateManyWithoutApp_userNestedInput
   password_reset_tokens?: Prisma.password_reset_tokensUpdateManyWithoutApp_userNestedInput
+  player?: Prisma.playersUpdateOneWithoutApp_userNestedInput
+  profile?: Prisma.profilesUpdateOneWithoutApp_userNestedInput
+  user_sessions?: Prisma.user_sessionsUpdateManyWithoutApp_userNestedInput
 }
 
 export type app_usersUncheckedUpdateWithoutEmail_verification_tokensInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  email_lower?: Prisma.StringFieldUpdateOperationsInput | string
+  email_lower?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  profile?: Prisma.profilesUncheckedUpdateOneWithoutApp_userNestedInput
-  player?: Prisma.playersUncheckedUpdateOneWithoutApp_userNestedInput
-  user_sessions?: Prisma.user_sessionsUncheckedUpdateManyWithoutApp_userNestedInput
   password_reset_tokens?: Prisma.password_reset_tokensUncheckedUpdateManyWithoutApp_userNestedInput
+  player?: Prisma.playersUncheckedUpdateOneWithoutApp_userNestedInput
+  profile?: Prisma.profilesUncheckedUpdateOneWithoutApp_userNestedInput
+  user_sessions?: Prisma.user_sessionsUncheckedUpdateManyWithoutApp_userNestedInput
 }
 
 export type app_usersCreateWithoutPassword_reset_tokensInput = {
   id?: string
   email: string
-  email_lower?: string
+  email_lower?: string | null
   password_hash: string
   email_verified?: boolean
   created_at?: Date | string
   updated_at?: Date | string
-  profile?: Prisma.profilesCreateNestedOneWithoutApp_userInput
-  player?: Prisma.playersCreateNestedOneWithoutApp_userInput
-  user_sessions?: Prisma.user_sessionsCreateNestedManyWithoutApp_userInput
   email_verification_tokens?: Prisma.email_verification_tokensCreateNestedManyWithoutApp_userInput
+  player?: Prisma.playersCreateNestedOneWithoutApp_userInput
+  profile?: Prisma.profilesCreateNestedOneWithoutApp_userInput
+  user_sessions?: Prisma.user_sessionsCreateNestedManyWithoutApp_userInput
 }
 
 export type app_usersUncheckedCreateWithoutPassword_reset_tokensInput = {
   id?: string
   email: string
-  email_lower?: string
+  email_lower?: string | null
   password_hash: string
   email_verified?: boolean
   created_at?: Date | string
   updated_at?: Date | string
-  profile?: Prisma.profilesUncheckedCreateNestedOneWithoutApp_userInput
-  player?: Prisma.playersUncheckedCreateNestedOneWithoutApp_userInput
-  user_sessions?: Prisma.user_sessionsUncheckedCreateNestedManyWithoutApp_userInput
   email_verification_tokens?: Prisma.email_verification_tokensUncheckedCreateNestedManyWithoutApp_userInput
+  player?: Prisma.playersUncheckedCreateNestedOneWithoutApp_userInput
+  profile?: Prisma.profilesUncheckedCreateNestedOneWithoutApp_userInput
+  user_sessions?: Prisma.user_sessionsUncheckedCreateNestedManyWithoutApp_userInput
 }
 
 export type app_usersCreateOrConnectWithoutPassword_reset_tokensInput = {
@@ -801,29 +801,29 @@ export type app_usersUpdateToOneWithWhereWithoutPassword_reset_tokensInput = {
 export type app_usersUpdateWithoutPassword_reset_tokensInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  email_lower?: Prisma.StringFieldUpdateOperationsInput | string
+  email_lower?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  profile?: Prisma.profilesUpdateOneWithoutApp_userNestedInput
-  player?: Prisma.playersUpdateOneWithoutApp_userNestedInput
-  user_sessions?: Prisma.user_sessionsUpdateManyWithoutApp_userNestedInput
   email_verification_tokens?: Prisma.email_verification_tokensUpdateManyWithoutApp_userNestedInput
+  player?: Prisma.playersUpdateOneWithoutApp_userNestedInput
+  profile?: Prisma.profilesUpdateOneWithoutApp_userNestedInput
+  user_sessions?: Prisma.user_sessionsUpdateManyWithoutApp_userNestedInput
 }
 
 export type app_usersUncheckedUpdateWithoutPassword_reset_tokensInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  email_lower?: Prisma.StringFieldUpdateOperationsInput | string
+  email_lower?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  profile?: Prisma.profilesUncheckedUpdateOneWithoutApp_userNestedInput
-  player?: Prisma.playersUncheckedUpdateOneWithoutApp_userNestedInput
-  user_sessions?: Prisma.user_sessionsUncheckedUpdateManyWithoutApp_userNestedInput
   email_verification_tokens?: Prisma.email_verification_tokensUncheckedUpdateManyWithoutApp_userNestedInput
+  player?: Prisma.playersUncheckedUpdateOneWithoutApp_userNestedInput
+  profile?: Prisma.profilesUncheckedUpdateOneWithoutApp_userNestedInput
+  user_sessions?: Prisma.user_sessionsUncheckedUpdateManyWithoutApp_userNestedInput
 }
 
 
@@ -832,15 +832,15 @@ export type app_usersUncheckedUpdateWithoutPassword_reset_tokensInput = {
  */
 
 export type App_usersCountOutputType = {
-  user_sessions: number
   email_verification_tokens: number
   password_reset_tokens: number
+  user_sessions: number
 }
 
 export type App_usersCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user_sessions?: boolean | App_usersCountOutputTypeCountUser_sessionsArgs
   email_verification_tokens?: boolean | App_usersCountOutputTypeCountEmail_verification_tokensArgs
   password_reset_tokens?: boolean | App_usersCountOutputTypeCountPassword_reset_tokensArgs
+  user_sessions?: boolean | App_usersCountOutputTypeCountUser_sessionsArgs
 }
 
 /**
@@ -851,13 +851,6 @@ export type App_usersCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Ex
    * Select specific fields to fetch from the App_usersCountOutputType
    */
   select?: Prisma.App_usersCountOutputTypeSelect<ExtArgs> | null
-}
-
-/**
- * App_usersCountOutputType without action
- */
-export type App_usersCountOutputTypeCountUser_sessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.user_sessionsWhereInput
 }
 
 /**
@@ -874,6 +867,13 @@ export type App_usersCountOutputTypeCountPassword_reset_tokensArgs<ExtArgs exten
   where?: Prisma.password_reset_tokensWhereInput
 }
 
+/**
+ * App_usersCountOutputType without action
+ */
+export type App_usersCountOutputTypeCountUser_sessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.user_sessionsWhereInput
+}
+
 
 export type app_usersSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -883,11 +883,11 @@ export type app_usersSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   email_verified?: boolean
   created_at?: boolean
   updated_at?: boolean
-  profile?: boolean | Prisma.app_users$profileArgs<ExtArgs>
-  player?: boolean | Prisma.app_users$playerArgs<ExtArgs>
-  user_sessions?: boolean | Prisma.app_users$user_sessionsArgs<ExtArgs>
   email_verification_tokens?: boolean | Prisma.app_users$email_verification_tokensArgs<ExtArgs>
   password_reset_tokens?: boolean | Prisma.app_users$password_reset_tokensArgs<ExtArgs>
+  player?: boolean | Prisma.app_users$playerArgs<ExtArgs>
+  profile?: boolean | Prisma.app_users$profileArgs<ExtArgs>
+  user_sessions?: boolean | Prisma.app_users$user_sessionsArgs<ExtArgs>
   _count?: boolean | Prisma.App_usersCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["app_users"]>
 
@@ -923,11 +923,11 @@ export type app_usersSelectScalar = {
 
 export type app_usersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "email_lower" | "password_hash" | "email_verified" | "created_at" | "updated_at", ExtArgs["result"]["app_users"]>
 export type app_usersInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  profile?: boolean | Prisma.app_users$profileArgs<ExtArgs>
-  player?: boolean | Prisma.app_users$playerArgs<ExtArgs>
-  user_sessions?: boolean | Prisma.app_users$user_sessionsArgs<ExtArgs>
   email_verification_tokens?: boolean | Prisma.app_users$email_verification_tokensArgs<ExtArgs>
   password_reset_tokens?: boolean | Prisma.app_users$password_reset_tokensArgs<ExtArgs>
+  player?: boolean | Prisma.app_users$playerArgs<ExtArgs>
+  profile?: boolean | Prisma.app_users$profileArgs<ExtArgs>
+  user_sessions?: boolean | Prisma.app_users$user_sessionsArgs<ExtArgs>
   _count?: boolean | Prisma.App_usersCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type app_usersIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -936,16 +936,16 @@ export type app_usersIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
 export type $app_usersPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "app_users"
   objects: {
-    profile: Prisma.$profilesPayload<ExtArgs> | null
-    player: Prisma.$playersPayload<ExtArgs> | null
-    user_sessions: Prisma.$user_sessionsPayload<ExtArgs>[]
     email_verification_tokens: Prisma.$email_verification_tokensPayload<ExtArgs>[]
     password_reset_tokens: Prisma.$password_reset_tokensPayload<ExtArgs>[]
+    player: Prisma.$playersPayload<ExtArgs> | null
+    profile: Prisma.$profilesPayload<ExtArgs> | null
+    user_sessions: Prisma.$user_sessionsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     email: string
-    email_lower: string
+    email_lower: string | null
     password_hash: string
     email_verified: boolean
     created_at: Date
@@ -1344,11 +1344,11 @@ readonly fields: app_usersFieldRefs;
  */
 export interface Prisma__app_usersClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  profile<T extends Prisma.app_users$profileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_users$profileArgs<ExtArgs>>): Prisma.Prisma__profilesClient<runtime.Types.Result.GetResult<Prisma.$profilesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  player<T extends Prisma.app_users$playerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_users$playerArgs<ExtArgs>>): Prisma.Prisma__playersClient<runtime.Types.Result.GetResult<Prisma.$playersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  user_sessions<T extends Prisma.app_users$user_sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_users$user_sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$user_sessionsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   email_verification_tokens<T extends Prisma.app_users$email_verification_tokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_users$email_verification_tokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$email_verification_tokensPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   password_reset_tokens<T extends Prisma.app_users$password_reset_tokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_users$password_reset_tokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$password_reset_tokensPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  player<T extends Prisma.app_users$playerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_users$playerArgs<ExtArgs>>): Prisma.Prisma__playersClient<runtime.Types.Result.GetResult<Prisma.$playersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  profile<T extends Prisma.app_users$profileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_users$profileArgs<ExtArgs>>): Prisma.Prisma__profilesClient<runtime.Types.Result.GetResult<Prisma.$profilesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  user_sessions<T extends Prisma.app_users$user_sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_users$user_sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$user_sessionsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1778,68 +1778,6 @@ export type app_usersDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Int
 }
 
 /**
- * app_users.profile
- */
-export type app_users$profileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the profiles
-   */
-  select?: Prisma.profilesSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the profiles
-   */
-  omit?: Prisma.profilesOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.profilesInclude<ExtArgs> | null
-  where?: Prisma.profilesWhereInput
-}
-
-/**
- * app_users.player
- */
-export type app_users$playerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the players
-   */
-  select?: Prisma.playersSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the players
-   */
-  omit?: Prisma.playersOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.playersInclude<ExtArgs> | null
-  where?: Prisma.playersWhereInput
-}
-
-/**
- * app_users.user_sessions
- */
-export type app_users$user_sessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the user_sessions
-   */
-  select?: Prisma.user_sessionsSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the user_sessions
-   */
-  omit?: Prisma.user_sessionsOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.user_sessionsInclude<ExtArgs> | null
-  where?: Prisma.user_sessionsWhereInput
-  orderBy?: Prisma.user_sessionsOrderByWithRelationInput | Prisma.user_sessionsOrderByWithRelationInput[]
-  cursor?: Prisma.user_sessionsWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.User_sessionsScalarFieldEnum | Prisma.User_sessionsScalarFieldEnum[]
-}
-
-/**
  * app_users.email_verification_tokens
  */
 export type app_users$email_verification_tokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1885,6 +1823,68 @@ export type app_users$password_reset_tokensArgs<ExtArgs extends runtime.Types.Ex
   take?: number
   skip?: number
   distinct?: Prisma.Password_reset_tokensScalarFieldEnum | Prisma.Password_reset_tokensScalarFieldEnum[]
+}
+
+/**
+ * app_users.player
+ */
+export type app_users$playerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the players
+   */
+  select?: Prisma.playersSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the players
+   */
+  omit?: Prisma.playersOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.playersInclude<ExtArgs> | null
+  where?: Prisma.playersWhereInput
+}
+
+/**
+ * app_users.profile
+ */
+export type app_users$profileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the profiles
+   */
+  select?: Prisma.profilesSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the profiles
+   */
+  omit?: Prisma.profilesOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.profilesInclude<ExtArgs> | null
+  where?: Prisma.profilesWhereInput
+}
+
+/**
+ * app_users.user_sessions
+ */
+export type app_users$user_sessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the user_sessions
+   */
+  select?: Prisma.user_sessionsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the user_sessions
+   */
+  omit?: Prisma.user_sessionsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.user_sessionsInclude<ExtArgs> | null
+  where?: Prisma.user_sessionsWhereInput
+  orderBy?: Prisma.user_sessionsOrderByWithRelationInput | Prisma.user_sessionsOrderByWithRelationInput[]
+  cursor?: Prisma.user_sessionsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.User_sessionsScalarFieldEnum | Prisma.User_sessionsScalarFieldEnum[]
 }
 
 /**

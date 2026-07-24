@@ -6,7 +6,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  schemas  = ["auth", "public"]
+  schemas  = ["public", "auth"]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -24,30 +24,31 @@ model audit_log_entries {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model custom_oauth_providers {
-  id                    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  provider_type         String
-  identifier            String    @unique
-  name                  String
-  client_id             String
-  client_secret         String
-  acceptable_client_ids String[]  @default([])
-  scopes                String[]  @default([])
-  pkce_enabled          Boolean   @default(true)
-  attribute_mapping     Json      @default("{}")
-  authorization_params  Json      @default("{}")
-  enabled               Boolean   @default(true)
-  email_optional        Boolean   @default(false)
-  issuer                String?
-  discovery_url         String?
-  skip_nonce_check      Boolean   @default(false)
-  cached_discovery      Json?
-  discovery_cached_at   DateTime? @db.Timestamptz(6)
-  authorization_url     String?
-  token_url             String?
-  userinfo_url          String?
-  jwks_uri              String?
-  created_at            DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at            DateTime  @default(now()) @db.Timestamptz(6)
+  id                      String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  provider_type           String
+  identifier              String    @unique
+  name                    String
+  client_id               String
+  client_secret           String
+  acceptable_client_ids   String[]  @default([])
+  scopes                  String[]  @default([])
+  pkce_enabled            Boolean   @default(true)
+  attribute_mapping       Json      @default("{}")
+  authorization_params    Json      @default("{}")
+  enabled                 Boolean   @default(true)
+  email_optional          Boolean   @default(false)
+  issuer                  String?
+  discovery_url           String?
+  skip_nonce_check        Boolean   @default(false)
+  cached_discovery        Json?
+  discovery_cached_at     DateTime? @db.Timestamptz(6)
+  authorization_url       String?
+  token_url               String?
+  userinfo_url            String?
+  jwks_uri                String?
+  created_at              DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime  @default(now()) @db.Timestamptz(6)
+  custom_claims_allowlist String[]  @default([])
 
   @@index([created_at])
   @@index([enabled])
@@ -451,6 +452,7 @@ model users {
   sessions                    sessions[]
   webauthn_challenges         webauthn_challenges[]
   webauthn_credentials        webauthn_credentials[]
+
   @@index([created_at(sort: Desc)], map: "idx_users_created_at_desc")
   @@index([email], map: "idx_users_email")
   @@index([last_sign_in_at(sort: Desc)], map: "idx_users_last_sign_in_at_desc")
@@ -504,9 +506,9 @@ model academies {
   city        String?
   owner_id    String?    @db.Uuid
   status      String     @default("pending")
-  invite_code String?    @unique
   created_at  DateTime?  @default(now()) @db.Timestamptz(6)
   updated_at  DateTime?  @default(now()) @db.Timestamptz(6)
+  invite_code String?    @unique
   profiles    profiles[]
 
   @@schema("public")
@@ -571,16 +573,18 @@ model player_theme_rating {
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model players {
-  id             String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  chess_username String     @unique
-  full_name      String
-  status         String     @default("pending")
-  coach_id       String?    @db.Uuid
-  email          String?    @unique
-  user_id        String?    @unique @db.Uuid
-  created_at     DateTime?  @default(now()) @db.Timestamptz(6)
-  profiles       profiles?  @relation(fields: [coach_id], references: [id], onUpdate: NoAction)
-  app_user       app_users? @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  id               String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  chess_username   String?    @unique
+  full_name        String
+  status           String     @default("pending")
+  coach_id         String?    @db.Uuid
+  created_at       DateTime?  @default(now()) @db.Timestamptz(6)
+  email            String?    @unique
+  user_id          String?    @unique @db.Uuid
+  lichess_username String?    @unique
+  active_platform  String     @default("chess.com")
+  profiles         profiles?  @relation(fields: [coach_id], references: [id], onUpdate: NoAction)
+  app_user         app_users? @relation(fields: [user_id], references: [id], onUpdate: NoAction)
 
   @@schema("public")
 }
@@ -597,8 +601,8 @@ model profiles {
   status      String?    @default("approved")
   invite_code String?    @unique
   players     players[]
-  academies   academies? @relation(fields: [academy_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
-  app_user    app_users  @relation(fields: [id], references: [id], onDelete: Cascade)
+  academies   academies? @relation(fields: [academy_id], references: [id], onUpdate: NoAction)
+  app_user    app_users  @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "profiles_app_user_fkey")
 
   @@schema("public")
 }
@@ -668,52 +672,55 @@ model analysis_jobs {
   created_at DateTime @default(now()) @db.Timestamptz(6)
   updated_at DateTime @default(now()) @db.Timestamptz(6)
 
+  @@index([status, created_at], map: "idx_analysis_jobs_status_created")
   @@schema("public")
 }
 
 model batch_jobs {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  username   String
-  game_urls  Json
-  time_class String?
-  status     String   @default("pending")
-  result     Json?
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  updated_at DateTime @default(now()) @db.Timestamptz(6)
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username     String
+  game_urls    Json     @default("[]")
+  status       String   @default("pending")
+  result       Json?
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+  games_done   Int?     @default(0)
+  games_total  Int?     @default(0)
+  current_game String?
+  time_class   String?
+  updated_at   DateTime @default(now()) @db.Timestamptz(6)
 
-  @@index([username, created_at(sort: Desc)])
+  @@index([status, created_at], map: "batch_jobs_status_created")
+  @@index([username, created_at(sort: Desc)], map: "batch_jobs_username_created")
   @@schema("public")
 }
 
 model app_users {
-  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email          String
-  email_lower    String    @unique @default(dbgenerated("lower(email)"))
-  password_hash  String
-  email_verified Boolean   @default(false)
-  created_at     DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at     DateTime  @default(now()) @db.Timestamptz(6)
-
-  profile                   profiles?
-  player                    players?
-  user_sessions             user_sessions[]
+  id                        String                      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                     String
+  email_lower               String?                     @unique @default(dbgenerated("lower(email)"))
+  password_hash             String
+  email_verified            Boolean                     @default(false)
+  created_at                DateTime                    @default(now()) @db.Timestamptz(6)
+  updated_at                DateTime                    @default(now()) @db.Timestamptz(6)
   email_verification_tokens email_verification_tokens[]
   password_reset_tokens     password_reset_tokens[]
+  player                    players?
+  profile                   profiles?
+  user_sessions             user_sessions[]
 
   @@schema("public")
 }
 
 model user_sessions {
-  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user_id      String   @db.Uuid
-  token_hash   String   @unique
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id      String    @db.Uuid
+  token_hash   String    @unique
   user_agent   String?
   ip_address   String?
-  created_at   DateTime @default(now()) @db.Timestamptz(6)
-  expires_at   DateTime @db.Timestamptz(6)
-  last_used_at DateTime @default(now()) @db.Timestamptz(6)
-
-  app_user app_users @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  created_at   DateTime  @default(now()) @db.Timestamptz(6)
+  expires_at   DateTime  @default(dbgenerated("(now() + '30 days'::interval)")) @db.Timestamptz(6)
+  last_used_at DateTime  @default(now()) @db.Timestamptz(6)
+  app_user     app_users @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([user_id])
   @@index([expires_at])
@@ -724,13 +731,12 @@ model email_verification_tokens {
   id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   user_id    String    @db.Uuid
   token_hash String    @unique
-  expires_at DateTime  @db.Timestamptz(6)
+  expires_at DateTime  @default(dbgenerated("(now() + '24:00:00'::interval)")) @db.Timestamptz(6)
   used_at    DateTime? @db.Timestamptz(6)
   created_at DateTime  @default(now()) @db.Timestamptz(6)
+  app_user   app_users @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  app_user app_users @relation(fields: [user_id], references: [id], onDelete: Cascade)
-
-  @@index([user_id])
+  @@index([user_id], map: "evt_user_id_idx")
   @@schema("public")
 }
 
@@ -738,13 +744,26 @@ model password_reset_tokens {
   id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   user_id    String    @db.Uuid
   token_hash String    @unique
-  expires_at DateTime  @db.Timestamptz(6)
+  expires_at DateTime  @default(dbgenerated("(now() + '01:00:00'::interval)")) @db.Timestamptz(6)
   used_at    DateTime? @db.Timestamptz(6)
   created_at DateTime  @default(now()) @db.Timestamptz(6)
+  app_user   app_users @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  app_user app_users @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  @@schema("public")
+}
 
-  @@index([user_id])
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model game_analysis_cache {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username         String
+  game_url         String
+  analysis_version Int
+  source           String
+  result           Json
+  analyzed_at      DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@unique([username, game_url])
+  @@index([username, game_url, analysis_version], map: "idx_game_analysis_cache_lookup")
   @@schema("public")
 }
 

@@ -4,22 +4,32 @@ import { useRouter } from "next/navigation";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { fetchGames } from "@/services/api";
 import Loader from "@/components/Loader";
+import { PillTabs } from "@/components/PillTabs";
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const { chessUsername, isApproved, loading } = usePlayer();
+  const { chessUsername, lichessUsername, activePlatform, activeUsername, isApproved, loading } = usePlayer();
   const [platform, setPlatform] = useState("chess.com");
   const [limit, setLimit] = useState(10);
   const [status, setStatus] = useState("idle"); // idle, fetching, success, error
   const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
-    if (!loading && (!chessUsername || !isApproved)) {
+    if (!loading && (!activeUsername || !isApproved)) {
       router.push("/login");
     }
-  }, [chessUsername, isApproved, loading, router]);
+  }, [activeUsername, isApproved, loading, router]);
 
-  const username = chessUsername;
+  useEffect(() => {
+    setPlatform(activePlatform);
+  }, [activePlatform]);
+
+  const platformTabs = [
+    ...(chessUsername ? [{ id: "chess.com" as const, label: "Chess.com" }] : []),
+    ...(lichessUsername ? [{ id: "lichess" as const, label: "Lichess" }] : []),
+  ];
+
+  const username = activeUsername;
 
   const handleFetch = async (e) => {
     e.preventDefault();
@@ -27,7 +37,8 @@ export default function OnboardingPage() {
     setErrorMsg("");
 
     try {
-      const games = await fetchGames(platform, username, limit);
+      const fetchUsername = platform === "lichess" ? lichessUsername : chessUsername;
+      const games = await fetchGames(platform, fetchUsername, limit);
       localStorage.setItem(`recentGames_${username}`, JSON.stringify(games));
       setStatus("success");
       setTimeout(() => {
@@ -114,18 +125,14 @@ export default function OnboardingPage() {
           style={{ display: "flex", flexDirection: "column", gap: "20px" }}
         >
           <div>
-            <label className="input-label" htmlFor="platform">
-              Platform
-            </label>
-            <select
-              id="platform"
-              className="input-field"
-              value={platform}
-              onChange={(e) => setPlatform(e.target.value)}
-            >
-              <option value="chess.com">Chess.com</option>
-              <option value="lichess">Lichess</option>
-            </select>
+            <label className="input-label">Platform</label>
+            {platformTabs.length > 1 ? (
+              <PillTabs tabs={platformTabs} activeTab={platform as "chess.com" | "lichess"} onChange={setPlatform} />
+            ) : (
+              <span style={{ fontSize: "15px", color: "var(--text-primary)", padding: "8px 0", display: "block" }}>
+                {platformTabs[0]?.label ?? "Chess.com"}
+              </span>
+            )}
           </div>
 
           <div>

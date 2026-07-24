@@ -422,7 +422,8 @@ export const ModelName = {
   app_users: 'app_users',
   user_sessions: 'user_sessions',
   email_verification_tokens: 'email_verification_tokens',
-  password_reset_tokens: 'password_reset_tokens'
+  password_reset_tokens: 'password_reset_tokens',
+  game_analysis_cache: 'game_analysis_cache'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -438,7 +439,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "audit_log_entries" | "custom_oauth_providers" | "flow_state" | "identities" | "instances" | "mfa_amr_claims" | "mfa_challenges" | "mfa_factors" | "oauth_authorizations" | "oauth_client_states" | "oauth_clients" | "oauth_consents" | "one_time_tokens" | "refresh_tokens" | "saml_providers" | "saml_relay_states" | "schema_migrations" | "sessions" | "sso_domains" | "sso_providers" | "users" | "webauthn_challenges" | "webauthn_credentials" | "academies" | "game_annotations" | "player_puzzle_rating" | "player_rating_history" | "player_theme_rating" | "players" | "profiles" | "puzzle_library" | "puzzle_progress" | "puzzles" | "analysis_jobs" | "batch_jobs" | "app_users" | "user_sessions" | "email_verification_tokens" | "password_reset_tokens"
+    modelProps: "audit_log_entries" | "custom_oauth_providers" | "flow_state" | "identities" | "instances" | "mfa_amr_claims" | "mfa_challenges" | "mfa_factors" | "oauth_authorizations" | "oauth_client_states" | "oauth_clients" | "oauth_consents" | "one_time_tokens" | "refresh_tokens" | "saml_providers" | "saml_relay_states" | "schema_migrations" | "sessions" | "sso_domains" | "sso_providers" | "users" | "webauthn_challenges" | "webauthn_credentials" | "academies" | "game_annotations" | "player_puzzle_rating" | "player_rating_history" | "player_theme_rating" | "players" | "profiles" | "puzzle_library" | "puzzle_progress" | "puzzles" | "analysis_jobs" | "batch_jobs" | "app_users" | "user_sessions" | "email_verification_tokens" | "password_reset_tokens" | "game_analysis_cache"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3328,6 +3329,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    game_analysis_cache: {
+      payload: Prisma.$game_analysis_cachePayload<ExtArgs>
+      fields: Prisma.game_analysis_cacheFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.game_analysis_cacheFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$game_analysis_cachePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.game_analysis_cacheFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$game_analysis_cachePayload>
+        }
+        findFirst: {
+          args: Prisma.game_analysis_cacheFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$game_analysis_cachePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.game_analysis_cacheFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$game_analysis_cachePayload>
+        }
+        findMany: {
+          args: Prisma.game_analysis_cacheFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$game_analysis_cachePayload>[]
+        }
+        create: {
+          args: Prisma.game_analysis_cacheCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$game_analysis_cachePayload>
+        }
+        createMany: {
+          args: Prisma.game_analysis_cacheCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.game_analysis_cacheCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$game_analysis_cachePayload>[]
+        }
+        delete: {
+          args: Prisma.game_analysis_cacheDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$game_analysis_cachePayload>
+        }
+        update: {
+          args: Prisma.game_analysis_cacheUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$game_analysis_cachePayload>
+        }
+        deleteMany: {
+          args: Prisma.game_analysis_cacheDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.game_analysis_cacheUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.game_analysis_cacheUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$game_analysis_cachePayload>[]
+        }
+        upsert: {
+          args: Prisma.game_analysis_cacheUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$game_analysis_cachePayload>
+        }
+        aggregate: {
+          args: Prisma.Game_analysis_cacheAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateGame_analysis_cache>
+        }
+        groupBy: {
+          args: Prisma.game_analysis_cacheGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Game_analysis_cacheGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.game_analysis_cacheCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Game_analysis_cacheCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -3402,7 +3477,8 @@ export const Custom_oauth_providersScalarFieldEnum = {
   userinfo_url: 'userinfo_url',
   jwks_uri: 'jwks_uri',
   created_at: 'created_at',
-  updated_at: 'updated_at'
+  updated_at: 'updated_at',
+  custom_claims_allowlist: 'custom_claims_allowlist'
 } as const
 
 export type Custom_oauth_providersScalarFieldEnum = (typeof Custom_oauth_providersScalarFieldEnum)[keyof typeof Custom_oauth_providersScalarFieldEnum]
@@ -3751,9 +3827,9 @@ export const AcademiesScalarFieldEnum = {
   city: 'city',
   owner_id: 'owner_id',
   status: 'status',
-  invite_code: 'invite_code',
   created_at: 'created_at',
-  updated_at: 'updated_at'
+  updated_at: 'updated_at',
+  invite_code: 'invite_code'
 } as const
 
 export type AcademiesScalarFieldEnum = (typeof AcademiesScalarFieldEnum)[keyof typeof AcademiesScalarFieldEnum]
@@ -3817,9 +3893,11 @@ export const PlayersScalarFieldEnum = {
   full_name: 'full_name',
   status: 'status',
   coach_id: 'coach_id',
+  created_at: 'created_at',
   email: 'email',
   user_id: 'user_id',
-  created_at: 'created_at'
+  lichess_username: 'lichess_username',
+  active_platform: 'active_platform'
 } as const
 
 export type PlayersScalarFieldEnum = (typeof PlayersScalarFieldEnum)[keyof typeof PlayersScalarFieldEnum]
@@ -3901,10 +3979,13 @@ export const Batch_jobsScalarFieldEnum = {
   id: 'id',
   username: 'username',
   game_urls: 'game_urls',
-  time_class: 'time_class',
   status: 'status',
   result: 'result',
   created_at: 'created_at',
+  games_done: 'games_done',
+  games_total: 'games_total',
+  current_game: 'current_game',
+  time_class: 'time_class',
   updated_at: 'updated_at'
 } as const
 
@@ -3960,6 +4041,19 @@ export const Password_reset_tokensScalarFieldEnum = {
 } as const
 
 export type Password_reset_tokensScalarFieldEnum = (typeof Password_reset_tokensScalarFieldEnum)[keyof typeof Password_reset_tokensScalarFieldEnum]
+
+
+export const Game_analysis_cacheScalarFieldEnum = {
+  id: 'id',
+  username: 'username',
+  game_url: 'game_url',
+  analysis_version: 'analysis_version',
+  source: 'source',
+  result: 'result',
+  analyzed_at: 'analyzed_at'
+} as const
+
+export type Game_analysis_cacheScalarFieldEnum = (typeof Game_analysis_cacheScalarFieldEnum)[keyof typeof Game_analysis_cacheScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -4395,6 +4489,7 @@ export type GlobalOmitConfig = {
   user_sessions?: Prisma.user_sessionsOmit
   email_verification_tokens?: Prisma.email_verification_tokensOmit
   password_reset_tokens?: Prisma.password_reset_tokensOmit
+  game_analysis_cache?: Prisma.game_analysis_cacheOmit
 }
 
 /* Types for Logging */

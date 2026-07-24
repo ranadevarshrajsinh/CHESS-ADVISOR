@@ -243,7 +243,7 @@ export type password_reset_tokensScalarWhereWithAggregatesInput = {
 export type password_reset_tokensCreateInput = {
   id?: string
   token_hash: string
-  expires_at: Date | string
+  expires_at?: Date | string
   used_at?: Date | string | null
   created_at?: Date | string
   app_user: Prisma.app_usersCreateNestedOneWithoutPassword_reset_tokensInput
@@ -253,7 +253,7 @@ export type password_reset_tokensUncheckedCreateInput = {
   id?: string
   user_id: string
   token_hash: string
-  expires_at: Date | string
+  expires_at?: Date | string
   used_at?: Date | string | null
   created_at?: Date | string
 }
@@ -280,7 +280,7 @@ export type password_reset_tokensCreateManyInput = {
   id?: string
   user_id: string
   token_hash: string
-  expires_at: Date | string
+  expires_at?: Date | string
   used_at?: Date | string | null
   created_at?: Date | string
 }
@@ -384,7 +384,7 @@ export type password_reset_tokensUncheckedUpdateManyWithoutApp_userNestedInput =
 export type password_reset_tokensCreateWithoutApp_userInput = {
   id?: string
   token_hash: string
-  expires_at: Date | string
+  expires_at?: Date | string
   used_at?: Date | string | null
   created_at?: Date | string
 }
@@ -392,7 +392,7 @@ export type password_reset_tokensCreateWithoutApp_userInput = {
 export type password_reset_tokensUncheckedCreateWithoutApp_userInput = {
   id?: string
   token_hash: string
-  expires_at: Date | string
+  expires_at?: Date | string
   used_at?: Date | string | null
   created_at?: Date | string
 }
@@ -438,7 +438,7 @@ export type password_reset_tokensScalarWhereInput = {
 export type password_reset_tokensCreateManyApp_userInput = {
   id?: string
   token_hash: string
-  expires_at: Date | string
+  expires_at?: Date | string
   used_at?: Date | string | null
   created_at?: Date | string
 }

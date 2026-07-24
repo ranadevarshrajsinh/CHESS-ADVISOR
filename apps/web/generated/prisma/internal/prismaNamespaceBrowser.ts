@@ -89,7 +89,8 @@ export const ModelName = {
   app_users: 'app_users',
   user_sessions: 'user_sessions',
   email_verification_tokens: 'email_verification_tokens',
-  password_reset_tokens: 'password_reset_tokens'
+  password_reset_tokens: 'password_reset_tokens',
+  game_analysis_cache: 'game_analysis_cache'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -143,7 +144,8 @@ export const Custom_oauth_providersScalarFieldEnum = {
   userinfo_url: 'userinfo_url',
   jwks_uri: 'jwks_uri',
   created_at: 'created_at',
-  updated_at: 'updated_at'
+  updated_at: 'updated_at',
+  custom_claims_allowlist: 'custom_claims_allowlist'
 } as const
 
 export type Custom_oauth_providersScalarFieldEnum = (typeof Custom_oauth_providersScalarFieldEnum)[keyof typeof Custom_oauth_providersScalarFieldEnum]
@@ -492,9 +494,9 @@ export const AcademiesScalarFieldEnum = {
   city: 'city',
   owner_id: 'owner_id',
   status: 'status',
-  invite_code: 'invite_code',
   created_at: 'created_at',
-  updated_at: 'updated_at'
+  updated_at: 'updated_at',
+  invite_code: 'invite_code'
 } as const
 
 export type AcademiesScalarFieldEnum = (typeof AcademiesScalarFieldEnum)[keyof typeof AcademiesScalarFieldEnum]
@@ -558,9 +560,11 @@ export const PlayersScalarFieldEnum = {
   full_name: 'full_name',
   status: 'status',
   coach_id: 'coach_id',
+  created_at: 'created_at',
   email: 'email',
   user_id: 'user_id',
-  created_at: 'created_at'
+  lichess_username: 'lichess_username',
+  active_platform: 'active_platform'
 } as const
 
 export type PlayersScalarFieldEnum = (typeof PlayersScalarFieldEnum)[keyof typeof PlayersScalarFieldEnum]
@@ -642,10 +646,13 @@ export const Batch_jobsScalarFieldEnum = {
   id: 'id',
   username: 'username',
   game_urls: 'game_urls',
-  time_class: 'time_class',
   status: 'status',
   result: 'result',
   created_at: 'created_at',
+  games_done: 'games_done',
+  games_total: 'games_total',
+  current_game: 'current_game',
+  time_class: 'time_class',
   updated_at: 'updated_at'
 } as const
 
@@ -701,6 +708,19 @@ export const Password_reset_tokensScalarFieldEnum = {
 } as const
 
 export type Password_reset_tokensScalarFieldEnum = (typeof Password_reset_tokensScalarFieldEnum)[keyof typeof Password_reset_tokensScalarFieldEnum]
+
+
+export const Game_analysis_cacheScalarFieldEnum = {
+  id: 'id',
+  username: 'username',
+  game_url: 'game_url',
+  analysis_version: 'analysis_version',
+  source: 'source',
+  result: 'result',
+  analyzed_at: 'analyzed_at'
+} as const
+
+export type Game_analysis_cacheScalarFieldEnum = (typeof Game_analysis_cacheScalarFieldEnum)[keyof typeof Game_analysis_cacheScalarFieldEnum]
 
 
 export const SortOrder = {

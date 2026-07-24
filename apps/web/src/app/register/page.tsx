@@ -211,6 +211,8 @@ function RegisterContent() {
   const [pFullName, setPFullName] = useState("");
   const [pEmail, setPEmail] = useState("");
   const [pUsername, setPUsername] = useState("");
+  const [pLichessUsername, setPLichessUsername] = useState("");
+  const [pActivePlatform, setPActivePlatform] = useState<"chess.com" | "lichess">("chess.com");
   const [pInviteCode, setPInviteCode] = useState("");
   const [pCoachId, setPCoachId] = useState("");
   const [codeStatus, setCodeStatus] = useState<"idle" | "checking" | "valid" | "invalid">("idle");
@@ -298,12 +300,27 @@ function RegisterContent() {
     e.preventDefault();
     setPError("");
     if (!pCoachId) { setPError("Please enter a valid invite code."); return; }
+    const chessUsername = pUsername.trim().toLowerCase();
+    const lichessUsername = pLichessUsername.trim().toLowerCase();
+    if (!chessUsername && !lichessUsername) {
+      setPError("Enter your Chess.com or Lichess username (at least one).");
+      return;
+    }
     setPLoading(true);
 
+    const activePlatform = chessUsername && lichessUsername ? pActivePlatform : (chessUsername ? "chess.com" : "lichess");
     const res = await fetch("/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type: "player", email: pEmail, fullName: pFullName.trim(), chessUsername: pUsername.trim().toLowerCase(), coachId: pCoachId }),
+      body: JSON.stringify({
+        type: "player",
+        email: pEmail,
+        fullName: pFullName.trim(),
+        chessUsername: chessUsername || undefined,
+        lichessUsername: lichessUsername || undefined,
+        activePlatform,
+        coachId: pCoachId,
+      }),
     });
     const data = await res.json();
     setPLoading(false);
@@ -438,7 +455,50 @@ function RegisterContent() {
         {tab === "player" && !pSuccess && (
           <form onSubmit={handlePlayerSubmit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
             <InputField label="Full Name" placeholder="Your full name" value={pFullName} onChange={setPFullName} onFocus={focus("p-name")} onBlur={blur} icon={<User size={18} />} focused={isFocused("p-name")} activeColor={meta.color} disabled={pLoading} required />
-            <InputField label="Chess.com Username" placeholder="your_username" value={pUsername} onChange={setPUsername} onFocus={focus("p-uname")} onBlur={blur} icon={<User size={18} />} focused={isFocused("p-uname")} activeColor={meta.color} disabled={pLoading} required autoComplete="username" />
+
+            {/* Chess platforms */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px", padding: "12px", background: "rgba(255,255,255,0.03)", borderRadius: "12px" }}>
+              <InputField label="Chess.com Username" placeholder="your_username (optional)" value={pUsername} onChange={setPUsername} onFocus={focus("p-uname")} onBlur={blur} icon={<User size={18} />} focused={isFocused("p-uname")} activeColor={meta.color} disabled={pLoading} autoComplete="username" />
+              <InputField label="Lichess Username" placeholder="your_username (optional)" value={pLichessUsername} onChange={setPLichessUsername} onFocus={focus("p-luname")} onBlur={blur} icon={<User size={18} />} focused={isFocused("p-luname")} activeColor={meta.color} disabled={pLoading} autoComplete="username" />
+              <p style={{ fontSize: "11px", color: "var(--text-secondary)", margin: 0 }}>Add at least one — link both if you play on both.</p>
+
+              {pUsername.trim() && pLichessUsername.trim() && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                  <label className="input-label">Default platform</label>
+                  <div style={{ display: "flex", gap: "6px", background: "rgba(255,255,255,0.03)", borderRadius: "10px", padding: "3px" }}>
+                    <button
+                      type="button"
+                      disabled={pLoading}
+                      onClick={() => setPActivePlatform("chess.com")}
+                      style={{
+                        flex: 1, padding: "8px 4px", fontSize: "12px", fontWeight: pActivePlatform === "chess.com" ? "700" : "500",
+                        background: pActivePlatform === "chess.com" ? "rgba(16,185,129,0.18)" : "transparent",
+                        color: pActivePlatform === "chess.com" ? "#34d399" : "var(--text-secondary)",
+                        border: pActivePlatform === "chess.com" ? "1px solid rgba(16,185,129,0.35)" : "1px solid transparent",
+                        borderRadius: "8px", cursor: "pointer", transition: "all 0.2s ease",
+                      }}
+                    >
+                      Chess.com
+                    </button>
+                    <button
+                      type="button"
+                      disabled={pLoading}
+                      onClick={() => setPActivePlatform("lichess")}
+                      style={{
+                        flex: 1, padding: "8px 4px", fontSize: "12px", fontWeight: pActivePlatform === "lichess" ? "700" : "500",
+                        background: pActivePlatform === "lichess" ? "rgba(16,185,129,0.18)" : "transparent",
+                        color: pActivePlatform === "lichess" ? "#34d399" : "var(--text-secondary)",
+                        border: pActivePlatform === "lichess" ? "1px solid rgba(16,185,129,0.35)" : "1px solid transparent",
+                        borderRadius: "8px", cursor: "pointer", transition: "all 0.2s ease",
+                      }}
+                    >
+                      Lichess
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <InputField label="Email" type="email" placeholder="you@example.com" value={pEmail} onChange={setPEmail} onFocus={focus("p-email")} onBlur={blur} icon={<Mail size={18} />} focused={isFocused("p-email")} activeColor={meta.color} disabled={pLoading} required autoComplete="email" />
 
             {/* Invite code */}

@@ -31,6 +31,7 @@ import {
   Play,
   Pause,
   RefreshCw,
+  FlipVertical2,
 } from "lucide-react";
 
 const PIECE_SYMBOLS: Record<string, string> = {
@@ -147,7 +148,7 @@ export default function GameAnalysisPage({
   const searchParams = useSearchParams();
   const resolvedParams = use(params);
   const { filename } = resolvedParams;
-  const { chessUsername, coachId, isApproved, loading: playerLoading } = usePlayer();
+  const { activeUsername, coachId, isApproved, loading: playerLoading } = usePlayer();
 
   const [analysis, setAnalysis] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -157,6 +158,11 @@ export default function GameAnalysisPage({
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const { boardTheme, setBoardTheme, multiPv } = useSettings();
   const [themeFlash, setThemeFlash] = useState(false);
+  const [manualOrientation, setManualOrientation] = useState<"white" | "black" | null>(null);
+
+  useEffect(() => {
+    setManualOrientation(null);
+  }, [filename]);
 
   const [fenHistory, setFenHistory] = useState<string[]>([]);
   const [movePairs, setMovePairs] = useState<
@@ -227,13 +233,13 @@ export default function GameAnalysisPage({
 
   useEffect(() => {
     if (playerLoading) return;
-    if (!chessUsername || !isApproved) {
+    if (!activeUsername || !isApproved) {
       router.push("/login");
       return;
     }
     if (!filename) return;
 
-    analyzeGame(chessUsername, filename, false, multiPv, (pct) => {
+    analyzeGame(activeUsername, filename, false, multiPv, (pct) => {
       progressRef.current = pct;
       setAnalysisProgress(pct);
     })
@@ -281,7 +287,7 @@ export default function GameAnalysisPage({
         alert("Failed to analyze game.");
         setLoading(false);
       });
-  }, [chessUsername, isApproved, playerLoading, filename, router]);
+  }, [activeUsername, isApproved, playerLoading, filename, router]);
 
   useEffect(() => {
     if (!filename) return;
@@ -301,16 +307,16 @@ export default function GameAnalysisPage({
           }
         }
         // Fallback to old route (works when user is a coach reviewing their player's game)
-        if (coachId && chessUsername) {
-          fetchAnnotations(coachId, chessUsername, filename).then(setAnnotations);
+        if (coachId && activeUsername) {
+          fetchAnnotations(coachId, activeUsername, filename).then(setAnnotations);
         }
       })
       .catch(() => {
-        if (coachId && chessUsername) {
-          fetchAnnotations(coachId, chessUsername, filename).then(setAnnotations);
+        if (coachId && activeUsername) {
+          fetchAnnotations(coachId, activeUsername, filename).then(setAnnotations);
         }
       });
-  }, [coachId, chessUsername, filename]);
+  }, [coachId, activeUsername, filename]);
 
   useEffect(() => {
     if (!fenHistory.length) return;
@@ -405,7 +411,7 @@ export default function GameAnalysisPage({
     return () => clearTimeout(t);
   }, [isPlaying, currentMoveIndex, fenHistory.length]);
 
-  if (!chessUsername) return null;
+  if (!activeUsername) return null;
 
   const currentFen = fenHistory[currentMoveIndex] || "start";
   const { whiteCaptured, blackCaptured } = getCapturedPieces(currentFen);
@@ -513,13 +519,20 @@ export default function GameAnalysisPage({
     };
   }
 
+  // Default to the player's own perspective (their pieces at the bottom); a manual
+  // flip overrides this until a different game is loaded (reset above).
+  const isUserWhite = analysis?.white_player?.toLowerCase() === activeUsername?.toLowerCase();
+  const boardOrientation: "white" | "black" = manualOrientation ?? (isUserWhite ? "white" : "black");
+
   const badgeSymbol = currentQuality ? BADGE[currentQuality] : undefined;
   const badgePos =
     currentMove?.to && badgeSymbol
       ? (() => {
-          const col = currentMove.to.charCodeAt(0) - 97;
+          const file = currentMove.to.charCodeAt(0) - 97;
           const rank = parseInt(currentMove.to[1]);
-          return { left: `${col * 12.5}%`, top: `${(8 - rank) * 12.5}%` };
+          const col = boardOrientation === "white" ? file : 7 - file;
+          const row = boardOrientation === "white" ? 8 - rank : rank - 1;
+          return { left: `${col * 12.5}%`, top: `${row * 12.5}%` };
         })()
       : null;
 
@@ -532,11 +545,11 @@ export default function GameAnalysisPage({
   ];
 
   async function handleReanalyze() {
-    if (!chessUsername || !filename) return;
+    if (!activeUsername || !filename) return;
     setReanalyzing(true);
     setAnalysisProgress(0);
     try {
-      const data = await analyzeGame(chessUsername, filename, true, multiPv, setAnalysisProgress);
+      const data = await analyzeGame(activeUsername, filename, true, multiPv, setAnalysisProgress);
       setAnalysis(data);
       if (data?.full_history) {
         const game = new Chess();
@@ -699,7 +712,7 @@ export default function GameAnalysisPage({
                 overflow: "hidden",
               }}
             >
-              {/* Black player info */}
+              {/* Black player info — shown above the board unless the board is flipped */}
               <div
                 style={{
                   flexShrink: 0,
@@ -708,6 +721,7 @@ export default function GameAnalysisPage({
                   alignItems: "center",
                   marginBottom: "6px",
                   padding: "0 4px",
+                  order: boardOrientation === "white" ? 0 : 2,
                 }}
               >
                 <div
@@ -750,6 +764,7 @@ export default function GameAnalysisPage({
                   alignItems: "center",
                   justifyContent: "center",
                   overflow: "hidden",
+                  order: 1,
                 }}
               >
                 <div
@@ -770,6 +785,7 @@ export default function GameAnalysisPage({
                   <Chessboard
                     options={{
                       position: displayFen,
+                      boardOrientation,
                       darkSquareStyle: { backgroundColor: BOARD_THEMES[boardTheme]?.dark ?? "#b58863" },
                       lightSquareStyle: { backgroundColor: BOARD_THEMES[boardTheme]?.light ?? "#f0d9b5" },
                       animationDurationInMs: 200,
@@ -819,7 +835,7 @@ export default function GameAnalysisPage({
                 </div>
               </div>
 
-              {/* White player info */}
+              {/* White player info — shown below the board unless the board is flipped */}
               <div
                 style={{
                   flexShrink: 0,
@@ -828,6 +844,7 @@ export default function GameAnalysisPage({
                   alignItems: "center",
                   marginTop: "6px",
                   padding: "0 4px",
+                  order: boardOrientation === "white" ? 2 : 0,
                 }}
               >
                 <div
@@ -868,6 +885,7 @@ export default function GameAnalysisPage({
                   justifyContent: "center",
                   alignItems: "center",
                   gap: "8px",
+                  order: 3,
                   padding: "8px",
                   marginTop: "8px",
                 }}
@@ -930,6 +948,13 @@ export default function GameAnalysisPage({
                 >
                   <SkipForward size={18} />
                 </button>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setManualOrientation(boardOrientation === "white" ? "black" : "white")}
+                  title="Flip board"
+                >
+                  <FlipVertical2 size={18} />
+                </button>
               </div>
 
             </div>
@@ -950,12 +975,12 @@ export default function GameAnalysisPage({
               </div>
 
               {/* Coach note for current move — student read-only view */}
-              {coachId && chessUsername && (
+              {coachId && activeUsername && (
                 <div style={{ flexShrink: 0 }}>
                   <AnnotationPanel
                     mode="student"
                     coachId={coachId}
-                    playerUsername={chessUsername}
+                    playerUsername={activeUsername}
                     filename={filename}
                     moveIndex={currentMoveIndex}
                     annotations={annotations}

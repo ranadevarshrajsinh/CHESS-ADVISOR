@@ -231,7 +231,7 @@ function LoginForm() {
               />
             </div>
             <p style={{ fontSize: "11px", color: "#52525b", margin: 0 }}>
-              {isStaff ? "Coach / Academy / Admin login" : "Players: enter your chess.com username"}
+              {isStaff ? "Coach / Academy / Admin login" : "Players: enter your Chess.com or Lichess username"}
             </p>
           </div>
 

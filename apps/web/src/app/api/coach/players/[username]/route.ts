@@ -13,7 +13,10 @@ export async function GET(
   const { username } = await params;
 
   const player = await prisma.players.findFirst({
-    where: { chess_username: username, coach_id: coachId },
+    where: {
+      OR: [{ chess_username: username }, { lichess_username: username }],
+      coach_id: coachId,
+    },
   });
 
   if (!player) return NextResponse.json(null, { status: 404 });

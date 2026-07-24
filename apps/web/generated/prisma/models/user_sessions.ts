@@ -270,7 +270,7 @@ export type user_sessionsCreateInput = {
   user_agent?: string | null
   ip_address?: string | null
   created_at?: Date | string
-  expires_at: Date | string
+  expires_at?: Date | string
   last_used_at?: Date | string
   app_user: Prisma.app_usersCreateNestedOneWithoutUser_sessionsInput
 }
@@ -282,7 +282,7 @@ export type user_sessionsUncheckedCreateInput = {
   user_agent?: string | null
   ip_address?: string | null
   created_at?: Date | string
-  expires_at: Date | string
+  expires_at?: Date | string
   last_used_at?: Date | string
 }
 
@@ -315,7 +315,7 @@ export type user_sessionsCreateManyInput = {
   user_agent?: string | null
   ip_address?: string | null
   created_at?: Date | string
-  expires_at: Date | string
+  expires_at?: Date | string
   last_used_at?: Date | string
 }
 
@@ -431,7 +431,7 @@ export type user_sessionsCreateWithoutApp_userInput = {
   user_agent?: string | null
   ip_address?: string | null
   created_at?: Date | string
-  expires_at: Date | string
+  expires_at?: Date | string
   last_used_at?: Date | string
 }
 
@@ -441,7 +441,7 @@ export type user_sessionsUncheckedCreateWithoutApp_userInput = {
   user_agent?: string | null
   ip_address?: string | null
   created_at?: Date | string
-  expires_at: Date | string
+  expires_at?: Date | string
   last_used_at?: Date | string
 }
 
@@ -491,7 +491,7 @@ export type user_sessionsCreateManyApp_userInput = {
   user_agent?: string | null
   ip_address?: string | null
   created_at?: Date | string
-  expires_at: Date | string
+  expires_at?: Date | string
   last_used_at?: Date | string
 }
 

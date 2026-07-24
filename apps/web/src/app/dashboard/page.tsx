@@ -5,6 +5,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import GameCard from "@/components/GameCard";
 import Loader from "@/components/Loader";
+import { PillTabs } from "@/components/PillTabs";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { getStats, fetchGames, getBatchJobs } from "@/services/api";
 import { ChevronRight, TrendingUp, TrendingDown, Minus, RefreshCw, ChevronDown, ChevronUp, Clock, Zap, Gauge, CalendarDays, Loader2, CheckCircle2 } from "lucide-react";
@@ -76,7 +77,7 @@ function useCountUp(target: number, triggered: boolean, duration = 1400, delay =
 
 export default function Dashboard() {
   const router = useRouter();
-  const { chessUsername, isApproved, loading: playerLoading } = usePlayer();
+  const { chessUsername, lichessUsername, activePlatform, activeUsername, isApproved, loading: playerLoading } = usePlayer();
   const [stats, setStats] = useState<any>(null);
   const [realStats, setRealStats] = useState<any>(null);
   const [games, setGames] = useState([]);
@@ -93,15 +94,26 @@ export default function Dashboard() {
   const [replaceConfirmStep, setReplaceConfirmStep] = useState(false);
   const [gameFilter, setGameFilter] = useState<string>("all");
 
+  const platformTabs = useMemo(() => {
+    const tabs: { id: "chess.com" | "lichess"; label: string }[] = [];
+    if (chessUsername) tabs.push({ id: "chess.com", label: "Chess.com" });
+    if (lichessUsername) tabs.push({ id: "lichess", label: "Lichess" });
+    return tabs;
+  }, [chessUsername, lichessUsername]);
+
+  useEffect(() => {
+    setFetchPlatform(activePlatform);
+  }, [activePlatform]);
+
   useEffect(() => {
     if (playerLoading) return;
-    if (!chessUsername || !isApproved) {
+    if (!activeUsername || !isApproved) {
       router.push("/login");
       return;
     }
 
     localStorage.removeItem("recentGames"); // remove unnamespaced key that could leak across players
-    const gamesKey = `recentGames_${chessUsername}`;
+    const gamesKey = `recentGames_${activeUsername}`;
     const storedGames = localStorage.getItem(gamesKey);
     if (storedGames) {
       setGames(JSON.parse(storedGames));
@@ -110,8 +122,8 @@ export default function Dashboard() {
     }
 
     const STATS_CACHE_VERSION = "v2";
-    const statsKey = `stats_${chessUsername}_${STATS_CACHE_VERSION}`;
-    const realStatsKey = `realStats_${chessUsername}_${STATS_CACHE_VERSION}`;
+    const statsKey = `stats_${activeUsername}_${STATS_CACHE_VERSION}`;
+    const realStatsKey = `realStats_${activeUsername}_${STATS_CACHE_VERSION}`;
 
     // Show cached stats immediately so the dashboard renders without a loader
     const cachedStats = localStorage.getItem(statsKey);
@@ -127,7 +139,7 @@ export default function Dashboard() {
     }
 
     // Re-fetch in background and update cache
-    getStats(chessUsername)
+    getStats(activeUsername)
       .then((s) => {
         setStats(s);
         if (s) localStorage.setItem(statsKey, JSON.stringify(s));
@@ -135,16 +147,27 @@ export default function Dashboard() {
       .catch(console.error)
       .finally(() => setLoading(false));
 
-    fetch(`/api/chess-com/${chessUsername}/stats`)
-      .then((r) => r.json())
-      .then((s) => {
-        setRealStats(s);
-        localStorage.setItem(realStatsKey, JSON.stringify(s));
-      })
-      .catch(console.error);
+    // Per-time-control career/recent-form stats — sourced differently per platform
+    if (activePlatform === "lichess" && lichessUsername) {
+      fetch(`/api/lichess/${lichessUsername}/stats`)
+        .then((r) => r.json())
+        .then((s) => {
+          setRealStats(s);
+          localStorage.setItem(realStatsKey, JSON.stringify(s));
+        })
+        .catch(console.error);
+    } else if (chessUsername) {
+      fetch(`/api/chess-com/${chessUsername}/stats`)
+        .then((r) => r.json())
+        .then((s) => {
+          setRealStats(s);
+          localStorage.setItem(realStatsKey, JSON.stringify(s));
+        })
+        .catch(console.error);
+    }
 
     // Fetch batch job statuses to show analysis state on each tc card
-    getBatchJobs(chessUsername)
+    getBatchJobs(activeUsername)
       .then(jobs => {
         const completed = jobs.filter((j: any) => j.status === "completed");
         const statusMap: Record<string, any> = {};
@@ -157,7 +180,7 @@ export default function Dashboard() {
       })
       .catch(() => {});
 
-  }, [chessUsername, isApproved, playerLoading, router]);
+  }, [activeUsername, chessUsername, lichessUsername, activePlatform, isApproved, playerLoading, router]);
 
   const handleLoadGames = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -169,7 +192,8 @@ export default function Dashboard() {
     setFetching(true);
     setFetchError("");
     try {
-      const newGames = await fetchGames(fetchPlatform, chessUsername, fetchLimit);
+      const fetchUsername = fetchPlatform === "lichess" ? lichessUsername : chessUsername;
+      const newGames = await fetchGames(fetchPlatform, fetchUsername, fetchLimit);
       setGames((prev: any[]) => {
         let merged: any[];
         if (fetchMode === "replace") {
@@ -178,7 +202,7 @@ export default function Dashboard() {
           const existingUrls = new Set(prev.map((g: any) => g.filename));
           merged = [...prev, ...newGames.filter((g: any) => !existingUrls.has(g.filename))];
         }
-        localStorage.setItem(`recentGames_${chessUsername}`, JSON.stringify(merged));
+        localStorage.setItem(`recentGames_${activeUsername}`, JSON.stringify(merged));
         return merged;
       });
       setShowFetchPanel(false);
@@ -194,13 +218,16 @@ export default function Dashboard() {
   const [summaryInView, setSummaryInView] = useState(false);
   const summaryTotals = useMemo(() => {
     if (!realStats) return null;
-    const keys = ["chess_rapid", "chess_blitz", "chess_bullet", "chess_daily"].filter(k => realStats[k]?.record);
+    const allKeys = activePlatform === "lichess"
+      ? ["lichess_rapid", "lichess_blitz", "lichess_bullet", "lichess_classical"]
+      : ["chess_rapid", "chess_blitz", "chess_bullet", "chess_daily"];
+    const keys = allKeys.filter(k => realStats[k]?.record);
     if (!keys.length) return null;
     let wins = 0, losses = 0, draws = 0;
     keys.forEach(k => { wins += realStats[k].record.win; losses += realStats[k].record.loss; draws += realStats[k].record.draw; });
     const total = wins + losses + draws;
     return { wins, losses, draws, total, winRate: total > 0 ? Math.round((wins / total) * 100) : 0 };
-  }, [realStats]);
+  }, [realStats, activePlatform]);
   useEffect(() => {
     const el = summaryRef.current;
     if (!el || !summaryTotals) return;
@@ -217,7 +244,7 @@ export default function Dashboard() {
   const animLosses  = useCountUp(summaryTotals?.losses   ?? 0, summaryInView, 1000, 350);
   const animDraws   = useCountUp(summaryTotals?.draws    ?? 0, summaryInView, 1000, 420);
 
-  if (!chessUsername) return null;
+  if (!activeUsername) return null;
 
   return (
     <>
@@ -248,7 +275,7 @@ export default function Dashboard() {
               }}
             >
               <h1 style={{ fontFamily: "'Space Grotesk', system-ui, sans-serif", fontSize: "clamp(1.8rem, 3.5vw, 2.8rem)", fontWeight: 600, letterSpacing: "-0.02em", lineHeight: 1.15, margin: 0 }}>
-                Welcome, {chessUsername}
+                Welcome, {activeUsername}
               </h1>
               {stats?.momentum && <MomentumBadge momentum={stats.momentum} />}
             </div>
@@ -324,9 +351,11 @@ export default function Dashboard() {
                 {/* RIGHT: Bento — White / Black / games count / Accuracy in 4 quadrants */}
                 {games.length > 0 && (() => {
                   const colorStats = { white: { wins: 0, losses: 0, draws: 0 }, black: { wins: 0, losses: 0, draws: 0 } };
-                  const userLower = chessUsername.toLowerCase();
+                  const chessLower = chessUsername?.toLowerCase();
+                  const lichessLower = lichessUsername?.toLowerCase();
                   const WHITE_LOSS = new Set(["checkmated", "resigned", "timeout", "abandoned", "loss"]);
                   (games as any[]).forEach((g) => {
+                    const userLower = g.platform === "lichess" ? lichessLower : chessLower;
                     const isWhite = (g.white || "").toLowerCase() === userLower;
                     const side = colorStats[isWhite ? "white" : "black"];
                     const r = (g.result || "").toLowerCase().trim();
@@ -404,12 +433,20 @@ export default function Dashboard() {
 
             {/* ── Stats by Time Control ── */}
             {realStats && (() => {
-              const formats = [
-                { key: "chess_rapid",  label: "Rapid",  Icon: Clock },
-                { key: "chess_blitz",  label: "Blitz",  Icon: Zap },
-                { key: "chess_bullet", label: "Bullet", Icon: Gauge },
-                { key: "chess_daily",  label: "Daily",  Icon: CalendarDays },
-              ].filter(({ key }) => realStats[key]?.record);
+              const formats = (activePlatform === "lichess"
+                ? [
+                    { key: "lichess_rapid",     label: "Rapid",     Icon: Clock },
+                    { key: "lichess_blitz",     label: "Blitz",     Icon: Zap },
+                    { key: "lichess_bullet",    label: "Bullet",    Icon: Gauge },
+                    { key: "lichess_classical", label: "Classical", Icon: CalendarDays },
+                  ]
+                : [
+                    { key: "chess_rapid",  label: "Rapid",  Icon: Clock },
+                    { key: "chess_blitz",  label: "Blitz",  Icon: Zap },
+                    { key: "chess_bullet", label: "Bullet", Icon: Gauge },
+                    { key: "chess_daily",  label: "Daily",  Icon: CalendarDays },
+                  ]
+              ).filter(({ key }) => realStats[key]?.record);
 
               if (formats.length === 0) return null;
 
@@ -426,7 +463,9 @@ export default function Dashboard() {
                 <section aria-labelledby="tc-stats-heading">
                   <h2 id="tc-stats-heading" style={{ fontFamily: "'Space Grotesk', system-ui, sans-serif", fontSize: "1.1rem", fontWeight: 600, letterSpacing: "-0.01em", color: "var(--text-primary)", marginBottom: "16px" }}>
                     Stats by Time Control
-                    <span style={{ fontFamily: "'Inter', sans-serif", fontSize: "0.88rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: "8px" }}>Chess.com</span>
+                    <span style={{ fontFamily: "'Inter', sans-serif", fontSize: "0.88rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: "8px" }}>
+                      {activePlatform === "lichess" ? "Lichess" : "Chess.com"}
+                    </span>
                   </h2>
 
                   {/* Per-time-control cards */}
@@ -611,17 +650,18 @@ export default function Dashboard() {
                 >
                   <form onSubmit={handleLoadGames} className="load-games-form">
                     <div className="load-games-field">
-                      <label htmlFor="fetch-platform" style={{ fontSize: "12px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Platform</label>
-                      <select
-                        id="fetch-platform"
-                        className="input-field"
-                        value={fetchPlatform}
-                        onChange={(e) => setFetchPlatform(e.target.value)}
-                        style={{ padding: "8px 12px", fontSize: "16px" }}
-                      >
-                        <option value="chess.com">Chess.com</option>
-                        <option value="lichess">Lichess</option>
-                      </select>
+                      <label style={{ fontSize: "12px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Platform</label>
+                      {platformTabs.length > 1 ? (
+                        <PillTabs
+                          tabs={platformTabs}
+                          activeTab={(fetchPlatform as "chess.com" | "lichess") || "chess.com"}
+                          onChange={setFetchPlatform}
+                        />
+                      ) : (
+                        <span style={{ fontSize: "15px", color: "var(--text-primary)", padding: "8px 0" }}>
+                          {platformTabs[0]?.label ?? "Chess.com"}
+                        </span>
+                      )}
                     </div>
                     <div className="load-games-field">
                       <label htmlFor="fetch-count" style={{ fontSize: "12px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Count (max 50)</label>
@@ -702,7 +742,7 @@ export default function Dashboard() {
                 return filtered.length > 0 ? (
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(300px, 100%), 1fr))", gap: "20px" }}>
                     {filtered.map((g, i) => (
-                      <GameCard key={i} game={g} username={chessUsername} />
+                      <GameCard key={i} game={g} chessUsername={chessUsername ?? undefined} lichessUsername={lichessUsername ?? undefined} />
                     ))}
                   </div>
                 ) : (

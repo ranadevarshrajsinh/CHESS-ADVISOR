@@ -19,7 +19,7 @@ function GamesPageInner() {
   const router       = useRouter();
   const searchParams = useSearchParams();
   const tc           = searchParams.get("tc") || "";
-  const { chessUsername, isApproved, loading: playerLoading } = usePlayer();
+  const { chessUsername, lichessUsername, activeUsername, activePlatform, isApproved, loading: playerLoading } = usePlayer();
 
   const [games,   setGames]   = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -27,16 +27,16 @@ function GamesPageInner() {
 
   useEffect(() => {
     if (playerLoading) return;
-    if (!chessUsername || !isApproved) { router.push("/login"); return; }
+    if (!activeUsername || !isApproved) { router.push("/login"); return; }
     if (!tc) { router.push("/dashboard"); return; }
 
     setLoading(true);
     setError("");
-    fetchGamesByTimeControl(chessUsername, tc, 50)
+    fetchGamesByTimeControl(activeUsername, tc, 50, activePlatform)
       .then(setGames)
-      .catch(() => setError("Could not fetch games from Chess.com. Check your connection."))
+      .catch(() => setError(`Could not fetch games from ${activePlatform === "lichess" ? "Lichess" : "Chess.com"}. Check your connection.`))
       .finally(() => setLoading(false));
-  }, [chessUsername, isApproved, playerLoading, router, tc]);
+  }, [activeUsername, activePlatform, isApproved, playerLoading, router, tc]);
 
   const meta  = TC_META[tc] || { label: tc, icon: "" };
   const label = meta.label;
@@ -109,9 +109,9 @@ function GamesPageInner() {
               onClick={() => {
                 setLoading(true);
                 setError("");
-                fetchGamesByTimeControl(chessUsername!, tc, 50)
+                fetchGamesByTimeControl(activeUsername!, tc, 50, activePlatform)
                   .then(setGames)
-                  .catch(() => setError("Could not fetch games from Chess.com. Check your connection."))
+                  .catch(() => setError(`Could not fetch games from ${activePlatform === "lichess" ? "Lichess" : "Chess.com"}. Check your connection.`))
                   .finally(() => setLoading(false));
               }}
             >
@@ -123,7 +123,7 @@ function GamesPageInner() {
             <div style={{ fontSize: "48px", marginBottom: "16px", opacity: 0.5 }}>{icon}</div>
             <h2 style={{ marginBottom: "8px" }}>No {label} games found</h2>
             <p style={{ color: "var(--text-secondary)" }}>
-              No recent {label} games were found on your Chess.com account.
+              No recent {label} games were found on your {activePlatform === "lichess" ? "Lichess" : "Chess.com"} account.
             </p>
           </div>
         ) : (
@@ -133,7 +133,7 @@ function GamesPageInner() {
             gap: "20px",
           }}>
             {games.map((g, i) => (
-              <GameCard key={i} game={g} username={chessUsername!} />
+              <GameCard key={i} game={g} chessUsername={chessUsername ?? undefined} lichessUsername={lichessUsername ?? undefined} />
             ))}
           </div>
         )}

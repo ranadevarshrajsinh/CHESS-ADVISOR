@@ -105,9 +105,10 @@ export async function fetchGamesByTimeControl(
   username: string,
   timeClass: string,
   limit = 50,
+  platform: string = "chess.com",
 ): Promise<any[]> {
   const params = new URLSearchParams({
-    platform: "chess.com",
+    platform,
     username,
     limit: String(limit),
     tc: timeClass,
@@ -147,9 +148,10 @@ export async function getBatchJobs(username: string): Promise<any[]> {
   return res.json();
 }
 
-export function getReport(username: string, limit = 50, tc?: string) {
+export function getReport(username: string, limit = 50, tc?: string, platform?: string) {
   const params = new URLSearchParams({ limit: String(limit) });
   if (tc && tc !== "all") params.set("tc", tc);
+  if (platform) params.set("platform", platform);
   return dedupedGet(`${BASE_URL}/api/report/${username}?${params}`);
 }
 

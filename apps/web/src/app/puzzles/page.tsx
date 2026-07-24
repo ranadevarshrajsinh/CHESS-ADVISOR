@@ -183,7 +183,7 @@ function extractPuzzle(item: any): Puzzle | null {
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function PuzzlesPage() {
   const router = useRouter();
-  const { chessUsername, isApproved, loading: playerLoading } = usePlayer();
+  const { activeUsername, isApproved, loading: playerLoading } = usePlayer();
 
   const [puzzles, setPuzzles]           = useState<Puzzle[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -234,14 +234,14 @@ export default function PuzzlesPage() {
   // ── Data loading ──────────────────────────────────────────────────────────
   useEffect(() => {
     if (playerLoading) return;
-    if (!chessUsername || !isApproved) { router.replace("/login"); return; }
+    if (!activeUsername || !isApproved) { router.replace("/login"); return; }
     loadPuzzles();
     loadStats();
     loadRating();
-  }, [playerLoading, chessUsername, isApproved]);
+  }, [playerLoading, activeUsername, isApproved]);
 
   useEffect(() => {
-    if (!chessUsername || !isApproved || playerLoading) return;
+    if (!activeUsername || !isApproved || playerLoading) return;
     loadPuzzles();
   }, [phase, source, puzzleType, difficulty]);
 
@@ -251,7 +251,7 @@ export default function PuzzlesPage() {
       let raw: Puzzle[] = [];
       if (source === "own") {
         const phaseParam = phase !== "all" ? phase : undefined;
-        const data = await getPuzzleQueue(chessUsername!, 20, phaseParam);
+        const data = await getPuzzleQueue(activeUsername!, 20, phaseParam);
         raw = (data.queue || []).map(extractPuzzle).filter(Boolean) as Puzzle[];
       } else {
         const data = await getLibraryPuzzles(puzzleType, difficulty, 20);
@@ -266,7 +266,7 @@ export default function PuzzlesPage() {
 
   async function loadStats() {
     try {
-      const s = await getPuzzleStats(chessUsername!);
+      const s = await getPuzzleStats(activeUsername!);
       setStats(s);
       if (s?.streak_days) setStreakDays(s.streak_days);
     } catch { setStats(null); }
@@ -275,20 +275,20 @@ export default function PuzzlesPage() {
   async function loadRating() {
     try {
       const { getPlayerRating } = await import("@/services/api");
-      const r = await getPlayerRating(chessUsername!);
+      const r = await getPlayerRating(activeUsername!);
       if (r && !r.calibrated) setShowCalibration(true);
     } catch { /* non-fatal */ }
   }
 
   async function handleGenerate() {
     setGenerating(true);
-    try { await generatePuzzles(chessUsername!); await loadPuzzles(); await loadStats(); }
+    try { await generatePuzzles(activeUsername!); await loadPuzzles(); await loadStats(); }
     finally { setGenerating(false); }
   }
 
   // ── Attempt handler ───────────────────────────────────────────────────────
   const handleAttempt = useCallback(async (solved: boolean, timeTaken: number, timedOut = false) => {
-    if (!chessUsername || !puzzles[currentIndex]) return;
+    if (!activeUsername || !puzzles[currentIndex]) return;
     const puzzle = puzzles[currentIndex];
     setSessionTotal((t) => t + 1);
     setSessionTimes((ts) => [...ts, timeTaken]);
@@ -297,7 +297,7 @@ export default function PuzzlesPage() {
     try {
       const resolvedPuzzleType = source === "library" ? puzzleType : (puzzle.theme ?? "");
       const result = await recordPuzzleAttempt(
-        chessUsername, puzzle.puzzle_id, solved, timeTaken, puzzle.rating,
+        activeUsername, puzzle.puzzle_id, solved, timeTaken, puzzle.rating,
         (puzzle.source ?? "own_game") as "own_game" | "library", resolvedPuzzleType,
       );
       if (result?.rating_delta != null) setRatingDelta(result.rating_delta);
@@ -311,7 +311,7 @@ export default function PuzzlesPage() {
         if (nl <= 0) setGameOver(true);
       }
     }
-  }, [chessUsername, puzzles, currentIndex, mode, lives]);
+  }, [activeUsername, puzzles, currentIndex, mode, lives]);
 
   // ── Navigation ────────────────────────────────────────────────────────────
   function handleNext() {
@@ -355,7 +355,7 @@ export default function PuzzlesPage() {
       <>
         <Header />
         <div className="container page-content-mobile" style={{ paddingTop: "32px", paddingBottom: "48px" }}>
-          <PuzzleRush username={chessUsername!} onExit={() => setMode("normal")} />
+          <PuzzleRush username={activeUsername!} onExit={() => setMode("normal")} />
         </div>
       </>
     );
