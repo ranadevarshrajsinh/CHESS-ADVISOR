@@ -2,7 +2,6 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CheckCircle } from "lucide-react";
-import Header from "@/components/Header";
 import Loader from "@/components/Loader";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { createBatchJob, getBatchJob, getBatchJobs, fetchGamesByTimeControl } from "@/services/api";
@@ -157,7 +156,6 @@ function BatchPageInner() {
   if (playerLoading || pageLoading) {
     return (
       <>
-        <Header />
         <div className="flex-center" style={{ minHeight: "60vh" }}>
           <Loader message="Loading..." />
         </div>
@@ -167,7 +165,6 @@ function BatchPageInner() {
 
   return (
     <>
-      <Header />
       <main className="container animate-fade-in page-content-mobile" style={{ paddingTop: "40px", paddingBottom: "80px" }}>
 
         {/* Page header */}

@@ -349,7 +349,7 @@ button {
 }
 
 .page-wrapper {
-  padding-top: 80px;
+  padding-top: 70px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -692,7 +692,7 @@ button {
 
 /* ── Analysis page mobile overrides ─────────────────────────── */
 @media (max-width: 768px) {
-  /* Shrink the fixed-header spacer (header is 52px on mobile) */
+  /* On mobile: header reverts to flat bar at top:0 (52px tall) */
   .analysis-header-spacer {
     height: 52px !important;
   }

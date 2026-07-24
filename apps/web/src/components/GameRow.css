@@ -1,0 +1,224 @@
+/* ── Row (bordered card per item) ── */
+.game-row {
+  display: grid;
+  grid-template-columns: auto minmax(180px, 1.1fr) minmax(0, 1.5fr) auto auto;
+  align-items: center;
+  gap: 24px;
+  padding: 18px 22px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s ease-out, border-color 0.15s ease-out;
+  min-height: 84px;
+}
+
+.game-row:hover {
+  background: var(--card-hover, var(--surface-3, #262626));
+  border-color: var(--border-medium);
+}
+
+.game-row:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* ── Result chip ── */
+.game-row__chip {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.game-row__chip--win {
+  background: color-mix(in srgb, var(--success) 20%, transparent);
+  color: var(--success);
+  border: 1px solid color-mix(in srgb, var(--success) 35%, transparent);
+}
+
+.game-row__chip--loss {
+  background: color-mix(in srgb, var(--danger) 18%, transparent);
+  color: var(--danger);
+  border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent);
+}
+
+.game-row__chip--draw {
+  background: color-mix(in srgb, var(--text-secondary) 15%, transparent);
+  color: var(--text-secondary);
+  border: 1px solid color-mix(in srgb, var(--text-secondary) 28%, transparent);
+}
+
+/* ── Body: "vs opponent" title + meta line ── */
+.game-row__body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.game-row__title {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.2;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.game-row__you {
+  color: var(--text-primary);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+.game-row__vs {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.game-row__opponent {
+  color: var(--text-primary);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+.game-row__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.3;
+}
+
+.game-row__meta-item {
+  display: inline-flex;
+  align-items: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.game-row__meta-sep {
+  padding: 0 7px;
+  opacity: 0.5;
+}
+
+/* ── Opening column (middle) ── */
+.game-row__opening-col {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.game-row__opening {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  letter-spacing: -0.005em;
+}
+
+/* ── Date column (small-caps label above value) ── */
+.game-row__date-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 96px;
+}
+
+.game-row__date-label {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.75;
+}
+
+.game-row__date-value {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+/* ── Arrow (top-right corner accent) ── */
+.game-row__arrow {
+  align-self: center;
+  color: var(--text-secondary);
+  opacity: 0.55;
+  transition: transform 0.18s ease-out, opacity 0.18s ease-out;
+}
+
+.game-row:hover .game-row__arrow {
+  opacity: 1;
+  transform: translate(2px, -2px);
+}
+
+/* ── Mid-width: shrink columns proportionally ── */
+@media (min-width: 641px) and (max-width: 960px) {
+  .game-row {
+    grid-template-columns: auto minmax(140px, 1fr) minmax(0, 1.2fr) auto auto;
+    gap: 18px;
+    padding: 18px 18px;
+  }
+  .game-row__opening {
+    font-size: 14px;
+  }
+  .game-row__title {
+    font-size: 15px;
+  }
+  .game-row__date-col {
+    min-width: 72px;
+  }
+}
+
+/* ── Mobile: collapse to chip + body + arrow ── */
+@media (max-width: 640px) {
+  .game-row {
+    grid-template-columns: auto 1fr auto;
+    gap: 14px;
+    padding: 16px 16px;
+    min-height: 76px;
+  }
+  .game-row__chip {
+    width: 42px;
+    height: 42px;
+    font-size: 15px;
+  }
+  .game-row__opening-col,
+  .game-row__date-col {
+    display: none;
+  }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .game-row,
+  .game-row__arrow {
+    transition: none;
+  }
+  .game-row:hover .game-row__arrow {
+    transform: none;
+  }
+}

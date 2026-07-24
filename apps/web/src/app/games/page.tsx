@@ -1,7 +1,6 @@
 "use client";
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Header from "@/components/Header";
 import Loader from "@/components/Loader";
 import GameCard from "@/components/GameCard";
 import { usePlayer } from "@/contexts/PlayerContext";
@@ -44,7 +43,6 @@ function GamesPageInner() {
 
   return (
     <>
-      <Header />
       <main
         className="container animate-fade-in page-content-mobile"
         style={{ paddingTop: "40px", paddingBottom: "60px" }}

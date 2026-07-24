@@ -3,7 +3,6 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Chess } from "chess.js";
-import Header from "@/components/Header";
 import Loader from "@/components/Loader";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { getTrainingPlan } from "@/services/api";
@@ -673,7 +672,6 @@ export default function TrainingPlanPage() {
 
   return (
     <>
-      <Header />
       <main
         className="container animate-fade-in page-content-mobile"
         style={{ paddingTop: "40px", paddingBottom: "60px" }}

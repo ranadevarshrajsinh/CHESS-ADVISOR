@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState, use, useRef, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Header from "@/components/Header";
 import Loader from "@/components/Loader";
 import MistakeCard from "@/components/MistakeCard";
 import PatternGrid from "@/components/PatternGrid";
@@ -578,9 +577,8 @@ export default function GameAnalysisPage({
         overflow: "hidden",
       }}
     >
-      <Header />
-      {/* spacer for the 56px fixed header */}
-      <div className="analysis-header-spacer" style={{ height: "56px", flexShrink: 0 }} />
+      {/* spacer for floating pill header (12px top + ~52px pill + 12px gap) */}
+      <div className="analysis-header-spacer" style={{ height: "76px", flexShrink: 0 }} />
 
       <main
         className="container animate-fade-in analysis-main-container"

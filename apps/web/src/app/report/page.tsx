@@ -2,7 +2,6 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import Header from "@/components/Header";
 import Loader from "@/components/Loader";
 import ChartRadar from "@/components/ChartRadar";
 import ChartLine from "@/components/ChartLine";
@@ -1278,7 +1277,6 @@ function ReportPageInner() {
 
   return (
     <>
-      <Header />
       <main
         className="container animate-fade-in"
         style={{ paddingTop: "40px", paddingBottom: "80px" }}

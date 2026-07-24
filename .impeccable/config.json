@@ -107,7 +107,7 @@
       {
         "rule": "design-system-color",
         "value": "rgba(0, 0, 0, 0.5)",
-        "reason": "Box-shadow overlay, not a fill color — intentional",
+        "reason": "Intentional shadow on notification dropdown, pre-existing",
         "createdAt": "2026-07-17T17:51:38.822Z"
       },
       {
@@ -115,6 +115,12 @@
         "value": "0 0 2px 2px",
         "reason": "Intentional micro-radius on 2px-tall bottom-nav active strip — same as suppressed 2px",
         "createdAt": "2026-07-17T17:58:05.441Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#031a10",
+        "reason": "Dark-on-green text for active pill state, confirmed in pill nav brief",
+        "createdAt": "2026-07-21T10:54:37.409Z"
       }
     ]
   }

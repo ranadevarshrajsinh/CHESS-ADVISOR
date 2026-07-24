@@ -39,6 +39,29 @@ export async function fetchGames(platform, username, limit = 10) {
   return res.json();
 }
 
+export type AnalysisStatus =
+  | { analyzed: true; accuracy?: number }
+  | { analyzed: false };
+
+export async function getBatchAnalysisStatus(
+  username: string,
+  filenames: string[],
+): Promise<Record<string, AnalysisStatus>> {
+  if (!username || filenames.length === 0) return {};
+  try {
+    const res = await fetch(`${BASE_URL}/api/analyze/status-batch`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, filenames }),
+    });
+    if (!res.ok) return {};
+    const data = await res.json();
+    return data.statuses || {};
+  } catch {
+    return {};
+  }
+}
+
 export async function getStats(username) {
   const res = await apiFetch(`${BASE_URL}/api/stats/${username}`);
   if (res.status === 404) return null;
