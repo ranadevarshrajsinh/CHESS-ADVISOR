@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Search, Loader2 } from "lucide-react";
 import { Chessboard } from "react-chessboard";
-import Header from "@/components/Header";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { useDrillEngine } from "@/hooks/useDrillEngine";
 import {
@@ -565,7 +564,6 @@ export default function OpeningDrillPage() {
 
     return (
       <>
-        <Header />
         <main
           className="container animate-fade-in page-content-mobile"
           style={{ paddingTop: "24px", paddingBottom: "60px" }}
@@ -837,7 +835,6 @@ export default function OpeningDrillPage() {
   // ─── SETUP ────────────────────────────────────────────────────────────────
   return (
     <>
-      <Header />
       <main
         className="container animate-fade-in page-content-mobile"
         style={{ paddingTop: "36px", paddingBottom: "60px" }}

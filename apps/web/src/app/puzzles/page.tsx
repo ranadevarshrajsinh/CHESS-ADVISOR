@@ -2,7 +2,6 @@
 import type { ReactNode } from "react";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Header from "@/components/Header";
 import Loader from "@/components/Loader";
 import PuzzleBoard from "@/components/PuzzleBoard";
 import TimedPuzzleBoard from "@/components/TimedPuzzleBoard";
@@ -346,14 +345,13 @@ export default function PuzzlesPage() {
   // ── Render ────────────────────────────────────────────────────────────────
   if (playerLoading) return (
     <>
-      <Header /><Loader />
+      <Loader />
     </>
   );
 
   if (mode === "rush") {
     return (
       <>
-        <Header />
         <div className="container page-content-mobile" style={{ paddingTop: "32px", paddingBottom: "48px" }}>
           <PuzzleRush username={activeUsername!} onExit={() => setMode("normal")} />
         </div>
@@ -366,7 +364,6 @@ export default function PuzzlesPage() {
 
   return (
     <>
-      <Header />
 
       {showTimeSetup && (
         <TimeChallengeSetup onStart={startTime} onCancel={() => setShowTimeSetup(false)} />

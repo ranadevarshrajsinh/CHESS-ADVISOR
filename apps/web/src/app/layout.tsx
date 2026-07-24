@@ -4,6 +4,7 @@ import { PlayerProvider } from "@/contexts/PlayerContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import Footer from "@/components/Footer";
+import Header from "@/components/Header";
 
 export const metadata = {
   title: "Chess Advisor Platform",
@@ -38,6 +39,7 @@ export default function RootLayout({ children }) {
             <ThemeProvider>
               <SettingsProvider>
                 <div className="bg-grid" />
+                <Header />
                 <div
                   className="page-wrapper"
                   style={{

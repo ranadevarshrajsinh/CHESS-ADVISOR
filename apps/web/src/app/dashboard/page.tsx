@@ -2,12 +2,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Header from "@/components/Header";
-import GameCard from "@/components/GameCard";
+import GameRow from "@/components/GameRow";
 import Loader from "@/components/Loader";
 import { PillTabs } from "@/components/PillTabs";
 import { usePlayer } from "@/contexts/PlayerContext";
-import { getStats, fetchGames, getBatchJobs } from "@/services/api";
+import { getStats, fetchGames, getBatchJobs, getBatchAnalysisStatus, type AnalysisStatus } from "@/services/api";
+import { parsePgnHeaders } from "@/lib/chess/parse-pgn-headers";
 import { ChevronRight, TrendingUp, TrendingDown, Minus, RefreshCw, ChevronDown, ChevronUp, Clock, Zap, Gauge, CalendarDays, Loader2, CheckCircle2 } from "lucide-react";
 
 function MomentumBadge({ momentum }: { momentum: string }) {
@@ -93,6 +93,18 @@ export default function Dashboard() {
   const [fetchError, setFetchError] = useState("");
   const [replaceConfirmStep, setReplaceConfirmStep] = useState(false);
   const [gameFilter, setGameFilter] = useState<string>("all");
+  const [analysisStatuses, setAnalysisStatuses] = useState<Record<string, AnalysisStatus>>({});
+
+  // Parse opening / ECO / ply count from each game's PGN once — memoized by games identity
+  const gameOpenings = useMemo(() => {
+    const map: Record<string, { opening?: string; eco?: string; plyCount?: number }> = {};
+    for (const g of games as any[]) {
+      if (!g?.filename) continue;
+      const headers = parsePgnHeaders(g.pgn);
+      map[g.filename] = { opening: headers.opening, eco: headers.eco, plyCount: headers.plyCount };
+    }
+    return map;
+  }, [games]);
 
   const platformTabs = useMemo(() => {
     const tabs: { id: "chess.com" | "lichess"; label: string }[] = [];
@@ -182,6 +194,18 @@ export default function Dashboard() {
 
   }, [activeUsername, chessUsername, lichessUsername, activePlatform, isApproved, playerLoading, router]);
 
+  // Batch-fetch analysis status for all currently loaded games
+  useEffect(() => {
+    if (!chessUsername) return;
+    const filenames = (games as any[]).map((g) => g.filename).filter(Boolean);
+    if (filenames.length === 0) return;
+    let cancelled = false;
+    getBatchAnalysisStatus(chessUsername, filenames).then((statuses) => {
+      if (!cancelled) setAnalysisStatuses(statuses);
+    });
+    return () => { cancelled = true; };
+  }, [chessUsername, games]);
+
   const handleLoadGames = async (e: React.FormEvent) => {
     e.preventDefault();
     if (fetchMode === "replace" && (games as any[]).length > 0 && !replaceConfirmStep) {
@@ -248,10 +272,9 @@ export default function Dashboard() {
 
   return (
     <>
-      <Header />
       <main
         className="container animate-fade-in page-content-mobile"
-        style={{ paddingTop: "40px", paddingBottom: "60px" }}
+        style={{ paddingTop: "16px", paddingBottom: "60px" }}
         aria-label="Dashboard"
       >
         <div
@@ -736,13 +759,24 @@ export default function Dashboard() {
               )}
 
               {games.length > 0 ? (() => {
-                const filtered = gameFilter === "all"
+                const base = gameFilter === "all"
                   ? games as any[]
                   : (games as any[]).filter(g => (g.time_class || "").toLowerCase() === gameFilter);
+                const filtered = [...base].sort(
+                  (a, b) => (b?.end_time ?? 0) - (a?.end_time ?? 0)
+                );
                 return filtered.length > 0 ? (
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(300px, 100%), 1fr))", gap: "20px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                     {filtered.map((g, i) => (
-                      <GameCard key={i} game={g} chessUsername={chessUsername ?? undefined} lichessUsername={lichessUsername ?? undefined} />
+                      <GameRow
+                        key={g.filename ?? i}
+                        game={g}
+                        username={chessUsername}
+                        opening={gameOpenings[g.filename]?.opening}
+                        eco={gameOpenings[g.filename]?.eco}
+                        plyCount={gameOpenings[g.filename]?.plyCount}
+                        analysisStatus={analysisStatuses[g.filename]}
+                      />
                     ))}
                   </div>
                 ) : (
